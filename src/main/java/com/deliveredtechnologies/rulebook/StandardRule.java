@@ -12,7 +12,7 @@ import static com.deliveredtechnologies.rulebook.RuleState.*;
  */
 public class StandardRule<T> implements Rule<T> {
     private Rule<T> _nextRule;
-    private FactMap<T> _facts;
+    private FactMap<T> _facts = new FactMap<>();
     private Predicate<FactMap<T>> _test;
     private Function<FactMap<T>, RuleState> _action;
 
