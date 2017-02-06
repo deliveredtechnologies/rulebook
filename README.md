@@ -12,3 +12,31 @@ RuleBook rules are built in the way that Java developers think: Java code. And t
 RuleBook is based on the Chain of Responsibility pattern. Each rule specified in a RuleBook is chained together in the order in which it is specified. As one rule completes, the next rule is evaluated. Any rule can break the chain by returning RuleState.BREAK from the 'then' Function in the rule.
 
 State in Rules is handled through Facts. A Fact is literally just data that is named and supplied to a Rule or RuleBook _(note: facts added to a RuleBook are applied to all rules in the RuleBook)_. Facts can be both read and written to. So, in that way, facts can be used to evaluate state at the completion of a RuleBook execution and they can also be used to pass data into a Rule or RuleBook.
+
+### Using RuleBook
+**A HelloWorld Example**
+```
+public class ExampleRuleBook extends RuleBook {
+  public void defineRules() {
+    //first rule prints "Hello"
+    addRule(StandardRule.create().when(f -> true).then(f -> {
+      System.out.print("Hello");
+      return NEXT; //continue to the next Rule
+    });
+    
+    //second rule prints "World"
+    addRule(StandardRule.create().when(f -> true).then(f -> {
+      System.out.println("World");
+      return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
+    });
+  }
+}
+```
+```
+public class ExampleMainClass {
+  public static void main(String[] args) {
+    RuleBook exampleRuleBook = new ExampleRuleBook();
+    exampleRuleBook.run();
+  }
+}
+```
