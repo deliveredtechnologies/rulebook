@@ -40,3 +40,31 @@ public class ExampleMainClass {
   }
 }
 ```
+**A HelloWorld Example Using Facts**
+```
+public class ExampleRuleBook extends RuleBook<String> {
+  public void defineRules() {
+    //first rule prints "Hello" value from helloFact
+    addRule(StandardRule.create().when(f -> true).then(f -> {
+      System.out.print(f.getValue("hello"));
+      return NEXT; //continue to the next Rule
+    });
+    
+    //second rule prints "World" value from worldFact
+    addRule(StandardRule.create().when(f -> true).then(f -> {
+      System.out.println(f.getValue("world");
+      return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
+    });
+  }
+}
+```
+```
+public class ExampleMainClass {
+  public static void main(String[] args) {
+    Fact<String> helloFact = new Fact<>("hello", "Hello");
+    Fact<String> worldFact = new Fact<>("world", "World");
+    RuleBook exampleRuleBook = new ExampleRuleBook();
+    exampleRuleBook.given(helloFact, worldFact).run();
+  }
+}
+```
