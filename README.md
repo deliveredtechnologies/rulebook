@@ -52,7 +52,7 @@ public class ExampleRuleBook extends RuleBook<String> {
     
     //second rule prints "World" value from worldFact
     addRule(StandardRule.create().when(f -> true).then(f -> {
-      System.out.println(f.getValue("world");
+      System.out.println(f.getValue("world"));
       return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
     });
   }
