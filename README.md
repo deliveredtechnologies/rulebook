@@ -1,5 +1,5 @@
 # RuleBook
-**A Simple Rules Abstraction for Java8+**
+**A Simple Rules Abstraction for Java8+** 
 
 -----------------
 
@@ -15,7 +15,7 @@ State in Rules is handled through Facts. A Fact is literally just data that is n
 
 ### Using RuleBook
 **A HelloWorld Example**
-```
+```java
 public class ExampleRuleBook extends RuleBook {
   public void defineRules() {
     //first rule prints "Hello"
@@ -32,7 +32,7 @@ public class ExampleRuleBook extends RuleBook {
   }
 }
 ```
-```
+```java
 public class ExampleMainClass {
   public static void main(String[] args) {
     RuleBook exampleRuleBook = new ExampleRuleBook();
@@ -41,7 +41,7 @@ public class ExampleMainClass {
 }
 ```
 **A HelloWorld Example Using Facts**
-```
+```java
 public class ExampleRuleBook extends RuleBook<String> {
   public void defineRules() {
     //first rule prints "Hello" value from helloFact
@@ -58,7 +58,7 @@ public class ExampleRuleBook extends RuleBook<String> {
   }
 }
 ```
-```
+```java
 public class ExampleMainClass {
   public static void main(String[] args) {
     Fact<String> helloFact = new Fact<>("hello", "Hello");
@@ -79,10 +79,10 @@ The two different approaches to implementing these rules are
 
 There are pros and cons to each approach. 
 In the first approach, a single fact contains an uber-bean that is all of the input (and the responses). The good thing about this approach is that there is only one type of fact, so generics work well. The downside is that you have to combine everything into a single object.
-In the second approach, each input is a discrete object. However, since the result is also a fact, there are multiple types of facts, which means that a cast is necessary when retrieving a fact from the FactMap. Since we've been using Java before generics were even a thing (in Java 1.5), we've decided to trade syntactic elegance for independent objects representing independent facts. Perhaps in future version, there will be a more elegant way to handle facts of different types and/or results as facts.
+In the second approach, each input is a discrete object. However, since the result is also a fact, there are multiple types of facts, which means that a cast is necessary when retrieving a fact from the FactMap. Since we've been using Java before generics were even a thing (in Java 1.5), we've decided to trade syntactic elegance for independent objects representing independent facts. ~~Perhaps in future version, there will be a more elegant way to handle facts of different types and/or results as facts.~~ _a more elegant way of handling facts and return types of different types has recently been introduced with **Decision** objects_
 
 _An Example Solution_
-```
+```java
 public class ApplicantBean {
     private int creditScore;
     private BigDecimal cashOnHand;
@@ -105,7 +105,7 @@ public class ApplicantBean {
     public void setCashOnHand(BigDecimal cashOnHand) { this.cashOnHand = cashOnHand; }
 }
 ```
-```
+```java
 public class HomeLoanRuleBook extends RuleBook {
     @Override
     protected void defineRules() {
@@ -137,7 +137,7 @@ public class HomeLoanRuleBook extends RuleBook {
 }
 ```
 _Sadly, the loan was not approved :(_
-```
+```java
 public class ExampleMainClass {
   public static void main(String[] args) {
     Fact resultFact = new Fact("result", false);
