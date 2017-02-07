@@ -74,11 +74,83 @@ public class ExampleMainClass {
 
 _MegaBank issues home loans. Each home loan can have up to 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
 
-The two different approaches to implementing these rules are
+This type of problem lends itself well to Decisions. As stated above, Decsisions accept one type of a Fact and return a different type of result. In this case, the Facts are applicant information for each applicant and the result is whether the loan is approved or denied. The following code example shows how the rules for this scenario can be implemeted.
 
-1. Use a single fact containing a Java Bean that aggregates all of the input and the results
-2. Use a different fact for each input and for the result
+```java
+public class ApplicantBean {
+  private int creditScore;
+  private BigDecimal cashOnHand;
 
-There are pros and cons to each approach. 
-In the first approach, a single fact contains an uber-bean that is all of the input (and the responses). The good thing about this approach is that there is only one type of fact, so generics work well. The downside is that you have to combine everything into a single object.
-In the second approach, each input is a discrete object. However, since the result is also a fact, there are multiple types of facts, which means that a cast is necessary when retrieving a fact from the FactMap. Since we've been using Java before generics were even a thing (in Java 1.5), we've decided to trade syntactic elegance for independent objects representing independent facts. ~~Perhaps in future version, there will be a more elegant way to handle facts of different types and/or results as facts.~~ _A more elegant way of handling facts and return types of different types is coming soon with **Decision** objects_
+  public ApplicantBean(int creditScore, BigDecimal cashOnHand) {
+    this.creditScore = creditScore;
+    this.cashOnHand = cashOnHand;
+  }
+
+  public int getCreditScore() {
+    return creditScore;
+  }
+
+  public void setCreditScore(int creditScore) {
+    this.creditScore = creditScore;
+  }
+
+  public BigDecimal getCashOnHand() {
+    return cashOnHand;
+  }
+
+  public void setCashOnHand(BigDecimal cashOnHand) {
+    this.cashOnHand = cashOnHand;
+  }
+}
+```
+```java
+public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
+
+
+  @Override
+  protected void defineRules() {
+  
+    //if there are more than 3 applicants then the loan is denied
+    addRule(StandardRule.create(ApplicantBean.class)
+      .when(factMap -> factMap.size() > 3)
+      .then(f -> BREAK)
+    );
+
+    //if everyone has a credit score of over 700 then the loan is approved
+    addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
+      .when(factMap -> factMap.values().stream()
+        .allMatch(applicantFact -> applicantFact.getValue().getCreditScore() >= 700))
+      .then((f, result) -> {
+        result.setValue(true);
+        return NEXT;
+      })
+    );
+
+    //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved
+    addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
+      .when(factMap -> factMap.values().stream()
+        .allMatch(applicantFact -> applicantFact.getValue().getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
+      .then((f, result) -> {
+        result.setValue(true);
+        return BREAK;
+      })
+    );
+  }
+}
+```
+```java
+public class ExampleSolution {
+  public static void main(String[] args) {
+    HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
+    decisionBook.withDeafultResult(false)
+      .given(
+        new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
+        new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
+      .run();
+
+    System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
+  }
+```
+In the above example, the default result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
+
+One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
