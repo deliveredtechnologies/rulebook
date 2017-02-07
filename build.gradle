@@ -28,3 +28,12 @@ dependencies {
     testRuntime("org.objenesis:objenesis:2.1")
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/reports/coverage"
+    }
+}
+build.dependsOn jacocoTestReport
+
