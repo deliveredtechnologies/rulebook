@@ -144,8 +144,8 @@ public class ExampleMainClass {
     HomeLoanRuleBook ruleBook = new HomeLoanRuleBook();
     ruleBook.given(
       new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(100))),
-        new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))),
-        resultFact)
+      new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))),
+      resultFact)
       .run();
     Boolean result = (Boolean)resultFact.getValue();
     System.out.println(result ? "Loan Approved!" : "Loan Denied!");
