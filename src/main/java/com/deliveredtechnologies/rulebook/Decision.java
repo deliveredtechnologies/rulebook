@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 
 /**
  * Created by clong on 2/6/17.
+ * A special type of rule that has a return type, which may be different from the type of input (Facts).
  */
 public interface Decision <T, U> extends Rule<T> {
     /**
@@ -14,8 +15,12 @@ public interface Decision <T, U> extends Rule<T> {
 
     /**
      *
-     * @param result
-     * @return  the current <code>Rule</code> object
+     * @return the result object
      */
-    Decision<T, U> withResult(Result<U> result);
+    U getResult();
+
+    /**
+     * @param result the instantiated result; useful for aggregation/chaining of a result
+     */
+    void setResult(Result<U> result);
 }

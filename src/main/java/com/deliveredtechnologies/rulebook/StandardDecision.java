@@ -14,7 +14,7 @@ import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 public class StandardDecision<T, U> implements Decision<T, U> {
     private Rule<T> _nextRule;
     private FactMap<T> _facts = new FactMap<>();
-    private Result<U> _result;
+    private Result<U> _result = new Result<>();
     private Predicate<FactMap<T>> _test;
     private Function<FactMap<T>, RuleState> _action;
     private BiFunction<FactMap<T>, Result<U>, RuleState> _actionResult;
@@ -65,7 +65,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     }
 
     @Override
-    public Rule<T> given(Fact<T>... facts) {
+    public StandardDecision<T, U> given(Fact<T>... facts) {
         for (Fact f : facts) {
             _facts.put(f.getName(), f);
         }
@@ -74,7 +74,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     }
 
     @Override
-    public Rule<T> given(List<Fact<T>> facts) {
+    public StandardDecision<T, U> given(List<Fact<T>> facts) {
         for (Fact f : facts) {
             _facts.put(f.getName(), f);
         }
@@ -83,37 +83,41 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     }
 
     @Override
-    public Rule<T> given(FactMap<T> facts) {
+    public StandardDecision<T, U> given(FactMap<T> facts) {
         _facts = facts;
         return this;
     }
 
     @Override
-    public Rule<T> when(Predicate<FactMap<T>> test) {
+    public StandardDecision<T, U> when(Predicate<FactMap<T>> test) {
         _test = test;
         return this;
     }
 
     @Override
-    public Rule<T> then(Function<FactMap<T>, RuleState> action) {
+    public StandardDecision<T, U> then(Function<FactMap<T>, RuleState> action) {
         _action = action;
         return this;
     }
 
     @Override
-    public Decision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
+    public StandardDecision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
         _actionResult = action;
-        return this;
-    }
-
-    @Override
-    public Decision<T, U> withResult(Result<U> result) {
-        _result = result;
         return this;
     }
 
     @Override
     public void setNextRule(Rule<T> rule) {
         _nextRule = rule;
+    }
+
+    @Override
+    public U getResult() {
+        return _result.getValue();
+    }
+
+    @Override
+    public void setResult(Result<U> result) {
+        _result = result;
     }
 }

@@ -5,8 +5,9 @@ import org.junit.Test;
 
 import java.util.function.Function;
 
+import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
+import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
 import static org.mockito.Mockito.*;
-import static com.deliveredtechnologies.rulebook.RuleState.*;
 
 /**
  * Created by clong on 2/6/17.
@@ -28,7 +29,7 @@ public class StandardRuleTest {
     @SuppressWarnings("unchecked")
     public void thenIsRunIfWhenIsTrue() {
         Rule<String> rule = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
         when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 
@@ -41,7 +42,7 @@ public class StandardRuleTest {
     @SuppressWarnings("unchecked")
     public void thenIsNotRunIfWhenIsFalse() {
         Rule<String> rule = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
         when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 
@@ -54,11 +55,11 @@ public class StandardRuleTest {
     @SuppressWarnings("unchecked")
     public void nextRuleInChainIsRunIfWhenIsFalse() {
         Rule<String> rule1 = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Rule<String> rule2 = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
-        when(action.apply(any(FactMap.class))).thenReturn(NEXT);
+        when(action.apply(any(FactMap.class))).thenReturn(BREAK);
 
         rule1 = rule1.when(f -> false).then(action);
         rule1.setNextRule(rule2.when(f -> true).then(action));
@@ -72,9 +73,9 @@ public class StandardRuleTest {
     @SuppressWarnings("unchecked")
     public void nextRuleInChainIsRunIfWhenIsTrueAndThenReturnsNEXT() {
         Rule<String> rule1 = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Rule<String> rule2 = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
         when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 
@@ -90,9 +91,9 @@ public class StandardRuleTest {
     @SuppressWarnings("unchecked")
     public void nextRuleInChainIsNotRunIfWhenIsTrueAndThenReturnsBREAK() {
         Rule<String> rule1 = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Rule<String> rule2 = spy(
-                (Rule<String>)StandardRule.create(String.class).given(new Fact<String>("hello", "world")));
+                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
         when(action.apply(any(FactMap.class))).thenReturn(BREAK);
 
