@@ -13,6 +13,8 @@ RuleBook is a rules abstraction based on the Chain of Responsibility pattern. Ea
 
 State in Rules is handled through Facts. A Fact is literally just data that is named and supplied to a Rule or RuleBook _(note: facts added to a RuleBook are applied to all rules in the RuleBook)_. Facts can be both read and written to. So, in that way, facts can be used to evaluate state at the completion of a RuleBook execution and they can also be used to pass data into a Rule or RuleBook.
 
+A special type of Rule called a Decision accepts Facts of one type and can store a Result of a different type. This works nicely when there are several different inputs all of the same type and there is a need to distill those inputs down to a different type. Similar to how RuleBooks chain rules together, DecisionBooks chain Decisions together. And since a Decision is really just a special type of rule, DecisionBooks can also chain Rules and Decisions togehter. An example below illustrates the use of Facts and Results and Decisions can be used to create a Result based on the input of several Facts.
+
 ### Using RuleBook
 **A HelloWorld Example**
 ```java
@@ -80,75 +82,3 @@ The two different approaches to implementing these rules are
 There are pros and cons to each approach. 
 In the first approach, a single fact contains an uber-bean that is all of the input (and the responses). The good thing about this approach is that there is only one type of fact, so generics work well. The downside is that you have to combine everything into a single object.
 In the second approach, each input is a discrete object. However, since the result is also a fact, there are multiple types of facts, which means that a cast is necessary when retrieving a fact from the FactMap. Since we've been using Java before generics were even a thing (in Java 1.5), we've decided to trade syntactic elegance for independent objects representing independent facts. ~~Perhaps in future version, there will be a more elegant way to handle facts of different types and/or results as facts.~~ _A more elegant way of handling facts and return types of different types is coming soon with **Decision** objects_
-
-_An Example Solution_
-```java
-public class ApplicantBean {
-    private int creditScore;
-    private BigDecimal cashOnHand;
-
-    public ApplicantBean(int creditScore, BigDecimal cashOnHand) {
-        this.creditScore = creditScore;
-        this.cashOnHand = cashOnHand;
-    }
-
-    public int getCreditScore() {
-        return creditScore;
-    }
-
-    public void setCreditScore(int creditScore) {
-        this.creditScore = creditScore;
-    }
-
-    public BigDecimal getCashOnHand() { return cashOnHand; }
-
-    public void setCashOnHand(BigDecimal cashOnHand) { this.cashOnHand = cashOnHand; }
-}
-```
-```java
-public class HomeLoanRuleBook extends RuleBook {
-    @Override
-    protected void defineRules() {
-
-        //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved!
-        addRule(StandardRule.create()
-          .when(factMap -> factMap.values().stream()
-            .filter(fact -> fact.getValue() instanceof ApplicantBean)
-            .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
-          .then(factMap -> {
-            factMap.get("result").setValue(true);
-            return BREAK; //stop the rules chain; it's approved!
-          })
-        );
-
-        //if everyone has a credit score over 700 then the loan is approved!
-        addRule(StandardRule.create()
-          .when(factMap -> factMap.values().stream()
-            .filter(fact -> fact.getValue() instanceof ApplicantBean)
-              .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCreditScore() >= 700))
-          .then(factMap -> {
-            factMap.get("result").setValue(true);
-            return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-          })
-        );
-        
-        //the default value of the result should be false
-    }
-}
-```
-_Sadly, the loan was not approved :(_
-```java
-public class ExampleMainClass {
-  public static void main(String[] args) {
-    Fact resultFact = new Fact("result", false);
-    HomeLoanRuleBook ruleBook = new HomeLoanRuleBook();
-    ruleBook.given(
-      new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(100))),
-      new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))),
-      resultFact)
-      .run();
-    Boolean result = (Boolean)resultFact.getValue();
-    System.out.println(result ? "Loan Approved!" : "Loan Denied!");
-  }
-}
-```
