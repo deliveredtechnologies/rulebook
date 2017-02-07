@@ -117,7 +117,7 @@ public class HomeLoanRuleBook extends RuleBook {
                         .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
                 .then(factMap -> {
                     factMap.get("result").setValue(true);
-                    return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
+                    return BREAK; //stop the rules chain; it's approved!
                 })
         );
 
@@ -128,7 +128,7 @@ public class HomeLoanRuleBook extends RuleBook {
                 .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCreditScore() >= 700))
             .then(factMap -> {
                 factMap.get("result").setValue(true);
-                return BREAK; //either BREAK or NEXT would work since this is the last rule
+                return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
             })
         );
         
