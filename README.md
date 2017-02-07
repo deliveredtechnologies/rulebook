@@ -72,7 +72,7 @@ public class ExampleMainClass {
 ```
 **A [Slightly] More Complex Scenario**
 
-_MegaBank issues home loans. Each home loan can have between one and 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
+_MegaBank issues home loans. Each home loan can have up to 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
 
 The two different approaches to implementing these rules are
 
