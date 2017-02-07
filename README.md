@@ -68,3 +68,72 @@ public class ExampleMainClass {
   }
 }
 ```
+**A [Slightly] More Complex Scenario**
+
+_MegaBank issues home loans. Each home loan can have between one and 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
+
+The two different approaches to implementing these rules are
+
+1. Use a single fact containing a Java Bean that aggregates all of the input and the results
+2. Use a different fact for each input and for the result
+
+There are pros and cons to each approach. 
+In the first approach, a single fact contains an uber-bean that is all of the input (and the responses). The good thing about this approach is that there is only one type of fact, so generics work well. The downside is that you have to combine everything into a single object.
+In the second approach, each input is a discrete object. However, since the result is also a fact, there are multiple types of facts, which means that a cast is necessary when retrieving a fact from the FactMap. Since we've been using Java before generics were even a thing (in Java 1.5), we've decided to trade syntactic elegance for independent objects representing independent facts. Perhaps in future version, there will be a more elegant way to handle facts of different types and/or results as facts.
+
+_The Example Solution_
+```
+public class ApplicantBean {
+    private int creditScore;
+    private BigDecimal cashOnHand;
+
+    public ApplicantBean(int creditScore, BigDecimal cashOnHand) {
+        this.creditScore = creditScore;
+        this.cashOnHand = cashOnHand;
+    }
+
+    public int getCreditScore() {
+        return creditScore;
+    }
+
+    public void setCreditScore(int creditScore) {
+        this.creditScore = creditScore;
+    }
+
+    public BigDecimal getCashOnHand() { return cashOnHand; }
+
+    public void setCashOnHand(BigDecimal cashOnHand) { this.cashOnHand = cashOnHand; }
+}
+```
+```
+public class HomeLoanRuleBook extends RuleBook {
+    @Override
+    protected void defineRules() {
+
+        //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved!
+        addRule(StandardRule.create()
+                .when(factMap -> factMap.values().stream()
+                        .filter(fact -> fact.getValue() instanceof ApplicantBean)
+                        .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
+                .then(factMap -> {
+                    factMap.get("result").setValue(true);
+                    return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
+                })
+        );
+
+        //if everyone has a credit score over 700 then the loan is approved!
+        addRule(StandardRule.create()
+            .when(factMap -> factMap.values().stream()
+                .filter(fact -> fact.getValue() instanceof ApplicantBean)
+                .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCreditScore() >= 700))
+            .then(factMap -> {
+                factMap.get("result").setValue(true);
+                return BREAK; //either BREAK or NEXT would work since this is the last rule
+            })
+        );
+        
+        //the default value of the result should be false
+    }
+}
+```
+
