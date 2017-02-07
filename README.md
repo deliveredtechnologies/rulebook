@@ -112,24 +112,24 @@ public class HomeLoanRuleBook extends RuleBook {
 
         //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved!
         addRule(StandardRule.create()
-                .when(factMap -> factMap.values().stream()
-                        .filter(fact -> fact.getValue() instanceof ApplicantBean)
-                        .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
-                .then(factMap -> {
-                    factMap.get("result").setValue(true);
-                    return BREAK; //stop the rules chain; it's approved!
-                })
+          .when(factMap -> factMap.values().stream()
+            .filter(fact -> fact.getValue() instanceof ApplicantBean)
+            .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
+          .then(factMap -> {
+            factMap.get("result").setValue(true);
+            return BREAK; //stop the rules chain; it's approved!
+          })
         );
 
         //if everyone has a credit score over 700 then the loan is approved!
         addRule(StandardRule.create()
-            .when(factMap -> factMap.values().stream()
-                .filter(fact -> fact.getValue() instanceof ApplicantBean)
-                .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCreditScore() >= 700))
-            .then(factMap -> {
-                factMap.get("result").setValue(true);
-                return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-            })
+          .when(factMap -> factMap.values().stream()
+            .filter(fact -> fact.getValue() instanceof ApplicantBean)
+              .allMatch(applicantFact -> ((ApplicantBean)applicantFact.getValue()).getCreditScore() >= 700))
+          .then(factMap -> {
+            factMap.get("result").setValue(true);
+            return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
+          })
         );
         
         //the default value of the result should be false
