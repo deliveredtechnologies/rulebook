@@ -8,8 +8,9 @@ import java.util.Optional;
  * Created by clong on 2/6/17.
  */
 public abstract class RuleBook<T> {
-    private Rule<T> _headRule;
-    private List<Fact<T>> _facts = new ArrayList<>();
+    protected Rule<T> _headRule;
+    protected Rule<T> _tailRule;
+    protected List<Fact<T>> _facts = new ArrayList<>();
 
     public RuleBook() { }
 
@@ -30,6 +31,11 @@ public abstract class RuleBook<T> {
         rule.given(_facts);
         if (!Optional.ofNullable(_headRule).isPresent()) {
             _headRule = rule; //this rule is the head if there was no head
+            _tailRule = rule;
+        }
+        else {
+            _tailRule.setNextRule(rule);
+            _tailRule = rule;
         }
     }
 
