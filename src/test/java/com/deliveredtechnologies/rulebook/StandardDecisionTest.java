@@ -3,7 +3,6 @@ package com.deliveredtechnologies.rulebook;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
@@ -130,19 +129,5 @@ public class StandardDecisionTest {
         verify(decision1, times(1)).run();
         verify(decision2, times(0)).run();
         Assert.assertNull(decision2.getResult());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testHomeLoan() {
-        HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
-        decisionBook
-                .withDeafultResult(false)
-                .given(
-                        new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
-                        new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
-                .run();
-
-        System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
     }
 }
