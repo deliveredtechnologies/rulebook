@@ -81,7 +81,7 @@ There are pros and cons to each approach.
 In the first approach, a single fact contains an uber-bean that is all of the input (and the responses). The good thing about this approach is that there is only one type of fact, so generics work well. The downside is that you have to combine everything into a single object.
 In the second approach, each input is a discrete object. However, since the result is also a fact, there are multiple types of facts, which means that a cast is necessary when retrieving a fact from the FactMap. Since we've been using Java before generics were even a thing (in Java 1.5), we've decided to trade syntactic elegance for independent objects representing independent facts. Perhaps in future version, there will be a more elegant way to handle facts of different types and/or results as facts.
 
-_The Example Solution_
+_An Example Solution_
 ```
 public class ApplicantBean {
     private int creditScore;
