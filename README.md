@@ -136,4 +136,19 @@ public class HomeLoanRuleBook extends RuleBook {
     }
 }
 ```
-
+_Sadly, the loan was not approved :(_
+```
+public class ExampleMainClass {
+  public static void main(String[] args) {
+    Fact resultFact = new Fact("result", false);
+    HomeLoanRuleBook ruleBook = new HomeLoanRuleBook();
+    ruleBook.given(
+      new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(100))),
+        new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))),
+        resultFact)
+      .run();
+    Boolean result = (Boolean)resultFact.getValue();
+    System.out.println(result ? "Loan Approved!" : "Loan Denied!");
+  }
+}
+```
