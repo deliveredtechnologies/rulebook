@@ -152,6 +152,7 @@ public class ExampleSolution {
 
     System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
   }
+}
 ```
 In the above example, the default Result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
 
