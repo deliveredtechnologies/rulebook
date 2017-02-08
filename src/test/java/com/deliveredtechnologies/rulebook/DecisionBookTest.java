@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
@@ -59,6 +60,35 @@ public class DecisionBookTest {
         verify(rule, times(1)).setNextRule((decision2));
         verify(decisionBook, times(1)).defineRules();
         verify(decision1, times(1)).run();
+    }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void decisionBooksRunDecisionsAndGetResults() {
+    Fact<String> hello = new Fact<>("hello", "Hello");
+    Fact<String> world = new Fact<>("world", "World");
+
+    DecisionBook<String, StringBuffer> decisionBook = new DecisionBook<String, StringBuffer>() {
+      @Override
+      protected void defineRules() {
+        addRule(StandardDecision.create(String.class, StringBuffer.class)
+          .when(f -> true)
+          .then((f, r) -> {
+            r.getValue().append(f.getValue("hello"));
+            return RuleState.NEXT;
+          })
+        );
+        addRule(StandardDecision.create(String.class, StringBuffer.class)
+          .when(f -> true)
+          .then((f, r) -> {
+            r.getValue().append(f.getValue("world"));
+            return RuleState.NEXT;
+          })
+        );
+      }
+    };
+    decisionBook.withDeafultResult(new StringBuffer()).given(hello, world).run();
+    Assert.assertEquals(decisionBook.getResult().toString(), "HelloWorld");
     }
 
 }
