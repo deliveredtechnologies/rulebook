@@ -1,6 +1,6 @@
 # RuleBook
 **A Simple, Intuitive Rules Abstraction for Java8+**  
-<sub> _100% Java_ &middot; _Simple, Intuitive DSL_ &middot; _Very Lightweight_ </sub>
+<sub> _100% Java_ &middot; _Lambda Enabled_ &middot; _Simple, Intuitive DSL_ &middot; _Lightweight_ </sub>
 
 -----------------
 
