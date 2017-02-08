@@ -5,7 +5,8 @@ task wrapper(type: Wrapper) {
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'idea'
-apply plugin: "jacoco"
+apply plugin: 'jacoco'
+apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
@@ -35,5 +36,22 @@ jacocoTestReport {
         html.destination "${buildDir}/reports/coverage"
     }
 }
-build.dependsOn jacocoTestReport
 
+checkstyle {
+    toolVersion = '6.7'
+}
+
+task checkstyleMainHtml << {
+    ant.xslt(in: checkstyleMain.reports.xml.destination,
+            style: file('./config/checkstyle/checkstyle.xsl'),
+            out: new File("${buildDir}/reports/checkstyle", 'main.html'))
+}
+
+task checkstyleTestHtml << {
+    ant.xslt(in: checkstyleTest.reports.xml.destination,
+            style: file('./config/checkstyle/checkstyle.xsl'),
+            out: new File("${buildDir}/reports/checkstyle", 'test.html'))
+}
+checkstyleMainHtml.dependsOn checkstyleMain
+checkstyleTestHtml.dependsOn checkstyleTest
+build.dependsOn jacocoTestReport, checkstyleMainHtml, checkstyleTestHtml
