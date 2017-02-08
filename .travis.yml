@@ -3,9 +3,11 @@ sudo: false
 cache:
   directories:
     - $HOME/.m2/repository
+    - $HOME/.gradle
 jdk:
   - oraclejdk8
 script:
   - ./gradlew check
+  - ./gradlew jacocoTestReport
   - ./gradlew coveralls
 after_success: coveralls
