@@ -5,3 +5,4 @@ cache:
     - $HOME/.m2/repository
 jdk:
   - oraclejdk8
+after_success: coveralls
