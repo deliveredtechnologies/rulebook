@@ -110,11 +110,8 @@ public class ApplicantBean {
 ```
 ```java
 public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
-
-
   @Override
   protected void defineRules() {
-  
     //if there are more than 3 applicants then the loan is denied
     addRule(StandardRule.create(ApplicantBean.class)
       .when(factMap -> factMap.size() > 3)
