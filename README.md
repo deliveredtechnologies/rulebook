@@ -22,6 +22,7 @@ A special type of Rule called a Decision accepts Facts of one type and can store
 **A HelloWorld Example**
 ```java
 public class ExampleRuleBook extends RuleBook {
+  @Override
   public void defineRules() {
     //first rule prints "Hello"
     addRule(StandardRule.create().when(f -> true).then(f -> {
@@ -48,6 +49,7 @@ public class ExampleMainClass {
 **A HelloWorld Example Using Facts**
 ```java
 public class ExampleRuleBook extends RuleBook<String> {
+  @Override
   public void defineRules() {
     //first rule prints "Hello" value from helloFact
     addRule(StandardRule.create().when(f -> f.containsKey("hello")).then(f -> {
