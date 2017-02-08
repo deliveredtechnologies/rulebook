@@ -3,6 +3,8 @@ package com.deliveredtechnologies.rulebook;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
@@ -72,10 +74,12 @@ public class StandardRuleTest {
     @Test
     @SuppressWarnings("unchecked")
     public void nextRuleInChainIsRunIfWhenIsTrueAndThenReturnsNEXT() {
+      FactMap<String> factMap = new FactMap<>();
+      factMap.put("hello", new Fact<String>("hello", "world"));
         Rule<String> rule1 = spy(
-                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+          StandardRule.create(String.class).given(factMap));
         Rule<String> rule2 = spy(
-                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+          StandardRule.create(String.class).given(factMap));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
         when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 
@@ -90,10 +94,12 @@ public class StandardRuleTest {
     @Test
     @SuppressWarnings("unchecked")
     public void nextRuleInChainIsNotRunIfWhenIsTrueAndThenReturnsBREAK() {
+      List<Fact<String>> factList = new ArrayList<>();
+      factList.add(new Fact<>("hello", "world"));
         Rule<String> rule1 = spy(
-                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+          StandardRule.create(String.class).given(factList));
         Rule<String> rule2 = spy(
-                StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+          StandardRule.create(String.class).given(factList));
         Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>)mock(Function.class);
         when(action.apply(any(FactMap.class))).thenReturn(BREAK);
 

@@ -2,6 +2,9 @@ package com.deliveredtechnologies.rulebook;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -15,6 +18,7 @@ public class RuleBookTest {
         Rule<String> rule1 = (Rule<String>) mock(Rule.class);
         Rule<String> rule2 = (Rule<String>) mock(Rule.class);
         Rule<String> rule3 = (Rule<String>) mock(Rule.class);
+        List<Fact<String>> factList = new ArrayList<>();
         Fact<String> fact = new Fact<String>("hello", "world");
         RuleBook<String> ruleBook = spy(new RuleBook<String>() {
             @Override
