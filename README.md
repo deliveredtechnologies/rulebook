@@ -3,7 +3,7 @@
 
 -----------------
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
 
 
 ### Why Another Rules Abstraction?
@@ -22,6 +22,7 @@ A special type of Rule called a Decision accepts Facts of one type and can store
 **A HelloWorld Example**
 ```java
 public class ExampleRuleBook extends RuleBook {
+  @Override
   public void defineRules() {
     //first rule prints "Hello"
     addRule(StandardRule.create().when(f -> true).then(f -> {
@@ -48,6 +49,7 @@ public class ExampleMainClass {
 **A HelloWorld Example Using Facts**
 ```java
 public class ExampleRuleBook extends RuleBook<String> {
+  @Override
   public void defineRules() {
     //first rule prints "Hello" value from helloFact
     addRule(StandardRule.create().when(f -> f.containsKey("hello")).then(f -> {
@@ -108,11 +110,8 @@ public class ApplicantBean {
 ```
 ```java
 public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
-
-
   @Override
   protected void defineRules() {
-  
     //if there are more than 3 applicants then the loan is denied
     addRule(StandardRule.create(ApplicantBean.class)
       .when(factMap -> factMap.size() > 3)
