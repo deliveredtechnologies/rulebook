@@ -5,4 +5,7 @@ cache:
     - $HOME/.m2/repository
 jdk:
   - oraclejdk8
+script:
+  - ./gradlew check
+  - ./gradlew coveralls
 after_success: coveralls
