@@ -1,10 +1,6 @@
 # RuleBook
 **A Simple Rules Abstraction for Java8+** 
 
-[![][Build Status img]][Build Status]
-[![][Coverage Status img]][Coverage Status]
-[![][Dependency Status img]][Dependency Status]
-
 -----------------
 
 ### Why Another Rules Abstraction?
