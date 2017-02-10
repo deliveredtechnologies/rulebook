@@ -19,19 +19,38 @@ public class Fact<T> {
     _value = obj;
   }
 
+  /**
+   * The method getName() gets the name of the Fact.
+   *
+   * @return the name of the Fact
+   */
   public String getName() {
     return _name;
   }
 
-  public void setName(String _name) {
-    this._name = _name;
+  /**
+   * The method setName() sets the name of the Fact.
+   *
+   * @param name the name of the Fact
+   */
+  public void setName(String name) {
+    this._name = name;
   }
 
+  /**
+   * The method getValue() gets the value of the Fact.
+   * @return the value of the Fact
+   */
   public T getValue() {
     return _value;
   }
 
-  public void setValue(T _value) {
-    this._value = _value;
+  /**
+   * The method setValue() sets the value of the Fact.
+   *
+   * @param value the value of the Fact
+   */
+  public void setValue(T value) {
+    this._value = value;
   }
 }

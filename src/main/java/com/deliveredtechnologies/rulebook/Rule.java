@@ -10,49 +10,53 @@ import java.util.function.Predicate;
  * rule.given(facts).when(some condition given facts).then(do something)
  */
 public interface Rule<T> {
-    /**
-     * evaluates the <code>Rule</code>
-     */
-    void run();
+  /**
+   * The run() method evaluates the Rule.
+   */
+  void run();
 
-    /**
-     *
-     * @param facts     Facts to be used by the <code>Rule</code>
-     * @return          the current <code>Rule</code> object
-     */
-    Rule<T> given(Fact<T>... facts);
+  /**
+   * The given() method sets the Facts to be used by the Rule.
+   *
+   * @param facts Facts to be used by the Rule
+   * @return the current Rule object
+   */
+  @SuppressWarnings("all")
+  Rule<T> given(Fact<T>... facts);
 
-    /**
-     *
-     * @param facts     a <code>List</code> of Facts to be used by the <code>Rule</code>
-     * @return          the current <code>Rule</code> object
-     */
-    Rule<T> given(List<Fact<T>> facts);
+  /**
+   * The given() method sets the Facts to be used by the Rule.
+   * @param facts     a List of Facts to be used by the Rule
+   * @return the current Rule object
+   */
+  Rule<T> given(List<Fact<T>> facts);
 
-    /**
-     *
-     * @param facts     a {@link FactMap}
-     * @return          the current <code>Rule</code> object
-     */
-    Rule<T> given(FactMap<T> facts);
+  /**
+   * The given() method sets the Facts to be used by the Rule.
+   * @param facts     a {@link FactMap}
+   * @return the current Rule object
+   */
+  Rule<T> given(FactMap<T> facts);
 
-    /**
-     *
-     * @param test      the condition(s) to be evaluated against the Facts
-     * @return          the current <code>Rule</code> object
-     */
-    Rule<T> when(Predicate<FactMap<T>> test);
+  /**
+   * The when() method takes in a {@link Predicate} that evaluates the facts against a condition.
+   * @param test      the condition(s) to be evaluated against the Facts
+   * @return the current Rule object
+   */
+  Rule<T> when(Predicate<FactMap<T>> test);
 
-    /**
-     *
-     * @param action    the action to be performed
-     * @return          the current <code>Rule</code> object
-     */
-    Rule<T> then(Function<FactMap<T>, RuleState> action);
+  /**
+   * The then() method performs some action based on facts and returns a {@link RuleState} of
+   * either NEXT or BREAK. If NEXT is returned then the next rule in the chain is executed.
+   * If BREAK is returned then the chain is broken and no more rules are executed in the chain.
+   * @param action    the action to be performed
+   * @return the current Rule object
+   */
+  Rule<T> then(Function<FactMap<T>, RuleState> action);
 
-    /**
-     * adds the next <code>Rule</code> to the chain
-     * @param rule
-     */
-    void setNextRule(Rule<T> rule);
+  /**
+   * The setNextRule method adds the next Rule to the chain.
+   * @param rule  the next Rule to add to the chain
+   */
+  void setNextRule(Rule<T> rule);
 }

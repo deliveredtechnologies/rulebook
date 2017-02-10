@@ -10,114 +10,161 @@ import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 
 /**
  * Created by clong on 2/6/17.
+ * StandardDecision is the standard implementation of {@link Decision}.
  */
 public class StandardDecision<T, U> implements Decision<T, U> {
-    private Rule<T> _nextRule;
-    private FactMap<T> _facts = new FactMap<>();
-    private Result<U> _result = new Result<>();
-    private Predicate<FactMap<T>> _test;
-    private Function<FactMap<T>, RuleState> _action;
-    private BiFunction<FactMap<T>, Result<U>, RuleState> _actionResult;
+  private Rule<T> _nextRule;
+  private FactMap<T> _facts = new FactMap<>();
+  private Result<U> _result = new Result<>();
+  private Predicate<FactMap<T>> _test;
+  private Function<FactMap<T>, RuleState> _action;
+  private BiFunction<FactMap<T>, Result<U>, RuleState> _actionResult;
 
-    public StandardDecision() { }
+  public StandardDecision() {
+  }
 
-    /**
-     * convenience method to avoid using new and generic syntax
-     * @param factType  the type of object stored in facts for this <code>Rule</code>
-     * @param <T>
-     * @return          a new instance of <code>StandardRule</code> of type
-     */
-    public static <T, U> StandardDecision<T, U> create(Class<T> factType, Class<U> returnType) {
-        return new StandardDecision<T, U>();
-    }
+  /**
+   * This create() method is a convenience method to avoid using new and generic syntax.
+   *
+   * @param factType the type of object stored in facts for this Decision
+   * @param <T>      the class type of the objects in the Facts used
+   * @param <U>      the class type of object stored in the Result
+   * @return a new instance of StandardDecision
+   */
+  public static <T, U> StandardDecision<T, U> create(Class<T> factType, Class<U> returnType) {
+    return new StandardDecision<>();
+  }
 
-    /**
-     * convenience method to create a non-type specific <code>StandardRule</code>
-     * @return
-     */
-    public static StandardDecision<Object, Object> create() {
-        return new StandardDecision<Object, Object>();
-    }
+  /**
+   * This create() method is another convenience method to create a non-type specific StandardDecision.
+   * @return a new instance of StandardDecision
+   */
+  public static StandardDecision<Object, Object> create() {
+    return new StandardDecision<>();
+  }
 
-    /**
-     * runs the {@link Predicate} supplied by the <code>when()</code> method; if it evaluates to true then
-     * the {@link BiFunction} supplied by the <code>then()</code> method is executed; if the <code>BiFuction</code>
-     * is not available then the {@link Function} is called instead; if the <code>then()</code>
-     * method returns a BREAK {@link RuleState} then no further rules are evaluated, otherwise the next rule in the
-     * chain is evaluated
-     */
-    @Override
-    public void run() {
-        if (_test.test(_facts)) {
-            if (Optional.ofNullable(_actionResult).isPresent()) {
-                if (_actionResult.apply(_facts, _result) == BREAK) {
-                    return;
-                }
-            }
-            else if (_action.apply(_facts) == BREAK) {
-                return;
-            }
-
+  /**
+   * The run() method runs the {@link Predicate} supplied by the <code>when()</code> method.
+   * If it evaluates to true then the {@link BiFunction} supplied by the then() method is executed.
+   * If the BiFuction is not available then the {@link Function} is called instead. If the then() method returns a
+   * BREAK {@link RuleState} then no further rules are evaluated, otherwise the next rule in the chain is evaluated.
+   */
+  @Override
+  public void run() {
+    if (_test.test(_facts)) {
+      if (Optional.ofNullable(_actionResult).isPresent()) {
+        if (_actionResult.apply(_facts, _result) == BREAK) {
+          return;
         }
-        if (Optional.ofNullable(this._nextRule).isPresent()) {
-            this._nextRule.run();
-        }
+      } else if (_action.apply(_facts) == BREAK) {
+        return;
+      }
     }
 
-    @Override
-    public StandardDecision<T, U> given(Fact<T>... facts) {
-        for (Fact f : facts) {
-            _facts.put(f.getName(), f);
-        }
+    if (Optional.ofNullable(this._nextRule).isPresent()) {
+      this._nextRule.run();
+    }
+  }
 
-        return this;
+  /**
+   * The given() method accepts Facts for the StandardDecision.
+   * @param facts     Facts to be used by the Rule
+   * @return the current object for chaining other methods
+   */
+  @Override
+  public StandardDecision<T, U> given(Fact<T>... facts) {
+    for (Fact f : facts) {
+      _facts.put(f.getName(), f);
     }
 
-    @Override
-    public StandardDecision<T, U> given(List<Fact<T>> facts) {
-        for (Fact f : facts) {
-            _facts.put(f.getName(), f);
-        }
+    return this;
+  }
 
-        return this;
+  /**
+   * The given() method accepts Facts for the StandardDecision.
+   * @param facts     a List of Facts to be used by the Rule
+   * @return the current object
+   */
+  @Override
+  public StandardDecision<T, U> given(List<Fact<T>> facts) {
+    for (Fact f : facts) {
+      _facts.put(f.getName(), f);
     }
 
-    @Override
-    public StandardDecision<T, U> given(FactMap<T> facts) {
-        _facts = facts;
-        return this;
-    }
+    return this;
+  }
 
-    @Override
-    public StandardDecision<T, U> when(Predicate<FactMap<T>> test) {
-        _test = test;
-        return this;
-    }
+  /**
+   * The given() method accepts Facts for the StandardDecision.
+   * @param facts     a {@link FactMap}
+   * @return the current object
+   */
+  @Override
+  public StandardDecision<T, U> given(FactMap<T> facts) {
+    _facts = facts;
+    return this;
+  }
 
-    @Override
-    public StandardDecision<T, U> then(Function<FactMap<T>, RuleState> action) {
-        _action = action;
-        return this;
-    }
+  /**
+   * The when() method accepts a {@link Predicate} that returns true or false based on Facts.
+   * @param test      the condition(s) to be evaluated against the Facts
+   * @return true, if the then() statement should be evaluated, otherwise false
+   */
+  @Override
+  public StandardDecision<T, U> when(Predicate<FactMap<T>> test) {
+    _test = test;
+    return this;
+  }
 
-    @Override
-    public StandardDecision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
-        _actionResult = action;
-        return this;
-    }
+  /**
+   * The then() method accepts a {@link Function} that performs an action based on Facts and then returns a
+   * {@link RuleState} of either NEXT or BREAK.
+   * @param action    the action to be performed
+   * @return NEXT if the next Rule should be run, otherwise BREAK
+   */
+  @Override
+  public StandardDecision<T, U> then(Function<FactMap<T>, RuleState> action) {
+    _action = action;
+    return this;
+  }
 
-    @Override
-    public void setNextRule(Rule<T> rule) {
-        _nextRule = rule;
-    }
+  /**
+   * The then() method accepts a {@link Function} that performs an action based on Facts, optionally sets a
+   * {@link Result}, and then returns a {@link RuleState} of either NEXT or BREAK.
+   * @param action the action to be performed
+   * @return NEXT if the next Decision should be run, otherwise BREAK
+   */
+  @Override
+  public StandardDecision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
+    _actionResult = action;
+    return this;
+  }
 
-    @Override
-    public U getResult() {
-        return _result.getValue();
-    }
+  /**
+   * The setNextRule() method sets the next rule in the chain.
+   * @param rule  the next Rule to add to the chain
+   */
+  @Override
+  public void setNextRule(Rule<T> rule) {
+    _nextRule = rule;
+  }
 
-    @Override
-    public void setResult(Result<U> result) {
-        _result = result;
-    }
+  /**
+   * The getResult() method gets the stored Result value from the execution of the StandardDecision.
+   * @return the stored Result value
+   */
+  @Override
+  public U getResult() {
+    return _result.getValue();
+  }
+
+  /**
+   * The setResult() method sets the stored Result.
+   *
+   * @param result the instantiated result
+   */
+  @Override
+  public void setResult(Result<U> result) {
+    _result = result;
+  }
 }

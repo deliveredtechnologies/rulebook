@@ -9,13 +9,23 @@ package com.deliveredtechnologies.rulebook;
  * and across other objects (i.e. DecisionBook and Decision objects)
  */
 public class Result<T> {
-    private T _value;
+  private T _value;
 
-    public T getValue() {
-        return _value;
-    }
+  /**
+   * The method getValue() returns the object contained in the Result object.
+   *
+   * @return the object stored in the Result object
+   */
+  public T getValue() {
+    return _value;
+  }
 
-    public void setValue(T _value) {
-        this._value = _value;
-    }
+  /**
+   * The method setValue() sets the object to be contained in the Result object.
+   *
+   * @param value the object to be stored in the Result object
+   */
+  public void setValue(T value) {
+    this._value = value;
+  }
 }
