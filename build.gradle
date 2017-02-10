@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.bmuschko:gradle-nexus-plugin:2.0'
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
@@ -17,12 +17,13 @@ task wrapper(type: Wrapper) {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
+apply plugin: 'com.bmuschko.nexus'
 
 repositories {
+    jcenter()
     mavenCentral()
 }
 
@@ -50,36 +51,33 @@ jacocoTestReport {
     }
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
 modifyPom {
-    name 'RuleBook'
-    description 'A simple, intuitive rules abstraction for Java'
-    url 'https://github.com/Clayton7510/RuleBook'
-    inceptionYear '2017'
-
-    scm {
+    project {
+        name 'RuleBook'
+        description 'A simple, intuitive rules abstraction for Java'
         url 'https://github.com/Clayton7510/RuleBook'
-        connection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
-        developerConnection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
-    }
+        inceptionYear '2017'
 
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
+        scm {
+            url 'https://github.com/Clayton7510/RuleBook'
+            connection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
+            developerConnection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
         }
-    }
 
-    developers {
-        developer {
-            id 'Clayton7510'
-            name 'Clayton Long'
-            email 'Clayton7510@gmail.com'
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'Clayton7510'
+                name 'Clayton Long'
+                email 'Clayton7510@gmail.com'
+            }
         }
     }
 }
