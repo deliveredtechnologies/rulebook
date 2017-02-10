@@ -2,12 +2,22 @@ plugins {
     id "com.github.kt3k.coveralls" version "2.8.0"
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
 
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
@@ -18,6 +28,7 @@ repositories {
 
 group = properties['project.group']
 version = properties['project.version']
+archivesBaseName = rootProject.name
 
 sourceCompatibility = properties['project.compatibility']
 targetCompatibility = properties['project.compatibility']
@@ -36,6 +47,98 @@ jacocoTestReport {
         xml.enabled true
         csv.enabled false
         html.destination "${buildDir}/reports/jacoco/test/"
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+modifyPom {
+    project {
+        name 'RuleBook'
+        description 'A simple, intuitive rules abstraction for Java'
+        url 'https://github.com/Clayton7510/RuleBook'
+        inceptionYear '2017'
+
+        scm {
+            url 'https://github.com/Clayton7510/RuleBook'
+            connection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
+            developerConnection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'Clayton7510'
+                name 'Clayton Long'
+                email 'Clayton7510@gmail.com'
+            }
+        }
+    }
+}
+
+nexus {
+    sign = true
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: "${System.env.OSSRH_USERNAME}", password: "${System.env.OSSRH_PASSWORD}")
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: "${System.env.OSSRH_USERNAME}", password: "${System.env.OSSRH_PASSWORD}")
+            }
+
+            pom.project {
+                name 'RuleBook'
+                packaging 'jar'
+                description 'A simple, intuitive rules abstraction for Java'
+                url 'https://github.com/Clayton7510/RuleBook'
+
+                scm {
+                    connection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
+                    developerConnection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
+                    url 'https://github.com/Clayton7510/RuleBook'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'Clayton7510'
+                        name 'Clayton Long'
+                        email 'Clayton7510@gmail.com'
+                    }
+                }
+            }
+        }
     }
 }
 
