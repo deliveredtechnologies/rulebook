@@ -7,127 +7,132 @@ import java.util.function.Function;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by clong on 2/7/17.
  * Tests for {@link StandardDecision}
  */
 public class StandardDecisionTest {
-    @Test
-    @SuppressWarnings("checked")
-    public void standardDecisionIsCreated() {
-        StandardDecision<String, Boolean> decision1 = new StandardDecision<>();
-        StandardDecision<String, Boolean> decision2 = StandardDecision.create(String.class, Boolean.class);
-        StandardDecision decision3 = StandardDecision.create();
 
-        Assert.assertNotNull(decision1);
-        Assert.assertNotNull(decision2);
-        Assert.assertNotNull(decision3);
-    }
+  @Test
+  @SuppressWarnings("checked")
+  public void standardDecisionIsCreated() {
+    StandardDecision<String, Boolean> decision1 = new StandardDecision<>();
+    StandardDecision<String, Boolean> decision2 = StandardDecision.create(String.class, Boolean.class);
+    StandardDecision decision3 = StandardDecision.create();
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void thenIsRunAndResultIsSetIfWhenIsTrue() {
-        StandardDecision<String, Boolean> decision = StandardDecision.create(String.class, Boolean.class)
-                .given(new Fact<>("hello", "world"))
-                .when(f -> true)
-                .then((f, r) -> {
-                    r.setValue(true);
-                    return NEXT;
-                });
-        decision.run();
+    Assert.assertNotNull(decision1);
+    Assert.assertNotNull(decision2);
+    Assert.assertNotNull(decision3);
+  }
 
-        Assert.assertTrue(decision.getResult());
-    }
+  @Test
+  @SuppressWarnings("unchecked")
+  public void thenIsRunAndResultIsSetIfWhenIsTrue() {
+    StandardDecision<String, Boolean> decision = StandardDecision.create(String.class, Boolean.class)
+      .given(new Fact<>("hello", "world"))
+      .when(facts -> true)
+      .then((facts, result) -> {
+        result.setValue(true);
+        return NEXT;
+      });
+    decision.run();
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void thenIsRunIfWhenIsTrue() {
-        StandardDecision<String, Boolean> rule = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-        Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
-        when(action.apply(any(FactMap.class))).thenReturn(NEXT);
+    Assert.assertTrue(decision.getResult());
+  }
 
-        rule.when(f -> true).then(action).run();
+  @Test
+  @SuppressWarnings("unchecked")
+  public void thenIsRunIfWhenIsTrue() {
+    StandardDecision<String, Boolean> rule = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+    Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
+    when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 
-        verify(action, times(1)).apply(any(FactMap.class));
-    }
+    rule.when(f -> true).then(action).run();
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void thenIsNotRunIfWhenIsFalse() {
-        StandardDecision<String, Boolean> rule = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-        Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
-        when(action.apply(any(FactMap.class))).thenReturn(NEXT);
+    verify(action, times(1)).apply(any(FactMap.class));
+  }
 
-        rule.when(f -> false).then(action).run();
+  @Test
+  @SuppressWarnings("unchecked")
+  public void thenIsNotRunIfWhenIsFalse() {
+    StandardDecision<String, Boolean> rule = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+    Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
+    when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 
-        verify(action, times(0)).apply(any(FactMap.class));
-    }
+    rule.when(f -> false).then(action).run();
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void nextRuleInChainIsRunAndResultIsSetIfWhenIsFalse() {
-        StandardDecision<String, Boolean> decision1 = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-        StandardDecision<String, Boolean> decision2 = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
+    verify(action, times(0)).apply(any(FactMap.class));
+  }
 
-        decision1 = decision1.when(f -> false);
-        decision2 = decision2.when(f -> true).then((f, r) -> {
-            r.setValue(true);
-            return BREAK;
-        });
-        decision1.setNextRule(decision2);
-        decision1.run();
+  @Test
+  @SuppressWarnings("unchecked")
+  public void nextRuleInChainIsRunAndResultIsSetIfWhenIsFalse() {
+    StandardDecision<String, Boolean> decision1 = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+    StandardDecision<String, Boolean> decision2 = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-        verify(decision1, times(1)).run();
-        verify(decision2, times(1)).run();
-        Assert.assertTrue(decision2.getResult());
-    }
+    decision1 = decision1.when(facts -> false);
+    decision2 = decision2.when(facts -> true).then((facts, result) -> {
+      result.setValue(true);
+      return BREAK;
+    });
+    decision1.setNextRule(decision2);
+    decision1.run();
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void nextRuleInChainIsRunAndResultIsSetIfWhenIsTrueAndThenReturnsNEXT() {
-        StandardDecision<String, Boolean> decision1 = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-        StandardDecision<String, Boolean> decision2 = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
+    verify(decision1, times(1)).run();
+    verify(decision2, times(1)).run();
+    Assert.assertTrue(decision2.getResult());
+  }
 
-        decision1 = decision1.when(f -> true).then(f -> NEXT);
-        decision2 = decision2.when(f -> true).then((f, r) -> {
-            r.setValue(true);
-            return BREAK;
-        });
-        decision1.setNextRule(decision2);
-        decision1.run();
+  @Test
+  @SuppressWarnings("unchecked")
+  public void nextRuleInChainIsRunAndResultIsSetIfWhenIsTrueAndThenReturnsNext() {
+    StandardDecision<String, Boolean> decision1 = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+    StandardDecision<String, Boolean> decision2 = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-        verify(decision1, times(1)).run();
-        verify(decision2, times(1)).run();
-        Assert.assertTrue(decision2.getResult());
-    }
+    decision1 = decision1.when(facts -> true).then(f -> NEXT);
+    decision2 = decision2.when(facts -> true).then((facts, result) -> {
+      result.setValue(true);
+      return BREAK;
+    });
+    decision1.setNextRule(decision2);
+    decision1.run();
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void nextRuleInChainIsNotRunIfWhenIsTrueAndThenReturnsBREAK() {
-        StandardDecision<String, Boolean> decision1 = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-        StandardDecision<String, Boolean> decision2 = spy(
-                StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
+    verify(decision1, times(1)).run();
+    verify(decision2, times(1)).run();
+    Assert.assertTrue(decision2.getResult());
+  }
 
-        decision1 = decision1.when(f -> true).then(f -> BREAK);
-        decision2 = decision2.when(f -> true).then((f, r) -> {
-            r.setValue(true);
-            return BREAK;
-        });
-        decision1.setNextRule(decision2);
-        decision1.run();
+  @Test
+  @SuppressWarnings("unchecked")
+  public void nextRuleInChainIsNotRunIfWhenIsTrueAndThenReturnsBreak() {
+    StandardDecision<String, Boolean> decision1 = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+    StandardDecision<String, Boolean> decision2 = spy(
+      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-        verify(decision1, times(1)).run();
-        verify(decision2, times(0)).run();
-        Assert.assertNull(decision2.getResult());
-    }
+    decision1 = decision1.when(f -> true).then(facts -> BREAK);
+    decision2 = decision2.when(f -> true).then((facts, result) -> {
+      result.setValue(true);
+      return BREAK;
+    });
+    decision1.setNextRule(decision2);
+    decision1.run();
+
+    verify(decision1, times(1)).run();
+    verify(decision2, times(0)).run();
+    Assert.assertNull(decision2.getResult());
+  }
 }
