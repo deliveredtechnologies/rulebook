@@ -5,9 +5,11 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
 
-|Build       |Version      | 
-|:---        |:---         | 
-|Development |0.1-SNAPSHOT |
+**Current Maven Releases**
+
+| Build     | Group                   | Artifact |  Version    |
+|---        |---                      |---       |---          |
+|Development|com.deliveredtechnologies|RuleBook  |0.1-SNAPSHOT |
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines add a bunch of annotations or specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of special annotations or other specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
@@ -160,3 +162,9 @@ public class ExampleSolution {
 In the above example, the default Result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
 
 One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
+
+#### _Want to Contribute?_
+
+Suggestions and code conributors are welcome! 
+
+_Developer guidlines coming soon_
