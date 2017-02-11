@@ -1,13 +1,13 @@
 package com.deliveredtechnologies.rulebook;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Created by clong on 2/7/17.
@@ -76,18 +76,18 @@ public class DecisionBookTest {
       @Override
       protected void defineRules() {
         addRule(StandardDecision.create(String.class, StringBuffer.class)
-          .when(facts -> true)
-          .then((facts, result) -> {
-            result.getValue().append(facts.getValue("hello"));
-            return RuleState.NEXT;
-          })
+            .when(facts -> true)
+            .then((facts, result) -> {
+                result.getValue().append(facts.getValue("hello"));
+                return RuleState.NEXT;
+              })
         );
         addRule(StandardDecision.create(String.class, StringBuffer.class)
-          .when(facts -> true)
-          .then((facts, results) -> {
-            results.getValue().append(facts.getValue("world"));
-            return RuleState.NEXT;
-          })
+            .when(facts -> true)
+            .then((facts, results) -> {
+                results.getValue().append(facts.getValue("world"));
+                return RuleState.NEXT;
+              })
         );
       }
     };
