@@ -1,11 +1,11 @@
 package com.deliveredtechnologies.rulebook;
 
+import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 
 /**
  * Created by clong on 2/6/17.

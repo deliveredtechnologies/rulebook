@@ -92,6 +92,7 @@ nexus {
 
 checkstyle {
     toolVersion = '6.7'
+    ignoreFailures = false
 }
 
 task checkstyleMainHtml << {
