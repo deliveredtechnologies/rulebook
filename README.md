@@ -163,7 +163,7 @@ In the above example, the default Result value was initialized to false. So, unl
 
 One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
 
-#### _Want to Contribute?_
+### _Want to Contribute?_
 
 Suggestions and code conributors are welcome! Please see the _Deverloper Guidelines_ below.
 
