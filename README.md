@@ -9,7 +9,7 @@
 
 | Build     | Group                   | Artifact |  Version    |
 |---        |---                      |---       |---          |
-|Development|com.deliveredtechnologies|RuleBook  |0.1-SNAPSHOT |
+|Development|com.deliveredtechnologies|RuleBook  |0.2-SNAPSHOT |
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines add a bunch of annotations or specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of special annotations or other specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
