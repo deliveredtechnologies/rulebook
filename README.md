@@ -3,14 +3,14 @@
 
 <hr/>
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/RuleBook/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|com.deliveredtechnologies|RuleBook|0.1|) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)](http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook|0.1|) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/rulebook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
 
 **Current Maven Releases**
 
 | Build     | Group                   | Artifact |  Version    |
 |---        |---                      |---       |---          |
-|Release    |com.deliveredtechnologies|RuleBook  |0.1          |
-|Development|com.deliveredtechnologies|RuleBook  |0.2-SNAPSHOT |
+|Release    |com.deliveredtechnologies|rulebook  |0.1          |
+|Development|com.deliveredtechnologies|rulebook  |0.2-SNAPSHOT |
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines add a bunch of annotations or specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of special annotations or other specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
