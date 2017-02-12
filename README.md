@@ -3,13 +3,14 @@
 
 <hr/>
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)](http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook|0.1|) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/rulebook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
 
 **Current Maven Releases**
 
 | Build     | Group                   | Artifact |  Version    |
 |---        |---                      |---       |---          |
-|Development|com.deliveredtechnologies|RuleBook  |0.1-SNAPSHOT |
+|Release    |com.deliveredtechnologies|rulebook  |0.1          |
+|Development|com.deliveredtechnologies|rulebook  |0.2-SNAPSHOT |
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines add a bunch of annotations or specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of special annotations or other specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
@@ -163,8 +164,23 @@ In the above example, the default Result value was initialized to false. So, unl
 
 One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
 
-#### _Want to Contribute?_
+<hr/>
 
-Suggestions and code conributors are welcome! 
+### _Want to Contribute?_
 
-_Developer guidlines coming soon_
+Suggestions and code contributions are welcome! Please see the _Developer Guidelines_ below.
+
+**_Developer Guidelines_**
+
+Contributions must adhere to the following criteria:
+
+1. The forked repository must be publicly visible.
+2. The issues addressed in the request must be associated to an accepted issue.
+3. The build (i.e. ./gradlew build) must pass with no errors or warnings.
+4. All new and existing tests must pass.
+5. The code must adhere to the style guidleines icluded in the checkstyle configuration (i.e. no checkstyle errors).
+6. Newly introduced code must have at least 85% test coverage.
+
+Anyone may submit an issue, which can be either an enhancement/feature request or a bug to be remediated. If a feature request or a bug is approved, completed and an associated pull request is submitted that adheres to the above criteria, then the pull request will be merged and the contributor will be added to the list of contributors in the following release.
+
+
