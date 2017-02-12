@@ -171,13 +171,14 @@ Suggestions and code contributions are welcome! Please see the _Developer Guidel
 
 **_Developer Guidelines_**
 
-Accepted pull requests accepted must adhere to the following criteria:
+Contributions must adhere to the following criteria:
 
 1. The forked repository must be publicly visible.
 2. The issues addressed in the request must be associated to an accepted issue.
-3. The build must pass with no errors or warnings.
-4. The code must adhere to the style guidleines icluded in the checkstyle configuration (i.e. no checkstyle errors).
-5. Newly introduced code must have at least 85% test coverage.
+3. The build (i.e. ./gradlew build) must pass with no errors or warnings.
+4. All new and existing tests must pass.
+5. The code must adhere to the style guidleines icluded in the checkstyle configuration (i.e. no checkstyle errors).
+6. Newly introduced code must have at least 85% test coverage.
 
 Anyone may submit an issue, which can be either an enhancement/feature request or a bug to be remediated. If a feature request or a bug is approved, completed and an associated pull request is submitted that adheres to the above criteria, then the pull request will be merged and the contributor will be added to the list of contributors in the following release.
 
