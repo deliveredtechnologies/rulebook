@@ -3,7 +3,7 @@
 
 <hr/>
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)](http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook|0.1|) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)
 
 **Current Maven Releases**
 
