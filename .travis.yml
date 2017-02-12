@@ -23,5 +23,4 @@ script:
   - ./gradlew jacocoTestReport
   - ./gradlew coveralls
 after_success:
-  - ./travis/before-deploy.sh
-  - ./gradlew uploadArchives -PnexusUsername="${OSSRH_USERNAME}" -PnexusPassword="${OSSRH_PASSWORD}" -Psigning.keyId="${SIGN_KEY_ID}" -Psigning.password="${KEY_PASSPHRASE}"
+  - ./travis/deploy.sh
