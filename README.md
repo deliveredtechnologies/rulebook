@@ -167,7 +167,7 @@ One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions
 
 ### _Want to Contribute?_
 
-Suggestions and code contributions are welcome! Please see the _Deverloper Guidelines_ below.
+Suggestions and code contributions are welcome! Please see the _Developer Guidelines_ below.
 
 **_Developer Guidelines_**
 
