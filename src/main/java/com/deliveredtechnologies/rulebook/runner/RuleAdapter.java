@@ -19,8 +19,10 @@ import java.util.function.Predicate;
 public class RuleAdapter extends StandardDecision {
   private Object _ruleObj;
 
-  public RuleAdapter(Object ruleObj) {
+  public RuleAdapter(Object ruleObj, Fact... facts) {
     _ruleObj = ruleObj;
+    this.given(facts);
+    buildGiven().buildWhen().buildThen();
   }
 
   private RuleAdapter buildWhen() {
@@ -31,49 +33,12 @@ public class RuleAdapter extends StandardDecision {
     return this;
   }
 
-  @Override
-  public void run() {
-    super.run();
+  private RuleAdapter buildGiven() {
+    Util.mapGivenFactsToProperties(_ruleObj, getFactMap());
+    return this;
   }
 
-  @Override
-  public StandardDecision then(BiFunction action) {
-    return null;
-  }
-
-  @Override
-  public StandardDecision given(Fact[] facts) {
-    return null;
-  }
-
-  @Override
-  public Object getResult() {
-    return null;
-  }
-
-  @Override
-  public StandardDecision given(List list) {
-    return null;
-  }
-
-  @Override
-  public void setResult(Result result) {
-
-  }
-
-  @Override
-  public StandardDecision given(FactMap facts) {
-    return null;
-  }
-
-
-  @Override
-  public StandardDecision then(Function action) {
-    return null;
-  }
-
-  @Override
-  public void setNextRule(Rule rule) {
-    super.setNextRule(rule);
+  private RuleAdapter buildThen() {
+    return this;
   }
 }

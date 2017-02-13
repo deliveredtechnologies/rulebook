@@ -167,4 +167,12 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   public void setResult(Result<U> result) {
     _result = result;
   }
+
+  /**
+   * The getFactMap() method gets the factMap of stored facts.
+   * @return  the factMap of stored facts
+   */
+  public FactMap<T> getFactMap() {
+    return _facts;
+  }
 }
