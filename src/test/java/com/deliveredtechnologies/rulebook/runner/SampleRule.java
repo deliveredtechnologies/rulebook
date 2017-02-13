@@ -1,7 +1,10 @@
 package com.deliveredtechnologies.rulebook.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
+import com.deliveredtechnologies.rulebook.annotation.Result;
+import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
 /**
@@ -17,9 +20,18 @@ public class SampleRule {
   @Given("value1")
   private int value1;
 
+  @Result
+  private String result;
+
   @When
   public boolean when() {
     return fact1.getValue().equals(fact2.getValue());
+  }
+
+  @Then
+  public RuleState then() {
+    result = "Equivalence, Bitches!";
+    return RuleState.NEXT;
   }
 
   public String getFact1() {
@@ -31,4 +43,6 @@ public class SampleRule {
   }
 
   public int getValue1() { return value1; }
+
+  public String getResult() { return result; }
 }

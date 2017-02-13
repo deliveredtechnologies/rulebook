@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
@@ -75,35 +76,38 @@ public class Util {
     }
   }
 
-  public static BiFunction getThenMethodAsBiFunction(Object obj) {
+  public static Optional<BiFunction> getThenMethodAsBiFunction(Object obj) {
     for (Method method : obj.getClass().getMethods()) {
       for (Annotation annotation : method.getAnnotations()) {
-        if (annotation instanceof Then && hasResult(obj)) {
-          return new BiFunction() {
+        Optional<Field> resultField = getResultField(obj);
+        if (annotation instanceof Then && resultField.isPresent()) {
+          return Optional.of(new BiFunction() {
             @Override
-            public Object apply(Object o, Object o2) {
+            public Object apply(Object factMap, Object resultObj) {
               try {
-                return method.invoke(obj);
+                Object retVal = method.invoke(obj);
+                Object resultVal = resultField.get().get(obj);
+                com.deliveredtechnologies.rulebook.Result result = (com.deliveredtechnologies.rulebook.Result)resultObj;
+                resultField.get().setAccessible(true);
+                if (Optional.ofNullable(resultVal).isPresent()) {
+                  result.setValue(resultVal);
+                }
+                return retVal;
               } catch (IllegalAccessException | InvocationTargetException ex) {
                 return RuleState.BREAK;
               }
             }
-          };
+          });
         }
       }
     }
-    return new BiFunction() {
-      @Override
-      public Object apply(Object o, Object o2) {
-        return RuleState.BREAK;
-      }
-    };
+    return Optional.empty();
   }
 
   public static Function getThenMethodAsFunction(Object obj) {
     for (Method method : obj.getClass().getMethods()) {
       for (Annotation annotation : method.getAnnotations()) {
-        if (annotation instanceof Then && !hasResult(obj)) {
+        if (annotation instanceof Then && !getResultField(obj).isPresent()) {
           return new Function() {
             @Override
             public Object apply(Object o) {
@@ -125,10 +129,9 @@ public class Util {
     };
   }
 
-  private static boolean hasResult(Object obj) {
+  private static Optional<Field> getResultField(Object obj) {
     return Stream.of(obj.getClass().getDeclaredFields())
-      .anyMatch(field -> Stream.of(field.getDeclaredAnnotations())
-        .anyMatch(annotation -> annotation.getClass() == Result.class)
-      );
+      .filter(field -> Stream.of(field.getDeclaredAnnotations())
+        .allMatch(annotation -> annotation.getClass() == Result.class)).findFirst();
   }
 }

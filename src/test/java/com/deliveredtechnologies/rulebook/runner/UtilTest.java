@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
 
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 /**
@@ -50,5 +51,12 @@ public class UtilTest {
     Assert.assertTrue(predicate.test(null));
   }
 
-  
+  @Test
+  public void thenMethodShouldConvertToBiFunctionIfResultPresent() {
+
+    Util.mapGivenFactsToProperties(sampleRule, factMap);
+    BiFunction biFunction = Util.getThenMethodAsBiFunction(sampleRule);
+
+    Ass
+  }
 }
