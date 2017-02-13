@@ -3,10 +3,13 @@ package com.deliveredtechnologies.rulebook.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.RuleState;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
@@ -54,9 +57,13 @@ public class UtilTest {
   @Test
   public void thenMethodShouldConvertToBiFunctionIfResultPresent() {
 
-    Util.mapGivenFactsToProperties(sampleRule, factMap);
-    BiFunction biFunction = Util.getThenMethodAsBiFunction(sampleRule);
+    Result<String> result = new Result<>();
 
-    Ass
+    Util.mapGivenFactsToProperties(sampleRule, factMap);
+    Optional<BiFunction> biFunction = Util.getThenMethodAsBiFunction(sampleRule);
+
+    Assert.assertTrue(biFunction.isPresent());
+    Assert.assertEquals(RuleState.NEXT, biFunction.get().apply(factMap, result));
+    Assert.assertEquals(result.getValue(), sampleRule.getResult());
   }
 }

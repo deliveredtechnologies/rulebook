@@ -86,9 +86,9 @@ public class Util {
             public Object apply(Object factMap, Object resultObj) {
               try {
                 Object retVal = method.invoke(obj);
+                resultField.get().setAccessible(true);
                 Object resultVal = resultField.get().get(obj);
                 com.deliveredtechnologies.rulebook.Result result = (com.deliveredtechnologies.rulebook.Result)resultObj;
-                resultField.get().setAccessible(true);
                 if (Optional.ofNullable(resultVal).isPresent()) {
                   result.setValue(resultVal);
                 }
