@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  */
 public class Util {
   private Util() {}
-  
+
   public static Predicate getWhenMethodAsPredicate(FactMap facts, Object obj) {
     for (Method method : obj.getClass().getMethods()) {
       for (Annotation annotation : method.getDeclaredAnnotations()) {
