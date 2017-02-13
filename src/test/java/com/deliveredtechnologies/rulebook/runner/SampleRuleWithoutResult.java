@@ -10,18 +10,12 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 /**
  * Created by clong on 2/13/17.
  */
-public class SampleRule {
+public class SampleRuleWithoutResult {
   @Given("fact1")
   private Fact<String> fact1;
 
   @Given("fact2")
   private Fact<String> fact2;
-
-  @Given("value1")
-  private int value1;
-
-  @Result
-  private String result;
 
   @When
   public boolean when() {
@@ -30,7 +24,7 @@ public class SampleRule {
 
   @Then
   public RuleState then() {
-    result = "Equivalence, Bitches!";
+    fact2.setValue("So Factual!");
     return RuleState.NEXT;
   }
 
@@ -41,8 +35,4 @@ public class SampleRule {
   public String getFact2() {
     return fact2.getValue();
   }
-
-  public int getValue1() { return value1; }
-
-  public String getResult() { return result; }
 }

@@ -11,6 +11,7 @@ import org.junit.Before;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -18,12 +19,10 @@ import java.util.function.Predicate;
  */
 public class UtilTest {
 
-  SampleRule sampleRule;
   FactMap factMap;
 
   @Before
   public void setup() {
-    sampleRule = new SampleRule();
     factMap = new FactMap();
     factMap.put("fact1", new Fact("fact1", "FirstFact"));
     factMap.put("fact2", new Fact("fact2", "SecondFact"));
@@ -33,18 +32,21 @@ public class UtilTest {
   @Test
   public void givenAttributesShouldMapToFacts() {
 
-    Util.mapGivenFactsToProperties(sampleRule, factMap);
+    SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
 
-    Assert.assertEquals("FirstFact", sampleRule.getFact1());
-    Assert.assertEquals("SecondFact", sampleRule.getFact2());
-    Assert.assertEquals(1, sampleRule.getValue1());
+    Util.mapGivenFactsToProperties(sampleRuleWithResult, factMap);
+
+    Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
+    Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
+    Assert.assertEquals(1, sampleRuleWithResult.getValue1());
   }
 
   @Test
   public void whenMethodShouldConvertToPredicate() {
+    SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
 
-    Util.mapGivenFactsToProperties(sampleRule, factMap);
-    Predicate predicate = Util.getWhenMethodAsPredicate(sampleRule);
+    Util.mapGivenFactsToProperties(sampleRuleWithResult, factMap);
+    Predicate predicate = Util.getWhenMethodAsPredicate(sampleRuleWithResult);
 
     Assert.assertFalse(predicate.test(null));
 
@@ -56,14 +58,28 @@ public class UtilTest {
 
   @Test
   public void thenMethodShouldConvertToBiFunctionIfResultPresent() {
+    SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
 
     Result<String> result = new Result<>();
 
-    Util.mapGivenFactsToProperties(sampleRule, factMap);
-    Optional<BiFunction> biFunction = Util.getThenMethodAsBiFunction(sampleRule);
+    Util.mapGivenFactsToProperties(sampleRuleWithResult, factMap);
+    Optional<BiFunction> biFunction = Util.getThenMethodAsBiFunction(sampleRuleWithResult);
 
     Assert.assertTrue(biFunction.isPresent());
     Assert.assertEquals(RuleState.NEXT, biFunction.get().apply(factMap, result));
-    Assert.assertEquals(result.getValue(), sampleRule.getResult());
+    Assert.assertEquals(result.getValue(), sampleRuleWithResult.getResult());
+  }
+
+  @Test
+  public void thenMethodShouldConvertToFunctionIfResultNotPresent() {
+
+    SampleRuleWithoutResult sampleRuleWithoutResult = new SampleRuleWithoutResult();
+
+    Util.mapGivenFactsToProperties(sampleRuleWithoutResult, factMap);
+    Optional<Function> function = Util.getThenMethodAsFunction(sampleRuleWithoutResult);
+
+    Assert.assertTrue(function.isPresent());
+    Assert.assertEquals(RuleState.NEXT, function.get().apply(factMap));
+    Assert.assertEquals(factMap.getValue("fact2"), "So Factual!");
   }
 }

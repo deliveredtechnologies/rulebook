@@ -104,11 +104,11 @@ public class Util {
     return Optional.empty();
   }
 
-  public static Function getThenMethodAsFunction(Object obj) {
+  public static Optional<Function> getThenMethodAsFunction(Object obj) {
     for (Method method : obj.getClass().getMethods()) {
       for (Annotation annotation : method.getAnnotations()) {
         if (annotation instanceof Then && !getResultField(obj).isPresent()) {
-          return new Function() {
+          return Optional.of(new Function() {
             @Override
             public Object apply(Object o) {
               try {
@@ -117,16 +117,11 @@ public class Util {
                 return RuleState.BREAK;
               }
             }
-          };
+          });
         }
       }
     }
-    return new Function() {
-      @Override
-      public Object apply(Object o) {
-        return RuleState.BREAK;
-      }
-    };
+    return Optional.empty();
   }
 
   private static Optional<Field> getResultField(Object obj) {
