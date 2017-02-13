@@ -24,7 +24,7 @@ public abstract class DecisionBook<T, U> extends RuleBook<T> {
    * method.
    * @param rule  the Decision rule to be added to the DecisionBook
    */
-  protected final void addRule(Decision<T, U> rule) {
+  public final void addRule(Decision<T, U> rule) {
     super.addRule(rule);
     rule.setResult(_result);
   }

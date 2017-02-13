@@ -42,7 +42,7 @@ public abstract class RuleBook<T> {
    *
    * @param rule the Rule to be added
    */
-  protected final void addRule(Rule<T> rule) {
+  public final void addRule(Rule<T> rule) {
     rule.given(_facts);
     if (!Optional.ofNullable(_headRule).isPresent()) {
       _headRule = rule; //this rule is the head if there was no head
