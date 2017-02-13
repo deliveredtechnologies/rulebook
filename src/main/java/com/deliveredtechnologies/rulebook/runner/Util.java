@@ -41,15 +41,19 @@ public class Util {
     };
   }
 
-  public static FactMap getGivenPropertiesAsFacts(Object obj) {
-    FactMap factMap = new FactMap();
+  public static void mapGivenFactsToProperties(Object obj, FactMap factMap) {
     for (Field field : obj.getClass().getDeclaredFields()) {
       for (Annotation annotation : field.getDeclaredAnnotations()) {
         if (annotation instanceof Given) {
-
+          Given given = (Given)annotation;
+          try {
+            field.set(obj, factMap.getValue(given.name()));
+          }
+          catch (IllegalAccessException ex) {
+            //TODO: handle error
+          }
         }
       }
     }
-    return factMap;
   }
 }
