@@ -8,6 +8,7 @@ import com.deliveredtechnologies.rulebook.Rule;
 import com.deliveredtechnologies.rulebook.RuleState;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,8 +17,18 @@ import java.util.function.Predicate;
  * Created by clong on 2/12/17.
  */
 public class RuleAdapter extends StandardDecision {
-  public RuleAdapter(Object ruleObj) {
+  private Object _ruleObj;
 
+  public RuleAdapter(Object ruleObj) {
+    _ruleObj = ruleObj;
+  }
+
+  private RuleAdapter buildWhen() {
+    Predicate predicate = Util.getWhenMethodAsPredicate(_ruleObj);
+    if (Optional.ofNullable(predicate).isPresent()) {
+      when(predicate);
+    }
+    return this;
   }
 
   @Override
@@ -55,10 +66,6 @@ public class RuleAdapter extends StandardDecision {
     return null;
   }
 
-  @Override
-  public StandardDecision when(Predicate test) {
-    return null;
-  }
 
   @Override
   public StandardDecision then(Function action) {
@@ -67,6 +74,6 @@ public class RuleAdapter extends StandardDecision {
 
   @Override
   public void setNextRule(Rule rule) {
-
+    super.setNextRule(rule);
   }
 }
