@@ -11,7 +11,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by clong on 2/12/17.
- * The RuleSource annotation defines a class to be injected into a {@link Rule} or {@link Decision}.
+ * RuleSource defines a class to be injected into a {@link Rule} or {@link Decision}.
  */
 @Target(TYPE)
 @Retention(RUNTIME)
