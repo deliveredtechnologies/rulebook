@@ -20,5 +20,5 @@ public @interface Given {
    * This method gets the name of the Fact in the {@link FactMap}.
    *
    */
-  String name();
+  String value();
 }

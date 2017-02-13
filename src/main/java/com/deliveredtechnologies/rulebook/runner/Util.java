@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook.runner;
 
+import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
@@ -26,7 +27,8 @@ public class Util {
   public static Predicate getWhenMethodAsPredicate(Object obj) {
     for (Method method : obj.getClass().getMethods()) {
       for (Annotation annotation : method.getDeclaredAnnotations()) {
-        if (annotation instanceof When && method.getReturnType() == Boolean.class) {
+        if (annotation instanceof When &&
+          (method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)) {
           return new Predicate() {
             @Override
             public boolean test(Object o) {
@@ -54,7 +56,16 @@ public class Util {
         if (annotation instanceof Given) {
           Given given = (Given)annotation;
           try {
-            field.set(obj, factMap.getValue(given.name()));
+            field.setAccessible(true);
+            if (field.getType() == Fact.class) {
+              field.set(obj, factMap.get(given.value()));
+            } else {
+              try {
+                field.set(obj, factMap.getValue(given.value()));
+              } catch (Exception ex) {
+                field.set(obj, null);
+              }
+            }
           }
           catch (IllegalAccessException ex) {
             //TODO: handle error
