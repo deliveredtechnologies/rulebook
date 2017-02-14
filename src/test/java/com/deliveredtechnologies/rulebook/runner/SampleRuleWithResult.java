@@ -30,6 +30,7 @@ public class SampleRuleWithResult {
 
   @Then
   public RuleState then() {
+    fact2.setValue("So Factual!");
     result = "Equivalence, Bitches!";
     return RuleState.NEXT;
   }
