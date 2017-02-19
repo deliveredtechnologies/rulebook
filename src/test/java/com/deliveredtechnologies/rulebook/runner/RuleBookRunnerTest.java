@@ -25,4 +25,12 @@ public class RuleBookRunnerTest {
 
     verify(ruleBookRunner, times(0)).addRule(any(RuleAdapter.class));
   }
+
+  @Test
+  public void ruleBookRunnerDoesntLoadClassesForInvalidPackage() {
+    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.invalid"));
+    ruleBookRunner.run();
+
+    verify(ruleBookRunner, times(0)).addRule(any(RuleAdapter.class));
+  }
 }

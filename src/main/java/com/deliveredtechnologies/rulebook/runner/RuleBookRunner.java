@@ -2,6 +2,9 @@ package com.deliveredtechnologies.rulebook.runner;
 
 import com.deliveredtechnologies.rulebook.DecisionBook;
 import com.deliveredtechnologies.rulebook.annotation.Rule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -20,6 +24,9 @@ import java.util.stream.Stream;
  * Created by clong on 2/12/17.
  */
 public class RuleBookRunner extends DecisionBook {
+
+  private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
+
   private String _package;
 
   public RuleBookRunner(String rulePackage) {
@@ -32,15 +39,16 @@ public class RuleBookRunner extends DecisionBook {
   protected void defineRules() {
     try {
       List<Class<?>> classes = findRuleClassesInPackage(_package);
+
       for (Class<?> rule : classes) {
         try {
           addRule(new RuleAdapter(rule.newInstance()));
         } catch (IllegalAccessException | InstantiationException ex) {
-          //TODO: Handle Exception
+          LOGGER.error("Unable to create instance of rule using '" + rule + "'", ex);
         }
       }
-    } catch (IOException ex) {
-      //TODO: Handle Exception
+    } catch (IOException | InvalidPathException ex) {
+      LOGGER.error("Unable to find rule classes in package '" + _package + "'", ex);
     }
   }
 
@@ -48,6 +56,9 @@ public class RuleBookRunner extends DecisionBook {
     String pathName = packageName.replace(".", "/");
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     URL pathUrl = classLoader.getResource(pathName);
+    if (!Optional.ofNullable(pathUrl).isPresent()) {
+      throw new InvalidPathException("'" + packageName + "' cannot be found by the ClassLoader", packageName);
+    }
     try {
       Path path = Paths.get(pathUrl.toURI());
       if (!Files.exists(path) || !Files.isDirectory(path)) {
@@ -66,8 +77,7 @@ public class RuleBookRunner extends DecisionBook {
               classes.add(ruleClass);
             }
           } catch (ClassNotFoundException e) {
-            //intentionally left blank
-            System.out.println(e.getMessage());
+            LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
           }
         });
       classes.sort(new Comparator<Class<?>>() {
