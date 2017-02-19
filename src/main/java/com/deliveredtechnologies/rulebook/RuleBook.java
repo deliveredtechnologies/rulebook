@@ -19,7 +19,9 @@ public abstract class RuleBook<T> {
 
   public final void run() {
     defineRules();
-    _headRule.run();
+    if (Optional.ofNullable(_headRule).isPresent()) {
+      _headRule.run();
+    }
   }
 
   /**
@@ -42,7 +44,11 @@ public abstract class RuleBook<T> {
    *
    * @param rule the Rule to be added
    */
-  public final void addRule(Rule<T> rule) {
+  public void addRule(Rule<T> rule) {
+    if (!Optional.ofNullable(rule).isPresent()) {
+      return;
+    }
+
     rule.given(_facts);
     if (!Optional.ofNullable(_headRule).isPresent()) {
       _headRule = rule; //this rule is the head if there was no head

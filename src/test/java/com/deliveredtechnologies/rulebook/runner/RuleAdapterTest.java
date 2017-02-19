@@ -82,6 +82,7 @@ public class RuleAdapterTest {
     ruleAdapter.given(factMap);
 
     Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)ruleAdapter.getThen();
+
     Assert.assertEquals(RuleState.NEXT, function.apply(null));
     Assert.assertEquals("So Factual!", ((Fact)factMap.get("fact2")).getValue());
   }

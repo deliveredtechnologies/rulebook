@@ -104,7 +104,6 @@ public class RuleAdapter extends StandardDecision {
     if (function.isPresent()) {
       return function.get();
     }
-
     //If the action still can't be determined then just give back a Function that moves down the chain
     return new Function<FactMap, RuleState>() {
       @Override
@@ -128,7 +127,10 @@ public class RuleAdapter extends StandardDecision {
               field.set(_ruleObj, getFactMap().get(given.value()));
             } else {
               try {
-                field.set(_ruleObj, getFactMap().getValue(given.value()));
+                Object value = getFactMap().getValue(given.value());
+                if (Optional.ofNullable(value).isPresent()) {
+                  field.set(_ruleObj, value);
+                }
               } catch (Exception ex) {
                 field.set(_ruleObj, null);
               }
@@ -207,7 +209,9 @@ public class RuleAdapter extends StandardDecision {
    */
   private static Optional<Field> getResultField(Object obj) {
     return Stream.of(obj.getClass().getDeclaredFields())
-      .filter(field -> Stream.of(field.getDeclaredAnnotations())
-        .allMatch(annotation -> annotation.getClass() == com.deliveredtechnologies.rulebook.annotation.Result.class)).findFirst();
+      .filter(field ->
+        Optional.ofNullable(field.getAnnotation(com.deliveredtechnologies.rulebook.annotation.Result.class)).isPresent()
+      )
+      .findFirst();
   }
 }
