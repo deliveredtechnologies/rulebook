@@ -10,6 +10,7 @@ import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
+import java.io.InvalidClassException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +29,12 @@ import java.util.stream.Stream;
 public class RuleAdapter extends StandardDecision {
   private Object _ruleObj;
 
-  public RuleAdapter(Object ruleObj) {
+  public RuleAdapter(Object ruleObj) throws InvalidClassException {
+    if (!Optional
+      .ofNullable(ruleObj.getClass()
+        .getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class)).isPresent()) {
+      throw new InvalidClassException(ruleObj.getClass() + " is not a Rule; missing @Rule annotation");
+    }
     _ruleObj = ruleObj;
   }
 
