@@ -39,7 +39,7 @@ public interface Rule<T> {
   Rule<T> given(FactMap<T> facts);
 
   /**
-   * Method getWhen() gets the {@link Predicate} that evaluates the condition of the Rule
+   * Method getWhen() gets the {@link Predicate} that evaluates the condition of the Rule.
    * @return  a Predicate object
    */
   Predicate<FactMap<T>> getWhen();

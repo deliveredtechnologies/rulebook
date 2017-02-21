@@ -4,7 +4,6 @@ import com.deliveredtechnologies.rulebook.DecisionBook;
 import com.deliveredtechnologies.rulebook.annotation.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,11 +16,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
  * Created by clong on 2/12/17.
+ * RuleBookRunner creates a RuleBook from a package containing {@link Rule} annotated POJOs.
  */
 public class RuleBookRunner extends DecisionBook {
 
@@ -67,25 +66,22 @@ public class RuleBookRunner extends DecisionBook {
 
       List<Class<?>> classes = new ArrayList<>();
       Files.walk(path, 1)
-        .filter(p -> !Files.isDirectory(p))
-        .forEach(p -> {
-          String fileName = p.getFileName().toString();
-          String className = fileName.substring(0, fileName.length() - 6);
-          try {
-            Class<?> ruleClass = Class.forName(packageName + "." + className);
-            if (Stream.of(ruleClass.getDeclaredAnnotations()).anyMatch(annotation -> annotation instanceof Rule)) {
-              classes.add(ruleClass);
-            }
-          } catch (ClassNotFoundException e) {
-            LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
-          }
-        });
-      classes.sort(new Comparator<Class<?>>() {
-        @Override
-        public int compare(Class<?> class1, Class<?> class2) {
-          return class1.getAnnotation(Rule.class).order() - class2.getAnnotation(Rule.class).order();
-        }
-      });
+          .filter(p -> !Files.isDirectory(p))
+          .forEach(p -> {
+              String fileName = p.getFileName().toString();
+              String className = fileName.substring(0, fileName.length() - 6);
+              try {
+                Class<?> ruleClass = Class.forName(packageName + "." + className);
+                if (Stream.of(ruleClass.getDeclaredAnnotations()).anyMatch(annotation -> annotation instanceof Rule)) {
+                  classes.add(ruleClass);
+                }
+              } catch (ClassNotFoundException e) {
+                LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
+              }
+            });
+      classes.sort(
+          (class1, class2) -> class1.getAnnotation(Rule.class).order() - class2.getAnnotation(Rule.class).order());
+
       return classes;
     } catch (URISyntaxException ex) {
       throw new InvalidPathException("'" + packageName + "' is not a valid path", ex.getReason());

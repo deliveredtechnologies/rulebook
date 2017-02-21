@@ -18,7 +18,6 @@ public @interface Rule {
 
   /**
    * This is the name of the Rule.
-   * @return  the name of the rule
    */
   String name() default "None";
 
@@ -26,7 +25,6 @@ public @interface Rule {
    * This specifies the order in which the rule will execute.
    * The ordering is 1, 2, 3, 4, etc.
    * Two rules in the same package with the same order will execute in a non-specified order.
-   * @return the order of execution
    */
   int order() default 1;
 }

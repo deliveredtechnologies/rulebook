@@ -9,6 +9,8 @@ import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InvalidClassException;
 import java.lang.annotation.Annotation;
@@ -27,11 +29,20 @@ import java.util.stream.Stream;
  * RuleAdapter accepts a POJO annotated Rule class and adapts it to an actual Rule class.
  */
 public class RuleAdapter extends StandardDecision {
+
+  private static Logger LOGGER = LoggerFactory.getLogger(RuleAdapter.class);
+
   private Object _ruleObj;
 
+  /**
+   * RuleAdapter accepts a {@link com.deliveredtechnologies.rulebook.annotation.Rule} annotated POJO
+   * and adapts it to a {@link Rule} or {@link com.deliveredtechnologies.rulebook.Decision}.
+   * @param ruleObj an annotated POJO to be adapted to a rule
+   * @throws InvalidClassException  if the POJO does not have the @Rule annotation
+   */
   public RuleAdapter(Object ruleObj) throws InvalidClassException {
     if (!Optional
-      .ofNullable(ruleObj.getClass()
+        .ofNullable(ruleObj.getClass()
         .getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class)).isPresent()) {
       throw new InvalidClassException(ruleObj.getClass() + " is not a Rule; missing @Rule annotation");
     }
@@ -69,8 +80,8 @@ public class RuleAdapter extends StandardDecision {
     //If nothing was explicitly set, then convert the method in the class
     for (Method method : _ruleObj.getClass().getMethods()) {
       for (Annotation annotation : method.getDeclaredAnnotations()) {
-        if (annotation instanceof When &&
-          (method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)) {
+        if (annotation instanceof When
+            && (method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)) {
           return new Predicate() {
             @Override
             public boolean test(Object obj) {
@@ -94,6 +105,12 @@ public class RuleAdapter extends StandardDecision {
     };
   }
 
+  /**
+   * Method getThen() returns the 'then' action to be used; either a {@link Function} object or a
+   * {@link BiFunction} object. If no action was specified then a default Function object that returns
+   * {@link RuleState} NEXT is used.
+   * @return  either a Function object or a BiFunction object
+   */
   public Object getThen() {
     //Use what was explicitly set by then() first
     if (Optional.ofNullable(super.getThen()).isPresent()) {
@@ -120,7 +137,9 @@ public class RuleAdapter extends StandardDecision {
   }
 
   /**
-   * Convert the Facts to properties with the @Given annotation in the class
+   * Convert the Facts to properties with the @Given annotation in the class.
+   * If any matched properties are non-Facts, then the value of the associated Facts are mapped to those
+   * properties. If any matched properties are Facts, then the Fact object are mapped to those properties.
    */
   private void mapGivenFactsToProperties() {
     for (Field field : _ruleObj.getClass().getDeclaredFields()) {
@@ -141,9 +160,9 @@ public class RuleAdapter extends StandardDecision {
                 field.set(_ruleObj, null);
               }
             }
-          }
-          catch (IllegalAccessException ex) {
-            //TODO: handle error
+          } catch (IllegalAccessException ex) {
+            LOGGER.error("Unable to access field '" + field.getName() + "' in rule object '"
+                + _ruleObj.getClass() + "'");
           }
         }
       }
@@ -194,7 +213,7 @@ public class RuleAdapter extends StandardDecision {
         if (annotation instanceof Then && !getResultField(_ruleObj).isPresent()) {
           return Optional.of(new Function() {
             @Override
-            public Object apply(Object o) {
+            public Object apply(Object obj) {
               try {
                 return method.invoke(_ruleObj);
               } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -209,7 +228,7 @@ public class RuleAdapter extends StandardDecision {
   }
 
   /**
-   * Method getResultField is a utility method that gets the @Result annotated property when applicable
+   * Method getResultField is a utility method that gets the @Result annotated property when applicable.
    * @param obj an object that is annotated and converts to a Rule
    * @return  an Optional Field object containing either nothing or the property annotated with @Result
    */

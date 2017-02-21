@@ -17,6 +17,10 @@ public abstract class RuleBook<T> {
   public RuleBook() {
   }
 
+  /**
+   * The run() method adds the rules [via defineRules()] and runs the rules as long as at least one rule was
+   * added.
+   */
   public final void run() {
     defineRules();
     if (Optional.ofNullable(_headRule).isPresent()) {
