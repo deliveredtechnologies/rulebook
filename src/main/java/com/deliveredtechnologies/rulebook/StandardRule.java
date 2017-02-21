@@ -46,9 +46,10 @@ public class StandardRule<T> implements Rule<T> {
    * chain is evaluated.
    */
   @Override
+  @SuppressWarnings("unchecked")
   public void run() {
-    if (_test.test(_facts)) {
-      if (_action.apply(_facts) == BREAK) {
+    if (getWhen().test(_facts)) {
+      if (((Function<FactMap<T>, RuleState>)getThen()).apply(_facts) == BREAK) {
         return;
       }
     }
@@ -129,5 +130,15 @@ public class StandardRule<T> implements Rule<T> {
   @Override
   public void setNextRule(Rule<T> rule) {
     _nextRule = rule;
+  }
+
+  @Override
+  public Predicate<FactMap<T>> getWhen() {
+    return _test;
+  }
+
+  @Override
+  public Object getThen() {
+    return _action;
   }
 }

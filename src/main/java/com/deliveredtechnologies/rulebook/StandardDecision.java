@@ -50,13 +50,14 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * BREAK {@link RuleState} then no further rules are evaluated, otherwise the next rule in the chain is evaluated.
    */
   @Override
+  @SuppressWarnings("unchecked")
   public void run() {
-    if (_test.test(_facts)) {
-      if (Optional.ofNullable(_actionResult).isPresent()) {
-        if (_actionResult.apply(_facts, _result) == BREAK) {
+    if (getWhen().test(_facts)) {
+      if (getThen() instanceof BiFunction) {
+        if (((BiFunction<FactMap<T>, Result<U>, RuleState>)getThen()).apply(_facts, _result) == BREAK) {
           return;
         }
-      } else if (_action.apply(_facts) == BREAK) {
+      } else if (((Function<FactMap<T>, RuleState>)getThen()).apply(_facts) == BREAK) {
         return;
       }
     }
@@ -73,8 +74,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> given(Fact<T>... facts) {
-    for (Fact f : facts) {
-      _facts.put(f.getName(), f);
+    for (Fact fact : facts) {
+      _facts.put(fact.getName(), fact);
     }
 
     return this;
@@ -87,8 +88,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> given(List<Fact<T>> facts) {
-    for (Fact f : facts) {
-      _facts.put(f.getName(), f);
+    for (Fact fact : facts) {
+      _facts.put(fact.getName(), fact);
     }
 
     return this;
@@ -166,5 +167,23 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @Override
   public void setResult(Result<U> result) {
     _result = result;
+  }
+
+  /**
+   * The getFactMap() method gets the factMap of stored facts.
+   * @return  the factMap of stored facts
+   */
+  public FactMap<T> getFactMap() {
+    return _facts;
+  }
+
+  @Override
+  public Predicate<FactMap<T>> getWhen() {
+    return _test;
+  }
+
+  @Override
+  public Object getThen() {
+    return Optional.ofNullable(_actionResult).isPresent() ? _actionResult : _action;
   }
 }

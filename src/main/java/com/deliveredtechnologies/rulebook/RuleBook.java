@@ -17,9 +17,15 @@ public abstract class RuleBook<T> {
   public RuleBook() {
   }
 
+  /**
+   * The run() method adds the rules [via defineRules()] and runs the rules as long as at least one rule was
+   * added.
+   */
   public final void run() {
     defineRules();
-    _headRule.run();
+    if (Optional.ofNullable(_headRule).isPresent()) {
+      _headRule.run();
+    }
   }
 
   /**
@@ -42,7 +48,11 @@ public abstract class RuleBook<T> {
    *
    * @param rule the Rule to be added
    */
-  protected final void addRule(Rule<T> rule) {
+  public void addRule(Rule<T> rule) {
+    if (!Optional.ofNullable(rule).isPresent()) {
+      return;
+    }
+
     rule.given(_facts);
     if (!Optional.ofNullable(_headRule).isPresent()) {
       _headRule = rule; //this rule is the head if there was no head

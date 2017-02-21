@@ -39,11 +39,24 @@ public interface Rule<T> {
   Rule<T> given(FactMap<T> facts);
 
   /**
+   * Method getWhen() gets the {@link Predicate} that evaluates the condition of the Rule.
+   * @return  a Predicate object
+   */
+  Predicate<FactMap<T>> getWhen();
+
+  /**
    * The when() method takes in a {@link Predicate} that evaluates the facts against a condition.
    * @param test      the condition(s) to be evaluated against the Facts
    * @return the current Rule object
    */
   Rule<T> when(Predicate<FactMap<T>> test);
+
+  /**
+   * Method getThen() gets an instance of a functional interface responsbile for the action to be performed by
+   * the Rule.
+   * @return  a functional interface Object
+   */
+  Object getThen();
 
   /**
    * The then() method performs some action based on facts and returns a {@link RuleState} of
