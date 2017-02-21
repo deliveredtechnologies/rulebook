@@ -111,7 +111,7 @@ public class RuleAdapterTest {
 
     BiFunction<FactMap, Result, RuleState> biFunction = (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen();
     Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
-    Assert.assertEquals("So Factual!", ((Fact)_factMap.get("fact2")).getValue());
+    Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(sampleRuleWithResult.getResult(), result.getValue());
   }
 
