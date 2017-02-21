@@ -12,7 +12,7 @@ import com.deliveredtechnologies.rulebook.annotation.When;
  * Created by clong on 2/13/17.
  * Sample POJO rule that only contains facts, no result.
  */
-@Rule(order = 2)
+@Rule(order = 3)
 public class SampleRuleWithoutResult {
   @Given("fact1")
   private Fact<String> _fact1;
@@ -32,7 +32,6 @@ public class SampleRuleWithoutResult {
   @Then
   public RuleState then() {
     _fact2.setValue("So Factual!");
-    _fact1.setValue("So Factual!");
     return RuleState.NEXT;
   }
 

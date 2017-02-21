@@ -48,8 +48,8 @@ public class RuleBookRunnerTest {
     RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
     ruleBookRunner.given(fact1, fact2).run();
 
-    Assert.assertEquals("So Factual!", fact1.getValue());
-    Assert.assertEquals("So Factual Too!", fact2.getValue());
+    Assert.assertEquals("So Factual Too!", fact1.getValue());
+    Assert.assertEquals("So Factual!", fact2.getValue());
     Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult());
   }
 }
