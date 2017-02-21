@@ -1,9 +1,11 @@
 package com.deliveredtechnologies.rulebook.runner;
 
-import com.deliveredtechnologies.rulebook.Decision;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by clong on 2/18/17.

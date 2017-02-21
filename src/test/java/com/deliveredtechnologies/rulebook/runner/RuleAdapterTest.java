@@ -13,20 +13,28 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by clong on 2/13/17.
+ * Tests for {@link RuleAdapter}
  */
 public class RuleAdapterTest {
-  FactMap<Object> factMap;
+  private FactMap<Object> _factMap;
 
+  /**
+   * Setup creates a default FactMap.
+   */
   @Before
   public void setup() {
-    factMap = new FactMap<>();
-    factMap.put("fact1", new Fact("fact1", "FirstFact"));
-    factMap.put("fact2", new Fact("fact2", "SecondFact"));
-    factMap.put("value1", new Fact("value1", 1));
+    _factMap = new FactMap<>();
+    _factMap.put("fact1", new Fact("fact1", "FirstFact"));
+    _factMap.put("fact2", new Fact("fact2", "SecondFact"));
+    _factMap.put("value1", new Fact("value1", 1));
   }
 
   @Test
@@ -34,7 +42,7 @@ public class RuleAdapterTest {
 
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
-    ruleAdapter.given(factMap);
+    ruleAdapter.given(_factMap);
 
     Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
@@ -45,7 +53,7 @@ public class RuleAdapterTest {
   public void givenAttributesShouldMapToFactsParams() throws InvalidClassException {
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
-    ruleAdapter.given(factMap.get("fact1"), factMap.get("fact2"), factMap.get("value1"));
+    ruleAdapter.given(_factMap.get("fact1"), _factMap.get("fact2"), _factMap.get("value1"));
 
     Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
@@ -57,16 +65,16 @@ public class RuleAdapterTest {
 
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
-    Fact fact = (Fact)factMap.get("fact1");
+    Fact fact = (Fact)_factMap.get("fact1");
     fact.setValue("SecondFact");
-    ruleAdapter.given(factMap);
+    ruleAdapter.given(_factMap);
 
     //when is true when fact1 eq fact2; so, here it should be true
     Predicate predicate = ruleAdapter.getWhen();
     Assert.assertTrue(predicate.test(null));
 
     fact.setValue("FirstFact");
-    ruleAdapter.given(factMap);
+    ruleAdapter.given(_factMap);
 
     //after changing fact1, it should be false
     Assert.assertFalse(predicate.test(null));
@@ -79,7 +87,7 @@ public class RuleAdapterTest {
 
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
-    ruleAdapter.given(factMap).when(predicate).run();
+    ruleAdapter.given(_factMap).when(predicate).run();
 
     verify(predicate, times(1)).test(any());
     Assert.assertTrue(predicate == ruleAdapter.getWhen());
@@ -99,11 +107,11 @@ public class RuleAdapterTest {
     Result<String> result = new Result<>();
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
-    ruleAdapter.given(factMap);
+    ruleAdapter.given(_factMap);
 
     BiFunction<FactMap, Result, RuleState> biFunction = (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen();
     Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
-    Assert.assertEquals("So Factual!", ((Fact)factMap.get("fact2")).getValue());
+    Assert.assertEquals("So Factual!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(sampleRuleWithResult.getResult(), result.getValue());
   }
 
@@ -111,21 +119,21 @@ public class RuleAdapterTest {
   public void thenAnnotatedMethodWithResultShouldConvertToFunction() throws InvalidClassException {
     SampleRuleWithoutResult sampleRuleWithoutResult = new SampleRuleWithoutResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithoutResult);
-    ruleAdapter.given(factMap);
+    ruleAdapter.given(_factMap);
 
     Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)ruleAdapter.getThen();
 
     Assert.assertEquals(RuleState.NEXT, function.apply(null));
-    Assert.assertEquals("So Factual!", ((Fact)factMap.get("fact2")).getValue());
+    Assert.assertEquals("So Factual!", ((Fact)_factMap.get("fact2")).getValue());
   }
 
   @Test
-  public void suppliedThenFunctionShouldTakePrecendenceOverPOJO() throws InvalidClassException {
+  public void suppliedThenFunctionShouldTakePrecendenceOverPojo() throws InvalidClassException {
     Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)mock(Function.class);
     when(function.apply(any(FactMap.class))).thenReturn(RuleState.NEXT);
     SampleRuleWithoutResult sampleRuleWithoutResult = new SampleRuleWithoutResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithoutResult);
-    ruleAdapter.given(factMap).when(facts -> true).then(function).run();
+    ruleAdapter.given(_factMap).when(facts -> true).then(function).run();
 
     verify(function, times(1)).apply(any(FactMap.class));
     Assert.assertTrue(function == ruleAdapter.getThen());

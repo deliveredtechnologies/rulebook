@@ -3,7 +3,6 @@ package com.deliveredtechnologies.rulebook.runner;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.StandardDecision;
-import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.Rule;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
@@ -50,6 +49,7 @@ public class RuleAdapter extends StandardDecision {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public RuleAdapter given(Fact... facts) {
     super.given(facts);
     mapGivenFactsToProperties();
@@ -57,6 +57,7 @@ public class RuleAdapter extends StandardDecision {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public RuleAdapter given(List list) {
     super.given(list);
     mapGivenFactsToProperties();
@@ -64,6 +65,7 @@ public class RuleAdapter extends StandardDecision {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public RuleAdapter given(FactMap facts) {
     super.given(facts);
     mapGivenFactsToProperties();
@@ -181,6 +183,7 @@ public class RuleAdapter extends StandardDecision {
         if (annotation instanceof Then && resultField.isPresent()) {
           return Optional.of(new BiFunction() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object apply(Object factMap, Object resultObj) {
               try {
                 Object retVal = method.invoke(_ruleObj);

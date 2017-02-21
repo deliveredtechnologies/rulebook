@@ -10,42 +10,51 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 /**
  * Created by clong on 2/13/17.
+ * Sample POJO rule with facts and a result.
  */
 @Rule
 public class SampleRuleWithResult {
   @Given("fact1")
-  private Fact<String> fact1;
+  private Fact<String> _fact1;
 
   @Given("fact2")
-  private Fact<String> fact2;
+  private Fact<String> _fact2;
 
   @Given("value1")
-  private int value1;
+  private int _value1;
 
   @Result
-  private String result;
+  private String _result;
 
   @When
   public boolean when() {
-    return fact1.getValue().equals(fact2.getValue());
+    return _fact1.getValue().equals(_fact2.getValue());
   }
 
+  /**
+   * Method then() performs the rule's action.
+   * @return  RuleState.NEXT to continue to the next rule in the chain
+   */
   @Then
   public RuleState then() {
-    fact2.setValue("So Factual!");
-    result = "Equivalence, Bitches!";
+    _fact2.setValue("So Factual!");
+    _result = "Equivalence, Bitches!";
     return RuleState.NEXT;
   }
 
   public String getFact1() {
-    return fact1.getValue();
+    return _fact1.getValue();
   }
 
   public String getFact2() {
-    return fact2.getValue();
+    return _fact2.getValue();
   }
 
-  public int getValue1() { return value1; }
+  public int getValue1() {
+    return _value1;
+  }
 
-  public String getResult() { return result; }
+  public String getResult() {
+    return _result;
+  }
 }
