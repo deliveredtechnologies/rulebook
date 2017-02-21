@@ -223,6 +223,8 @@ Contributions must adhere to the following criteria:
 4. All new and existing tests must pass.
 5. The code must adhere to the style guidleines icluded in the checkstyle configuration (i.e. no checkstyle errors).
 6. Newly introduced code must have at least 85% test coverage.
+7. Pull requests must be for the _develop_ branch.
+8. The version number in gradle.properties should match the milestone of the issue its associated with appended with _-SNAPSHOT_ (ex. 0.2-SNAPSHOT)
 
 Anyone may submit an issue, which can be either an enhancement/feature request or a bug to be remediated. If a feature request or a bug is approved, completed and an associated pull request is submitted that adheres to the above criteria, then the pull request will be merged and the contributor will be added to the list of contributors in the following release.
 
