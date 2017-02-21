@@ -164,6 +164,49 @@ In the above example, the default Result value was initialized to false. So, unl
 
 One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
 
+### _New in v0.2: POJO Rules!_
+
+As of RuleBook v0.2, POJO rules are supported. Simply define your rules as POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
+
+**A Hello World Example**
+
+```java
+package com.example.pojorules
+
+import com.deliveredtechnologies.rulebook.annotations.*;
+
+@Rule
+public class HelloWorld {
+
+  @Given("hello")
+  private String hello;
+  
+  @Given("world")
+  private String world;
+  
+  @Result
+  private String helloworld;
+  
+  @When
+  public boolean when() {
+    return true;
+  }
+  
+  @Then
+  public boolean then() {
+    helloworld = hello + " " + world;
+  }
+}
+```
+```java
+
+public static void main(String args[]) {
+  RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules");
+  ruleBook.given(new Fact("hello", "Hello"), new Fact("world", "World")).run();
+  System.out.println(ruleBook.getResult()); //prints "Hello World"
+}
+```
+
 <hr/>
 
 ### _Want to Contribute?_
