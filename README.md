@@ -166,7 +166,7 @@ One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions
 
 ### _New in v0.2: POJO Rules!_
 
-As of RuleBook v0.2, POJO rules are supported. Simply define your rules as POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
+As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
 **A Hello World Example**
 
