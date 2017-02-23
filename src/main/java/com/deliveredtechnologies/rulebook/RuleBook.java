@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
  * implementation for subclasses. This class facilitates the aggregation and chaining together of Rules.
  */
 public abstract class RuleBook<T> {
-  protected Rule<T> _headRule;
+  protected Optional<Rule<T>> _headRule = Optional.empty();
   protected Rule<T> _tailRule;
   protected List<Fact<T>> _facts = new ArrayList<>();
 
@@ -23,9 +24,7 @@ public abstract class RuleBook<T> {
    */
   public final void run() {
     defineRules();
-    if (Optional.ofNullable(_headRule).isPresent()) {
-      _headRule.run();
-    }
+    _headRule.ifPresent(Rule::run);
   }
 
   /**
@@ -37,9 +36,7 @@ public abstract class RuleBook<T> {
    */
   @SafeVarargs
   public final RuleBook<T> given(Fact<T>... facts) {
-    for (Fact<T> f : facts) {
-      _facts.add(f);
-    }
+    Arrays.stream(facts).forEach(_facts::add);
     return this;
   }
 
@@ -49,13 +46,13 @@ public abstract class RuleBook<T> {
    * @param rule the Rule to be added
    */
   public void addRule(Rule<T> rule) {
-    if (!Optional.ofNullable(rule).isPresent()) {
+    if (rule == null) {
       return;
     }
 
     rule.given(_facts);
-    if (!Optional.ofNullable(_headRule).isPresent()) {
-      _headRule = rule; //this rule is the head if there was no head
+    if (!_headRule.isPresent()) {
+      _headRule = Optional.of(rule); // this rule is the head if there was no head
       _tailRule = rule;
     } else {
       _tailRule.setNextRule(rule);
