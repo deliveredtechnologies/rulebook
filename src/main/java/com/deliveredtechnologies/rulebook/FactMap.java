@@ -28,8 +28,7 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
    * @return the value of the Fact
    */
   public T getValue(String name) {
-    Fact<T> fact = this.get(name);
-    return Optional.ofNullable(fact).isPresent() ? fact.getValue() : null;
+    return Optional.ofNullable(this.get(name)).map(Fact::getValue).orElse(null);
   }
 }
 
