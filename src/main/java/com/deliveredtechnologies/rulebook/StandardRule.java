@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * StandardRule is a standard rule implementation that can be used with a {@link RuleBook}.
  */
 public class StandardRule<T> implements Rule<T> {
-  private Rule<T> _nextRule;
+  private Optional<Rule<T>> _nextRule = Optional.empty();
   private FactMap<T> _facts = new FactMap<>();
   private Predicate<FactMap<T>> _test;
   private Function<FactMap<T>, RuleState> _action;
@@ -53,9 +53,7 @@ public class StandardRule<T> implements Rule<T> {
         return;
       }
     }
-    if (Optional.ofNullable(this._nextRule).isPresent()) {
-      this._nextRule.run();
-    }
+    _nextRule.ifPresent(Rule::run);
   }
 
   /**
@@ -129,7 +127,7 @@ public class StandardRule<T> implements Rule<T> {
    */
   @Override
   public void setNextRule(Rule<T> rule) {
-    _nextRule = rule;
+    _nextRule = Optional.ofNullable(rule);
   }
 
   @Override

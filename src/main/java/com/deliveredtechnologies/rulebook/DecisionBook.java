@@ -27,7 +27,7 @@ public abstract class DecisionBook<T, U> extends RuleBook<T> {
    * @param rule  the Decision rule to be added to the DecisionBook
    */
   public void addRule(Decision<T, U> rule) {
-    if (!Optional.ofNullable(rule).isPresent()) {
+    if (rule == null) {
       return;
     }
 
