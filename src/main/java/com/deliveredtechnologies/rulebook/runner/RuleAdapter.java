@@ -13,9 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InvalidClassException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -40,9 +43,7 @@ public class RuleAdapter extends StandardDecision {
    * @throws InvalidClassException  if the POJO does not have the @Rule annotation
    */
   public RuleAdapter(Object ruleObj) throws InvalidClassException {
-    if (!Optional
-        .ofNullable(ruleObj.getClass()
-        .getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class)).isPresent()) {
+    if (ruleObj.getClass().getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class) == null) {
       throw new InvalidClassException(ruleObj.getClass() + " is not a Rule; missing @Rule annotation");
     }
     _ruleObj = ruleObj;
@@ -75,36 +76,24 @@ public class RuleAdapter extends StandardDecision {
   @Override
   public Predicate getWhen() {
     //Use what was set by then() first, if it's there
-    if (Optional.ofNullable(super.getWhen()).isPresent()) {
+    if (super.getWhen() != null) {
       return super.getWhen();
     }
 
     //If nothing was explicitly set, then convert the method in the class
-    for (Method method : _ruleObj.getClass().getMethods()) {
-      for (Annotation annotation : method.getDeclaredAnnotations()) {
-        if (annotation instanceof When
-            && (method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)) {
-          return new Predicate() {
-            @Override
-            public boolean test(Object obj) {
+    return Arrays.stream(_ruleObj.getClass().getMethods())
+          .filter(method -> method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)
+          .filter(method -> Arrays.stream(method.getDeclaredAnnotations()).anyMatch(When.class::isInstance))
+          .findFirst()
+          .<Predicate>map(method -> object -> {
               try {
-                return (Boolean)method.invoke(_ruleObj);
+                return (Boolean) method.invoke(_ruleObj);
               } catch (InvocationTargetException | IllegalAccessException ex) {
                 return false;
               }
-            }
-          };
-        }
-      }
-    }
-
-    //If the condition still can't be determined, then just had back one that returns false
-    return new Predicate() {
-      @Override
-      public boolean test(Object obj) {
-        return false;
-      }
-    };
+            })
+          //If the condition still can't be determined, then just had back one that returns false
+         .orElse(o -> false);
   }
 
   /**
@@ -115,27 +104,14 @@ public class RuleAdapter extends StandardDecision {
    */
   public Object getThen() {
     //Use what was explicitly set by then() first
-    if (Optional.ofNullable(super.getThen()).isPresent()) {
+    if (super.getThen() != null) {
       return super.getThen();
     }
 
     //If nothing was explicitly set, convert what's in the class to a BiFunction or a Function
-    Optional<BiFunction> biFunction = getThenMethodAsBiFunction();
-    if (biFunction.isPresent()) {
-      return biFunction.get();
-    }
-
-    Optional<Function> function = getThenMethodAsFunction();
-    if (function.isPresent()) {
-      return function.get();
-    }
     //If the action still can't be determined then just give back a Function that moves down the chain
-    return new Function<FactMap, RuleState>() {
-      @Override
-      public RuleState apply(FactMap factMap) {
-        return RuleState.NEXT;
-      }
-    };
+    return getThenMethodAsBiFunction().map(Object.class::cast)
+        .orElse(getThenMethodAsFunction().orElse(factMap -> RuleState.NEXT));
   }
 
   /**
@@ -155,7 +131,7 @@ public class RuleAdapter extends StandardDecision {
             } else {
               try {
                 Object value = getFactMap().getValue(given.value());
-                if (Optional.ofNullable(value).isPresent()) {
+                if (value != null) {
                   field.set(_ruleObj, value);
                 }
               } catch (Exception ex) {
@@ -177,32 +153,25 @@ public class RuleAdapter extends StandardDecision {
    * @return  A {@link BiFunction} for classes that have a @Then method and a @Result
    */
   private Optional<BiFunction> getThenMethodAsBiFunction() {
-    for (Method method : _ruleObj.getClass().getMethods()) {
-      for (Annotation annotation : method.getAnnotations()) {
-        Optional<Field> resultField = getResultField(_ruleObj);
-        if (annotation instanceof Then && resultField.isPresent()) {
-          return Optional.of(new BiFunction() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public Object apply(Object factMap, Object resultObj) {
-              try {
-                Object retVal = method.invoke(_ruleObj);
-                resultField.get().setAccessible(true);
-                Object resultVal = resultField.get().get(_ruleObj);
-                com.deliveredtechnologies.rulebook.Result result = (com.deliveredtechnologies.rulebook.Result)resultObj;
-                if (Optional.ofNullable(resultVal).isPresent()) {
-                  result.setValue(resultVal);
-                }
-                return retVal;
-              } catch (IllegalAccessException | InvocationTargetException ex) {
-                return RuleState.BREAK;
-              }
-            }
-          });
+    return getResultField(_ruleObj).flatMap(resultField -> Arrays.stream(_ruleObj.getClass().getMethods())
+        .filter(method -> Arrays.stream(method.getAnnotations()).anyMatch(Then.class::isInstance)).findFirst()
+        .map(method -> toBiFunction(method, resultField)));
+  }
+
+  private BiFunction toBiFunction(Method method, Field resultField) {
+    return (factMap, resultObj) -> {
+      try {
+        Object retVal = method.invoke(_ruleObj);
+        resultField.setAccessible(true);
+        Object resultVal = resultField.get(_ruleObj);
+        if (resultVal != null) {
+          ((com.deliveredtechnologies.rulebook.Result) resultObj).setValue(resultVal);
         }
+        return retVal;
+      } catch (IllegalAccessException | InvocationTargetException ex) {
+        return RuleState.BREAK;
       }
-    }
-    return Optional.empty();
+    };
   }
 
   /**
@@ -211,23 +180,19 @@ public class RuleAdapter extends StandardDecision {
    * @return  a {@link Function} from the @Then annotated method of the obejct
    */
   private Optional<Function> getThenMethodAsFunction() {
-    for (Method method : _ruleObj.getClass().getMethods()) {
-      for (Annotation annotation : method.getAnnotations()) {
-        if (annotation instanceof Then && !getResultField(_ruleObj).isPresent()) {
-          return Optional.of(new Function() {
-            @Override
-            public Object apply(Object obj) {
-              try {
-                return method.invoke(_ruleObj);
-              } catch (IllegalAccessException | InvocationTargetException ex) {
-                return RuleState.BREAK;
-              }
+    if (getResultField(_ruleObj).isPresent()) {
+      return Optional.empty();
+    }
+    return Arrays.stream(_ruleObj.getClass().getMethods())
+        .filter(method -> Arrays.stream(method.getAnnotations()).anyMatch(Then.class::isInstance))
+        .findFirst()
+        .map(method -> obj -> {
+            try {
+              return method.invoke(_ruleObj);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+              return RuleState.BREAK;
             }
           });
-        }
-      }
-    }
-    return Optional.empty();
   }
 
   /**
@@ -237,9 +202,7 @@ public class RuleAdapter extends StandardDecision {
    */
   private static Optional<Field> getResultField(Object obj) {
     return Stream.of(obj.getClass().getDeclaredFields())
-      .filter(field ->
-        Optional.ofNullable(field.getAnnotation(com.deliveredtechnologies.rulebook.annotation.Result.class)).isPresent()
-      )
-      .findFirst();
+        .filter(field -> field.isAnnotationPresent(com.deliveredtechnologies.rulebook.annotation.Result.class))
+        .findFirst();
   }
 }
