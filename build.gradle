@@ -65,9 +65,9 @@ modifyPom {
         inceptionYear '2017'
 
         scm {
-            url 'https://github.com/Clayton7510/RuleBook'
-            connection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
-            developerConnection 'scm:git:https://github.com/Clayton7510/RuleBook.git'
+            url 'git@github.com:Clayton7510/RuleBook'
+            connection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
+            developerConnection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
         }
 
         licenses {
@@ -83,6 +83,12 @@ modifyPom {
                 id 'Clayton7510'
                 name 'Clayton Long'
                 email 'Clayton7510@gmail.com'
+            }
+        }
+
+        contributors {
+            contributor {
+                name 'Nicholas Lambert'
             }
         }
     }

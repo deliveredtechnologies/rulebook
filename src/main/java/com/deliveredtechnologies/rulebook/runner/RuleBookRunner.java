@@ -54,7 +54,7 @@ public class RuleBookRunner extends DecisionBook {
     String pathName = packageName.replace(".", "/");
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     URL pathUrl = classLoader.getResource(pathName);
-    if (!Optional.ofNullable(pathUrl).isPresent()) {
+    if (pathUrl == null) {
       throw new InvalidPathException("'" + packageName + "' cannot be found by the ClassLoader", packageName);
     }
     try {

@@ -12,7 +12,7 @@ import com.deliveredtechnologies.rulebook.annotation.When;
  * Created by clong on 2/13/17.
  * Sample POJO rule with facts and a result.
  */
-@Rule
+@Rule(order = 2)
 public class SampleRuleWithResult {
   @Given("fact1")
   private Fact<String> _fact1;
@@ -37,7 +37,8 @@ public class SampleRuleWithResult {
    */
   @Then
   public RuleState then() {
-    _fact2.setValue("So Factual!");
+    _fact2.setValue("So Factual Too!");
+    _fact1.setValue("So Factual Too!");
     _result = "Equivalence, Bitches!";
     return RuleState.NEXT;
   }

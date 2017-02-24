@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -13,12 +14,12 @@ import java.util.function.Predicate;
  * StandardDecision is the standard implementation of {@link Decision}.
  */
 public class StandardDecision<T, U> implements Decision<T, U> {
-  private Rule<T> _nextRule;
+  private Optional<Rule<T>> _nextRule = Optional.empty();
   private FactMap<T> _facts = new FactMap<>();
   private Result<U> _result = new Result<>();
   private Predicate<FactMap<T>> _test;
   private Function<FactMap<T>, RuleState> _action;
-  private BiFunction<FactMap<T>, Result<U>, RuleState> _actionResult;
+  private Optional<BiFunction<FactMap<T>, Result<U>, RuleState>> _actionResult = Optional.empty();
 
   public StandardDecision() {
   }
@@ -54,7 +55,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   public void run() {
     if (getWhen().test(_facts)) {
       if (getThen() instanceof BiFunction) {
-        if (((BiFunction<FactMap<T>, Result<U>, RuleState>)getThen()).apply(_facts, _result) == BREAK) {
+        if (((BiFunction<FactMap<T>, Result<U>, RuleState>) getThen()).apply(_facts, _result) == BREAK) {
           return;
         }
       } else if (((Function<FactMap<T>, RuleState>)getThen()).apply(_facts) == BREAK) {
@@ -62,9 +63,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
       }
     }
 
-    if (Optional.ofNullable(this._nextRule).isPresent()) {
-      this._nextRule.run();
-    }
+    _nextRule.ifPresent(Rule::run);
   }
 
   /**
@@ -74,9 +73,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> given(Fact<T>... facts) {
-    for (Fact fact : facts) {
-      _facts.put(fact.getName(), fact);
-    }
+    Arrays.stream(facts).forEach(fact -> _facts.put(fact.getName(), fact));
 
     return this;
   }
@@ -88,9 +85,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> given(List<Fact<T>> facts) {
-    for (Fact fact : facts) {
-      _facts.put(fact.getName(), fact);
-    }
+    facts.forEach(fact -> _facts.put(fact.getName(), fact));
 
     return this;
   }
@@ -137,7 +132,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
-    _actionResult = action;
+    _actionResult = Optional.ofNullable(action);
     return this;
   }
 
@@ -147,7 +142,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public void setNextRule(Rule<T> rule) {
-    _nextRule = rule;
+    _nextRule = Optional.ofNullable(rule);
   }
 
   /**
@@ -184,6 +179,6 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   @Override
   public Object getThen() {
-    return Optional.ofNullable(_actionResult).isPresent() ? _actionResult : _action;
+    return _actionResult.map(Object.class::cast).orElse(_action);
   }
 }
