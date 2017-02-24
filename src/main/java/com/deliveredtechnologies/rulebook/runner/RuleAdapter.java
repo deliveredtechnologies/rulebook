@@ -15,12 +15,15 @@ import java.io.InvalidClassException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -126,24 +129,34 @@ public class RuleAdapter extends StandardDecision {
           if (field.getType() == Fact.class) {
             field.set(_ruleObj, getFactMap().get(given.value()));
           } else {
-            try {
-              Object value = getFactMap().getValue(given.value());
-              if (value != null) { //set the field to the Fact that has the name of the @Given value
-                field.set(_ruleObj, value);
-              } else if (field.getType().isArray()) { //set the field to an array of the objects
-                field.set(_ruleObj, getFactMap().values().stream()
-                    .filter(fact -> field.getType().getComponentType().equals(((Fact) fact).getValue().getClass()))
-                    .map(fact -> (String)((Fact)fact).getValue())
-                    .toArray(i -> new String[i]));
-
-              }
-            } catch (Exception ex) {
-              field.set(_ruleObj, null);
+            Object value = getFactMap().getValue(given.value());
+            if (value != null) { //set the field to the Fact that has the name of the @Given value
+              field.set(_ruleObj, value);
+            } else if (field.getType().isArray()) { //set an array of Fact object values
+              field.set(_ruleObj, getFactMap().values().stream()
+                  .filter(fact -> field.getType().getComponentType().equals(((Fact) fact).getValue().getClass()))
+                  .map(fact -> (String)((Fact)fact).getValue())
+                  .toArray(i -> new String[i]));
+            } else if (Collection.class.isAssignableFrom(field.getType())) { //set a Collection of Fact object values
+              field.set(_ruleObj, getFactMap().values().stream()
+                  .filter(fact -> { //filter on only facts that contain objects matching the generic type
+                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
+                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
+                      return genericType.equals(((Fact) fact).getValue().getClass());
+                    })
+                  .map(fact -> (String)((Fact)fact).getValue())
+                  .collect(Collectors.toList()));
             }
           }
-        } catch (IllegalAccessException ex) {
-          LOGGER.error("Unable to access field '" + field.getName() + "' in rule object '"
+        } catch (Exception ex) {
+          LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
               + _ruleObj.getClass() + "'");
+          try {
+            field.set(_ruleObj, null);
+          } catch (IllegalAccessException iax) {
+            LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
+                + _ruleObj.getClass() + "'", iax);
+          }
         }
       }
     }
