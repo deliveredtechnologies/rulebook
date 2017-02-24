@@ -127,7 +127,8 @@ project('rulebook-core') {
 project('rulebook-spring') {
 
     dependencies {
-        compile project(':rulebook-core')
+        compile project(":rulebook-core")
+        compile ("org.springframework:spring-context:4.3.6.RELEASE")
     }
 
     modifyPom {
