@@ -27,9 +27,11 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   /**
    * This create() method is a convenience method to avoid using new and generic syntax.
    *
-   * @param factType the type of object stored in facts for this Decision
-   * @param <T>      the class type of the objects in the Facts used
-   * @param <U>      the class type of object stored in the Result
+   * @param factType    the type of object stored in facts for this Decision
+   * @param returnType  the type of the stored Result
+   * @param <T>         the class type of the objects in the Facts used
+   * @param <U>         the class type of object stored in the Result
+   *
    * @return a new instance of StandardDecision
    */
   public static <T, U> StandardDecision<T, U> create(Class<T> factType, Class<U> returnType) {

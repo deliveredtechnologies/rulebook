@@ -14,106 +14,150 @@ plugins {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+    apply plugin: 'com.bmuschko.nexus'
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'idea'
-apply plugin: 'jacoco'
-apply plugin: 'checkstyle'
-apply plugin: 'com.bmuschko.nexus'
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
 
-repositories {
-    jcenter()
-    mavenCentral()
+    group = properties['project.group']
+    version = properties['project.version']
+    sourceCompatibility = properties['project.compatibility']
+    targetCompatibility = properties['project.compatibility']
+
+    dependencies {
+
+        compile("org.slf4j:slf4j-api:1.7.22")
+
+        testCompile("junit:junit:4.12")
+        //for mocking
+        testCompile("org.mockito:mockito-all:1.10.19")
+        testRuntime("cglib:cglib-nodep:3.1")
+        testRuntime("org.objenesis:objenesis:2.1")
+    }
+
+    compileJava.doFirst {
+        println "source compatibility  " + sourceCompatibility
+        println "target compatibility  " + targetCompatibility
+    }
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.destination "${buildDir}/reports/jacoco/test/"
+        }
+    }
+
+    nexus {
+        sign = true
+    }
+
+    checkstyle {
+        configFile = new File("${rootDir}/config/checkstyle/checkstyle.xml")
+        toolVersion = '6.7'
+        ignoreFailures = false
+    }
+
+    task checkstyleMainHtml << {
+        ant.xslt(in: checkstyleMain.reports.xml.destination,
+                style: file('../config/checkstyle/checkstyle.xsl'),
+                out: new File("${buildDir}/reports/checkstyle", 'main.html'))
+    }
+
+    task checkstyleTestHtml << {
+        ant.xslt(in: checkstyleTest.reports.xml.destination,
+                style: file('../config/checkstyle/checkstyle.xsl'),
+                out: new File("${buildDir}/reports/checkstyle", 'test.html'))
+    }
+    checkstyleMainHtml.dependsOn checkstyleMain
+    checkstyleTestHtml.dependsOn checkstyleTest
+    build.dependsOn jacocoTestReport, checkstyleMainHtml, checkstyleTestHtml
 }
 
-group = properties['project.group']
-version = properties['project.version']
-sourceCompatibility = properties['project.compatibility']
-targetCompatibility = properties['project.compatibility']
+project('rulebook-core') {
+    modifyPom {
+        project {
+            name 'RuleBook'
+            description 'A simple, intuitive rules abstraction for Java'
+            url 'https://github.com/Clayton7510/RuleBook'
+            inceptionYear '2017'
 
-dependencies {
+            scm {
+                url 'git@github.com:Clayton7510/RuleBook'
+                connection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
+                developerConnection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
+            }
 
-    compile("org.slf4j:slf4j-api:1.7.22")
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
 
-    testCompile("junit:junit:4.12")
-    //for mocking
-    testCompile("org.mockito:mockito-all:1.10.19")
-    testRuntime("cglib:cglib-nodep:3.1")
-    testRuntime("org.objenesis:objenesis:2.1")
-}
+            developers {
+                developer {
+                    id 'Clayton7510'
+                    name 'Clayton Long'
+                    email 'Clayton7510@gmail.com'
+                }
+            }
 
-
-compileJava.doFirst {
-    println "source compatibility  " + sourceCompatibility
-    println "target compatibility  " + targetCompatibility
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.destination "${buildDir}/reports/jacoco/test/"
+            contributors {
+                contributor {
+                    name 'Nicholas Lambert'
+                }
+            }
+        }
     }
 }
 
-modifyPom {
-    project {
-        name 'RuleBook'
-        description 'A simple, intuitive rules abstraction for Java'
-        url 'https://github.com/Clayton7510/RuleBook'
-        inceptionYear '2017'
+project('rulebook-spring') {
 
-        scm {
-            url 'git@github.com:Clayton7510/RuleBook'
-            connection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
-            developerConnection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
-        }
+    dependencies {
+        compile project(':rulebook-core')
+    }
 
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
+    modifyPom {
+        project {
+            name 'RuleBook'
+            description 'A simple, intuitive rules abstraction for Java'
+            url 'https://github.com/Clayton7510/RuleBook'
+            inceptionYear '2017'
+
+            scm {
+                url 'git@github.com:Clayton7510/RuleBook'
+                connection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
+                developerConnection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
             }
-        }
 
-        developers {
-            developer {
-                id 'Clayton7510'
-                name 'Clayton Long'
-                email 'Clayton7510@gmail.com'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
             }
-        }
 
-        contributors {
-            contributor {
-                name 'Nicholas Lambert'
+            developers {
+                developer {
+                    id 'Clayton7510'
+                    name 'Clayton Long'
+                    email 'Clayton7510@gmail.com'
+                }
             }
         }
     }
 }
-
-nexus {
-    sign = true
-}
-
-checkstyle {
-    toolVersion = '6.7'
-    ignoreFailures = false
-}
-
-task checkstyleMainHtml << {
-    ant.xslt(in: checkstyleMain.reports.xml.destination,
-            style: file('./config/checkstyle/checkstyle.xsl'),
-            out: new File("${buildDir}/reports/checkstyle", 'main.html'))
-}
-
-task checkstyleTestHtml << {
-    ant.xslt(in: checkstyleTest.reports.xml.destination,
-            style: file('./config/checkstyle/checkstyle.xsl'),
-            out: new File("${buildDir}/reports/checkstyle", 'test.html'))
-}
-checkstyleMainHtml.dependsOn checkstyleMain
-checkstyleTestHtml.dependsOn checkstyleTest
-build.dependsOn jacocoTestReport, checkstyleMainHtml, checkstyleTestHtml
