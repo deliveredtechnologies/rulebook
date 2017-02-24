@@ -20,6 +20,9 @@ public class SampleRuleWithResult {
   @Given("fact2")
   private Fact<String> _fact2;
 
+  @Given
+  private String[] _strArray;
+
   @Given("value1")
   private int _value1;
 
@@ -49,6 +52,10 @@ public class SampleRuleWithResult {
 
   public String getFact2() {
     return _fact2.getValue();
+  }
+
+  public String[] getStrArray() {
+    return _strArray;
   }
 
   public int getValue1() {
