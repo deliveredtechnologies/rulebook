@@ -8,6 +8,8 @@ import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
+import java.util.List;
+
 /**
  * Created by clong on 2/13/17.
  * Sample POJO rule with facts and a result.
@@ -19,6 +21,12 @@ public class SampleRuleWithResult {
 
   @Given("fact2")
   private Fact<String> _fact2;
+
+  @Given
+  private String[] _strArray;
+
+  @Given
+  private List<String> _strList;
 
   @Given("value1")
   private int _value1;
@@ -49,6 +57,14 @@ public class SampleRuleWithResult {
 
   public String getFact2() {
     return _fact2.getValue();
+  }
+
+  public String[] getStrArray() {
+    return _strArray;
+  }
+
+  public List<String> get_strList() {
+    return _strList;
   }
 
   public int getValue1() {
