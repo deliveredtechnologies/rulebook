@@ -196,7 +196,7 @@ public class HelloWorld {
   }
   
   @Then
-  public boolean then() {
+  public RuleState.BREAK then() {
     helloworld = hello + " " + world;
     return RuleState.BREAK;
   }
