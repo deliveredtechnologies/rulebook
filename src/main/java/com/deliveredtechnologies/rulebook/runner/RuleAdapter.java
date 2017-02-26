@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InvalidClassException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -132,19 +133,18 @@ public class RuleAdapter extends StandardDecision {
             Object value = getFactMap().getValue(given.value());
             if (value != null) { //set the field to the Fact that has the name of the @Given value
               field.set(_ruleObj, value);
-            } else if (field.getType().isArray()) { //set an array of Fact object values
-              field.set(_ruleObj, getFactMap().values().stream()
-                  .filter(fact -> field.getType().getComponentType().equals(((Fact) fact).getValue().getClass()))
-                  .map(fact -> (String)((Fact)fact).getValue())
-                  .toArray(i -> new String[i]));
-            } else if (Collection.class.isAssignableFrom(field.getType())) { //set a Collection of Fact object values
+            } else if (List.class.isAssignableFrom(field.getType())) { //set a List of Fact object values
               field.set(_ruleObj, getFactMap().values().stream()
                   .filter(fact -> { //filter on only facts that contain objects matching the generic type
                       ParameterizedType paramType = (ParameterizedType)field.getGenericType();
                       Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
                       return genericType.equals(((Fact) fact).getValue().getClass());
                     })
-                  .map(fact -> (String)((Fact)fact).getValue())
+                  .map(fact -> {
+                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
+                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
+                      return genericType.cast(((Fact)fact).getValue());
+                    })
                   .collect(Collectors.toList()));
             }
           }
