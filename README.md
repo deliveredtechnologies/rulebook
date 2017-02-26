@@ -8,10 +8,10 @@
 
 **Current Maven Releases**
 
-| Build     | Group                   | Artifact |  Version      |
-|---        |---                      |---       |---            |
-|Release    |com.deliveredtechnologies|rulebook  |0.2.2          |
-|Development|com.deliveredtechnologies|rulebook  |0.2.3-SNAPSHOT |
+| Build     | Group                   | Artifact |  Version      |Repository                                              |
+|---        |---                      |---       |---            |---                                                     |
+|Release    |com.deliveredtechnologies|rulebook  |0.2.2          |Maven Central                                           |
+|Development|com.deliveredtechnologies|rulebook  |0.2.3-SNAPSHOT |[Sonatype](https://oss.sonatype.org/content/repositories/snapshots/)|
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines require a bunch of annotations or they have other specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of special annotations or other specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
@@ -125,7 +125,7 @@ public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
       .then(f -> BREAK)
     );
 
-    //if everyone has a credit score of over 700 then the loan is approved
+    //if everyone has a credit score of 700 or more then the loan is approved
     addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
       .when(factMap -> factMap.values().stream()
         .allMatch(applicantFact -> applicantFact.getValue().getCreditScore() >= 700))
@@ -207,6 +207,92 @@ public static void main(String args[]) {
   System.out.println(ruleBook.getResult()); //prints "Hello World"
 }
 ```
+
+**The MegaBank Example With POJOs**
+
+```java
+@Rule(order = 1) //order specifies the order the rule should execute in; if not specified, any order may be used
+public class ApplicantNumberRule {
+  @Given
+  private List<ApplicantBean> applicants; //Annotated Lists get injected with all Facts of the declared generic type
+
+  @When
+  public boolean when() {
+    return applicants.size() > 3;
+  }
+
+  @Then
+  public RuleState then() {
+    return RuleState.BREAK;
+  }
+}
+```
+```java
+@Rule(order = 2)
+public class CreditScoreRule {
+  @Given
+  private List<ApplicantBean> applicants;
+
+  @Result
+  private boolean approved;
+    
+  @When
+  public boolean when() {
+    return applicants.stream()
+      .allMatch(applicant -> applicant.getCreditScore() >= 700);
+  }
+
+  @Then
+  public RuleState then() {
+    approved = true;
+    return RuleState.NEXT;
+  }
+}
+```
+```java
+@Rule(order = 3)
+public class CashOnHandRule {
+  @Given
+  List<ApplicantBean> applicants; 
+
+  @Result
+  private boolean approved;
+
+  @When
+  public boolean when() {
+    return applicants.stream()
+      .allMatch(applicant -> applicant.getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0);
+  }
+
+  @Then
+  public RuleState then() {
+    approved = true;
+    return RuleState.BREAK;
+  }
+}
+```
+```java
+public static void main(String[] args) {
+  RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook");
+  ruleBook.withDeafultResult(false)
+    .given(
+      new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
+      new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
+    .run();
+  boolean approval = (boolean)ruleBook.getResult();
+  System.out.println("Application is " + (approval ? "approved!" : "not approved!"));
+}
+```
+
+_Some Important Things to Note About POJOs..._
+* The order property on the @Rule annotation groups the order that rules are executed in.
+* Only Lists are injected with multiple Facts based on the type of the Facts.
+* If the object type of a Fact is declared as a @Given, it's state won't be changed outsite the instance of the POJO rule.
+* If a Fact is declared as a @Given, any state changes made in the POJO rule instance seen after the rule completes.
+* The when() and then() methods don't have to be declared when() and then(), they just have to be annotated.
+* The annotated @When method must have no arguments and it must return a boolean result.
+* The annotated @Then method must have no arguments and it must return a RuleState result.
+
 
 <hr/>
 
