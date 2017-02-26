@@ -196,7 +196,7 @@ public class HelloWorld {
   }
   
   @Then
-  public RuleState.BREAK then() {
+  public RuleState then() {
     helloworld = hello + " " + world;
     return RuleState.BREAK;
   }
