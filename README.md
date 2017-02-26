@@ -198,6 +198,7 @@ public class HelloWorld {
   @Then
   public boolean then() {
     helloworld = hello + " " + world;
+    return RuleState.BREAK;
   }
 }
 ```
