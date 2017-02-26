@@ -177,6 +177,7 @@ As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annot
 package com.example.pojorules
 
 import com.deliveredtechnologies.rulebook.annotations.*;
+import com.deliveredtechnologies.rulebook.RuleState;
 
 @Rule
 public class HelloWorld {
