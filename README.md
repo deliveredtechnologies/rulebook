@@ -1,23 +1,23 @@
+[RuleBook Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook|0.2.3|
+
 # RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
 **&raquo; A Simple, Intuitive Rules Abstraction for Java** <br/><sub> _100% Java_ &middot; _Lambda Enabled_ &middot; _Simple, Intuitive DSL_ &middot; _Lightweight_ </sub>
 
 ---
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)](http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook|0.2.2|) [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)][RuleBook Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 **Current Maven Releases**
 
 | Build     | Group                   | Artifact |  Version      |Repository                                              |
 |---        |---                      |---       |---            |---                                                     |
-|Release    |com.deliveredtechnologies|rulebook  |0.2.2          |Maven Central                                           |
-|Development|com.deliveredtechnologies|rulebook  |0.2.3-SNAPSHOT |[Sonatype](https://oss.sonatype.org/content/repositories/snapshots/)|
-
+|Release    |com.deliveredtechnologies|rulebook  |0.2.3          |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)][RuleBook Maven Central] |
+|Development|com.deliveredtechnologies|rulebook  |0.2.4-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 
 ### Why Another Rules Abstraction?
-Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines require a bunch of annotations or they have other specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of special annotations or other specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
+Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines have other specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
 
-RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from eachother? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for.
+RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from each other? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for.
 
 ### How Does RuleBook Work?
 RuleBook is a rules abstraction based on the Chain of Responsibility pattern. Each rule specified in a RuleBook is chained together in the order in which it is specified. As one rule completes, the next rule is evaluated. Any rule can break the chain by returning RuleState.BREAK from the 'then' Function in the rule.
@@ -288,7 +288,7 @@ public static void main(String[] args) {
 _Some Important Things to Note About POJOs..._
 * The order property on the @Rule annotation groups the order that rules are executed in.
 * Only Lists are injected with multiple Facts based on the type of the Facts.
-* If the object type of a Fact is declared as a @Given, it's state won't be changed outsite the instance of the POJO rule.
+* If the object type of a Fact is declared as a @Given, its state won't be changed outsite the instance of the POJO rule.
 * If a Fact is declared as a @Given, any state changes made in the POJO rule instance seen after the rule completes.
 * The when() and then() methods don't have to be declared when() and then(), they just have to be annotated.
 * The annotated @When method must have no arguments and it must return a boolean result.
@@ -315,5 +315,3 @@ Contributions must adhere to the following criteria:
 8. The version number in gradle.properties should match the milestone of the issue its associated with appended with _-SNAPSHOT_ (ex. 0.2-SNAPSHOT)
 
 Anyone may submit an issue, which can be either an enhancement/feature request or a bug to be remediated. If a feature request or a bug is approved, completed and an associated pull request is submitted that adheres to the above criteria, then the pull request will be merged and the contributor will be added to the list of contributors in the following release.
-
-
