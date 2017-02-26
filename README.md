@@ -10,7 +10,7 @@
 
 | Build     | Group                   | Artifact |  Version      |Repository                                              |
 |---        |---                      |---       |---            |---                                                     |
-|Release    |com.deliveredtechnologies|rulebook  |0.2.2          |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)](http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook|0.2.2|)|
+|Release    |com.deliveredtechnologies|rulebook  |0.2.2          |   |
 |Development|com.deliveredtechnologies|rulebook  |0.2.3-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/Sonatype-SNAPSHOT-blue.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 
 
