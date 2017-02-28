@@ -57,7 +57,9 @@ public class RuleAdapterTest {
 
     Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
+    Assert.assertEquals(2, sampleRuleWithResult.getStrList().size());
     Assert.assertEquals(1, sampleRuleWithResult.getValue1());
+    Assert.assertNull(sampleRuleWithResult.getValueSet());
   }
 
   @Test
