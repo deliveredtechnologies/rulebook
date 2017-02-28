@@ -8,7 +8,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)][RuleBook Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-_The Case for RuleBook: [A Small Step Towards Simplfying Software Development](https://medium.com/@claytonlong_34858/a-small-step-towards-simplifying-software-development-3171846f5102#.1o185skm8)_
+__*The Case for RuleBook: [A Small Step Towards Simplfying Software Development](https://medium.com/@claytonlong_34858/a-small-step-towards-simplifying-software-development-3171846f5102#.1o185skm8)*__
 
 **Current Maven Releases**
 
