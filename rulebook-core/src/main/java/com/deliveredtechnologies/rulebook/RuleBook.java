@@ -24,6 +24,7 @@ public abstract class RuleBook<T> {
    */
   public final void run() {
     defineRules();
+    _headRule.ifPresent(rule -> rule.given(_facts));
     _headRule.ifPresent(Rule::run);
   }
 
@@ -50,7 +51,6 @@ public abstract class RuleBook<T> {
       return;
     }
 
-    rule.given(_facts);
     if (!_headRule.isPresent()) {
       _headRule = Optional.of(rule); // this rule is the head if there was no head
       _tailRule = rule;

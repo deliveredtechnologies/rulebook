@@ -65,6 +65,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
       }
     }
 
+    _nextRule.ifPresent(rule -> rule.given(_facts));
     _nextRule.ifPresent(Rule::run);
   }
 

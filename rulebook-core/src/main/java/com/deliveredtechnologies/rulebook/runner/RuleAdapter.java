@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InvalidClassException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +45,7 @@ public class RuleAdapter extends StandardDecision {
    * @throws InvalidClassException  if the POJO does not have the @Rule annotation
    */
   public RuleAdapter(Object ruleObj) throws InvalidClassException {
-    if (ruleObj.getClass().getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class) == null) {
+    if (getAnnotation(ruleObj.getClass(), com.deliveredtechnologies.rulebook.annotation.Rule.class) == null) {
       throw new InvalidClassException(ruleObj.getClass() + " is not a Rule; missing @Rule annotation");
     }
     _ruleObj = ruleObj;
@@ -219,5 +220,22 @@ public class RuleAdapter extends StandardDecision {
     return Stream.of(obj.getClass().getDeclaredFields())
         .filter(field -> field.isAnnotationPresent(com.deliveredtechnologies.rulebook.annotation.Result.class))
         .findFirst();
+  }
+
+  /**
+   * Method getAnnotation returns the annotation on a class or its parent annotation
+   * @param clazz       the annotated class
+   * @param annotation  the annotation to find
+   * @param <A>         the type of the annotation
+   * @return            the actual annotation used or null if it doesn't exist
+   */
+  private static <A extends Annotation> A getAnnotation(Class<?> clazz, Class<A> annotation) {
+    return Optional.ofNullable(clazz.getAnnotation(annotation)).orElse((A)
+      Arrays.stream(clazz.getDeclaredAnnotations())
+        .flatMap(anno -> Arrays.stream(anno.getClass().getInterfaces())
+          .flatMap(iface -> Arrays.stream(iface.getDeclaredAnnotations())))
+        .filter(pAnno -> annotation.isInstance(pAnno))
+        .findFirst().orElse(null)
+    );
   }
 }
