@@ -21,9 +21,11 @@ jdk:
 script:
   - cd ./rulebook-core
   - gradle check
+  - gradle jacocoTestReport
   - gradle coveralls
   - cd ../rulebook-spring
   - gradle check
+  - gradle jacocoTestReport
   - gradle coveralls
 after_success:
   - ./travis/deploy.sh
