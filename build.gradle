@@ -191,5 +191,5 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
 task copySource(type: Copy) {
     println("${buildDir}")
     from subprojects.collect { it.sourceSets.main.allSource }
-    into "${projectDir}/src/main/"
+    into "${projectDir}/src/main/java/"
 }
