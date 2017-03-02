@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import java.io.InvalidClassException;
+
 /**
  * Created by clong on 2/27/17.
  * Test configuration for rulebook-spring.
@@ -26,9 +28,13 @@ public class TestConfig {
    */
   @Bean
   @Scope("prototype")
-  public RuleBookBean ruleBookBean() {
+  public RuleBookBean ruleBookBean()  {
     RuleBookBean ruleBookBean = new RuleBookBean();
-    ruleBookBean.addRule(_context.getBean(SpringRuleWithResult.class));
+    try {
+      ruleBookBean.addRule(_context.getBean(SpringRuleWithResult.class));
+    } catch (InvalidClassException e) {
+      e.printStackTrace();
+    }
     ruleBookBean.addRule(StandardDecision.create(String.class, String.class)
         .when(factMap -> true)
         .then((factMap, result) -> {

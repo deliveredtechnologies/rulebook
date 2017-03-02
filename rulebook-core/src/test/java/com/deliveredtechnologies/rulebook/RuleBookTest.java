@@ -36,9 +36,7 @@ public class RuleBookTest {
     ruleBook.run();
 
     verify(rule1, times(1)).given(anyList());
-    verify(rule2, times(1)).given(anyList());
     verify(rule1, times(1)).setNextRule(rule2);
-    verify(rule3, times(1)).given(anyList());
     verify(rule2, times(1)).setNextRule(rule3);
     verify(ruleBook, times(1)).defineRules();
     verify(rule1, times(1)).run();

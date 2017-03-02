@@ -43,4 +43,10 @@ public class RuleBookBeanTest {
     Assert.assertEquals((String) ruleBookBean.getResult(), "SecondRule");
     Assert.assertEquals(fact2.getValue(), "value2");
   }
+
+  @Test(expected = InvalidClassException.class)
+  public void ruleBookBeanShouldHandlePojosInRuleAdapterWithNoAnnotation() throws InvalidClassException {
+    RuleBookBean ruleBookBean = new RuleBookBean();
+    ruleBookBean.addRule(new Object());
+  }
 }
