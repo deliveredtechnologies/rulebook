@@ -11,6 +11,7 @@ branches:
   only:
   - master
   - develop
+  - Issue4_Springify
 cache:
   directories:
     - $HOME/.m2/repository
@@ -19,7 +20,6 @@ jdk:
   - oraclejdk8
 script:
   - ./gradlew check
-  - ./gradlew jacocoTestReport
   - ./gradlew coveralls
 after_success:
   - ./travis/deploy.sh
