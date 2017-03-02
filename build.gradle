@@ -57,13 +57,9 @@ subprojects {
     }
 
     jacocoTestReport {
-        println("1")
         additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
-        println("1")
         sourceDirectories = files(sourceSets.main.allSource.srcDirs)
-        println("1")
         classDirectories =  files(sourceSets.main.output)
-        println("1")
         reports {
             xml.enabled true
             csv.enabled false

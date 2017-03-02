@@ -19,6 +19,8 @@ cache:
 jdk:
   - oraclejdk8
 script:
-  - ./gradlew check jacocoRootReport coveralls
+  - ./gradlew check
+  - ./gradlew check jacocoRootReport
+  - ./gradlew coveralls
 after_success:
   - ./travis/deploy.sh
