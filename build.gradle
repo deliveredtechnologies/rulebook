@@ -15,19 +15,21 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
 
-subprojects {
-
-    apply plugin: 'java'
-    apply plugin: 'idea'
+allprojects {
     apply plugin: 'jacoco'
-    apply plugin: 'checkstyle'
-    apply plugin: 'com.github.kt3k.coveralls'
-    apply plugin: 'com.bmuschko.nexus'
 
     repositories {
         jcenter()
         mavenCentral()
     }
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'checkstyle'
+    apply plugin: 'com.bmuschko.nexus'
 
     group = properties['project.group']
     version = properties['project.version']
@@ -55,6 +57,13 @@ subprojects {
     }
 
     jacocoTestReport {
+        println("1")
+        additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
+        println("1")
+        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+        println("1")
+        classDirectories =  files(sourceSets.main.output)
+        println("1")
         reports {
             xml.enabled true
             csv.enabled false
@@ -83,6 +92,7 @@ subprojects {
                 style: file('../config/checkstyle/checkstyle.xsl'),
                 out: new File("${buildDir}/reports/checkstyle", 'test.html'))
     }
+
     checkstyleMainHtml.dependsOn checkstyleMain
     checkstyleTestHtml.dependsOn checkstyleTest
     build.dependsOn jacocoTestReport, checkstyleMainHtml, checkstyleTestHtml
@@ -164,5 +174,19 @@ project('rulebook-spring') {
                 }
             }
         }
+    }
+}
+
+task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+    dependsOn = subprojects.test
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
+        html.destination "${buildDir}/reports/jacoco/test/"
     }
 }

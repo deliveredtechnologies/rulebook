@@ -19,13 +19,6 @@ cache:
 jdk:
   - oraclejdk8
 script:
-  - cd ./rulebook-core
-  - gradle check
-  - gradle jacocoTestReport
-  - gradle coveralls
-  - cd ../rulebook-spring
-  - gradle check
-  - gradle jacocoTestReport
-  - gradle coveralls
+  - ./gradlew check jacocoRootReport coveralls
 after_success:
   - ./travis/deploy.sh
