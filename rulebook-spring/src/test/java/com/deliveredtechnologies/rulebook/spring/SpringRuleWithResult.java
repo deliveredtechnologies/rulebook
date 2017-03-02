@@ -26,6 +26,10 @@ public class SpringRuleWithResult {
     return _value1.equals(_value2.getValue());
   }
 
+  /**
+   * The then() action.
+   * @return  RuleState.NEXT
+   */
   @Then
   public RuleState then() {
     _value2.setValue("value2");
