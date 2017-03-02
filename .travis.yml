@@ -19,6 +19,10 @@ cache:
 jdk:
   - oraclejdk8
 script:
+  - cd rulebook-core
+  - ./gradlew check
+  - ./gradlew coveralls
+  - cd rulebook-spring
   - ./gradlew check
   - ./gradlew coveralls
 after_success:
