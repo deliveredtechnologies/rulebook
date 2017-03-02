@@ -20,10 +20,10 @@ jdk:
   - oraclejdk8
 script:
   - cd rulebook-core
-  - ./gradlew check
-  - ./gradlew coveralls
+  - gradle check
+  - gradle coveralls
   - cd rulebook-spring
-  - ./gradlew check
-  - ./gradlew coveralls
+  - gradle check
+  - gradle coveralls
 after_success:
   - ./travis/deploy.sh
