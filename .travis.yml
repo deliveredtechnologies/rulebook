@@ -20,7 +20,7 @@ jdk:
   - oraclejdk8
 script:
   - ./gradlew check
-  - ./gradlew check jacocoRootReport
+  - ./gradlew jacocoRootReport
   - ./gradlew coveralls
 after_success:
   - ./travis/deploy.sh
