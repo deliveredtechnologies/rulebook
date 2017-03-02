@@ -223,7 +223,7 @@ public class RuleAdapter extends StandardDecision {
   }
 
   /**
-   * Method getAnnotation returns the annotation on a class or its parent annotation
+   * Method getAnnotation returns the annotation on a class or its parent annotation.
    * @param clazz       the annotated class
    * @param annotation  the annotation to find
    * @param <A>         the type of the annotation
