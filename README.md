@@ -12,10 +12,11 @@ _The Case for RuleBook: [A Small Step Towards Simplfying Software Development](h
 
 **Current Maven Releases**
 
-| Build     | Group                   | Artifact |  Version      |Repository                                              |
-|---        |---                      |---       |---            |---                                                     |
+| Build     | Group                   | Artifact |  Version      |Repository |
+|---        |---                      |---       |---            |---        |
 |Release    |com.deliveredtechnologies|rulebook  |0.2.3          |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)][RuleBook Maven Central] |
-|Development|com.deliveredtechnologies|rulebook  |0.2.4-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
+|Development|com.deliveredtechnologies|rulebook-core  |0.3-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
+|Development|com.deliveredtechnologies|rulebook-spring  |0.3-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines have other specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
