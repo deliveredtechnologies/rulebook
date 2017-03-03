@@ -11,11 +11,11 @@ import java.lang.annotation.Target;
 
 /**
  * Created by clong on 2/23/17.
+ * RuleBean is an annotation for Spring enabled rules.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Rule
 @Component
 @Scope("prototype")
-public @interface RuleBean {
-}
+public @interface RuleBean { }
