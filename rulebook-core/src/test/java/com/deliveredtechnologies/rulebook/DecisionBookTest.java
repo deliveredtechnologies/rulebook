@@ -96,7 +96,7 @@ public class DecisionBookTest {
         );
       }
     };
-    decisionBook.withDeafultResult(new StringBuffer()).given(hello, world).run();
+    decisionBook.withDefaultResult(new StringBuffer()).given(hello, world).run();
     Assert.assertEquals(decisionBook.getResult().toString(), "HelloWorld");
   }
 }
