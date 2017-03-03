@@ -175,7 +175,7 @@ project('rulebook-spring') {
 
 task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn subprojects.test
-    sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
     classDirectories =  files(subprojects.sourceSets.main.output)
     executionData = files(subprojects.jacocoTestReport.executionData)
     reports {
@@ -185,10 +185,4 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.destination "${buildDir}/reports/jacoco/test/"
     }
-}
-
-task copySource(type: Copy) {
-    println("${buildDir}")
-    from subprojects.collect { it.sourceSets.main.allSource }
-    into "${projectDir}/src/main/java/"
 }
