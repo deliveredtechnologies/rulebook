@@ -170,7 +170,7 @@ In the above example, the default Result value was initialized to false. So, unl
 
 One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
 
-### _New in v0.2: POJO Rules!_
+### _POJO Rules_
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
@@ -289,6 +289,67 @@ public static void main(String[] args) {
   boolean approval = (boolean)ruleBook.getResult();
   System.out.println("Application is " + (approval ? "approved!" : "not approved!"));
 }
+```
+###_Using RuleBook with Spring_
+
+RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
+
+**Creating a Spring Enabled POJO Rule**
+```java
+@RuleBean
+public class HelloSpringRule {
+  @Given
+  private String hello;
+  
+  @Result
+  private String result;
+  
+  @When
+  public boolean when() {
+    return hello.equalsIgnoreCase("Hello");
+  }
+  
+  @Then
+  public RuleState then() {
+    result = "Hello ";
+    return RuleState.NEXT;
+  }
+}
+```
+
+**Configuring a RuleBook in Spring**
+```java
+@Configuration
+public class SpringConfig {
+  @Autowired
+  private ApplicationContext context;
+  
+  @Bean
+  @Scope("prototype")
+  public RuleBookBean ruleBookBean() throws InvalidClassException {
+    RuleBookBean ruleBookBean = new RuleBookBean();
+    ruleBookBean.addRule(context.getBean(HelloSpringRule.class)); //add a Spring enabled POJO rule
+    ruleBookBean.addRule(StandardDecision.create()
+      .when(factMap -> factMap.getValue("world").equalsIgnoreCase("World"))
+      .then((factMap, result) -> {
+        result += "World";
+        return RuleState.BREAK;
+      });
+    return ruleBookBean;
+  }
+}
+```
+
+**Using a Spring Enabled RuleBook**
+```java
+  @Autowired
+  private ApplicationContext context;
+  
+  public void someMethod() {
+    RuleBookBean ruleBook = context.getBean(RuleBookBean.class));
+    ruleBook.given(new Fact("hello"), new Fact("hello")).run(); 
+    System.out.println(ruleBook.getResult()); //prints "Hello World"
+  }
 ```
 
 _Some Important Things to Note About POJOs..._
