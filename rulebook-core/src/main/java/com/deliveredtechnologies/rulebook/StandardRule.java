@@ -53,6 +53,8 @@ public class StandardRule<T> implements Rule<T> {
         return;
       }
     }
+
+    _nextRule.ifPresent(rule -> rule.given(_facts));
     _nextRule.ifPresent(Rule::run);
   }
 
