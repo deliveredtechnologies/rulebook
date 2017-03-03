@@ -20,7 +20,6 @@ jdk:
 script:
   - ./gradlew check
   - ./gradlew jacocoRootReport
-  - ./gradlew copySource
   - ./gradlew coveralls
 after_success:
   - ./travis/deploy.sh

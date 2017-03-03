@@ -187,11 +187,3 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     }
 }
 
-task copySource(type: Copy) {
-    from subprojects.sourceSets.main.allSource
-    into "${rootDir}/src/main/java"
-}
-
-clean.doFirst {
-    delete "${rootDir}/src"
-}
