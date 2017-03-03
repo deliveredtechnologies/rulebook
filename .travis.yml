@@ -11,7 +11,6 @@ branches:
   only:
   - master
   - develop
-  - Issue4_Springify
 cache:
   directories:
     - $HOME/.m2/repository
