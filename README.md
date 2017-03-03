@@ -290,6 +290,16 @@ public static void main(String[] args) {
   System.out.println("Application is " + (approval ? "approved!" : "not approved!"));
 }
 ```
+
+_Some Important Things to Note About POJOs..._
+* The order property on the @Rule annotation groups the order that rules are executed in.
+* Only Lists are injected with multiple Facts based on the type of the Facts.
+* If the object type of a Fact is declared as a @Given, its state won't be changed outsite the instance of the POJO rule.
+* If a Fact is declared as a @Given, any state changes made in the POJO rule instance seen after the rule completes.
+* The when() and then() methods don't have to be declared when() and then(), they just have to be annotated.
+* The annotated @When method must have no arguments and it must return a boolean result.
+* The annotated @Then method must have no arguments and it must return a RuleState result.
+
 ###_Using RuleBook with Spring_
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
@@ -351,16 +361,6 @@ public class SpringConfig {
     System.out.println(ruleBook.getResult()); //prints "Hello World"
   }
 ```
-
-_Some Important Things to Note About POJOs..._
-* The order property on the @Rule annotation groups the order that rules are executed in.
-* Only Lists are injected with multiple Facts based on the type of the Facts.
-* If the object type of a Fact is declared as a @Given, its state won't be changed outsite the instance of the POJO rule.
-* If a Fact is declared as a @Given, any state changes made in the POJO rule instance seen after the rule completes.
-* The when() and then() methods don't have to be declared when() and then(), they just have to be annotated.
-* The annotated @When method must have no arguments and it must return a boolean result.
-* The annotated @Then method must have no arguments and it must return a RuleState result.
-
 
 <hr/>
 
