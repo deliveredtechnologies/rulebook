@@ -38,7 +38,7 @@ public class RuleBookBeanTest {
     RuleBookBean ruleBookBean = _context.getBean(RuleBookBean.class);
     Fact<String> fact1 = new Fact<>("value1", "value");
     Fact<String> fact2 = new Fact<>("value2", "value");
-    ruleBookBean.withDeafultResult(false).given(fact1, fact2).run();
+    ruleBookBean.withDefaultResult(false).given(fact1, fact2).run();
 
     Assert.assertEquals((String) ruleBookBean.getResult(), "SecondRule");
     Assert.assertEquals(fact2.getValue(), "value2");
