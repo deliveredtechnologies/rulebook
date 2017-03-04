@@ -19,7 +19,7 @@
 |com.deliveredtechnologies|rulebook-core  |0.3 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Core Maven Central]|
 |com.deliveredtechnologies|rulebook-spring  |0.3 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Spring Maven Central]|
 
-**Current Maven _Development_ Releases**
+**Current Maven _Development_ Releases** &raquo; For those who like to live dangerously...
 
 | Group                   | Artifact |  Version      |Repository |
 |---                      |---       |---            |---        |
