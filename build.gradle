@@ -99,7 +99,7 @@ project('rulebook-core') {
     modifyPom {
         project {
             name 'RuleBook'
-            description 'A simple, intuitive rules abstraction for Java'
+            description 'A simple and intuitive rules abstraction for Java'
             url "${properties['project.compatibility']}"
             inceptionYear "${properties['project.inceptionYear']}"
 
