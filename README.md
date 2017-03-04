@@ -16,8 +16,8 @@
 
 | Build     | Group                   | Artifact |  Version      |Repository |
 |---        |---                      |---       |---            |---        |
-|Release|com.deliveredtechnologies|rulebook-core  |0.3-SNAPSHOT |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Core Maven Central]|
-|Release|com.deliveredtechnologies|rulebook-spring  |0.3-SNAPSHOT |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Spring Maven Central]|
+|Release|com.deliveredtechnologies|rulebook-core  |0.3 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Core Maven Central]|
+|Release|com.deliveredtechnologies|rulebook-spring  |0.3 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Spring Maven Central]|
 |Development|com.deliveredtechnologies|rulebook-core  |0.3.1-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 |Development|com.deliveredtechnologies|rulebook-spring  |0.3.1-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 
