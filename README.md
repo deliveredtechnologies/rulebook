@@ -23,8 +23,8 @@
 
 | Group                   | Artifact |  Version      |Repository |
 |---                      |---       |---            |---        |
-|com.deliveredtechnologies|rulebook-core  |0.3 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Core Maven Central]|
-|com.deliveredtechnologies|rulebook-spring  |0.3 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Spring Maven Central]|
+|com.deliveredtechnologies|rulebook-core  |0.3.1-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
+|com.deliveredtechnologies|rulebook-spring  |0.3.1-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 
 ### Why Another Rules Abstraction?
 Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines have other specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
