@@ -94,7 +94,7 @@ subprojects {
     build.dependsOn jacocoTestReport, checkstyleMainHtml, checkstyleTestHtml
 }
 
-project('rulebook') {
+project('rulebook-core') {
     modifyPom {
         project {
             name 'RuleBook'
