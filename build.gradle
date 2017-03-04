@@ -16,7 +16,6 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-    apply plugin: 'java'
     apply plugin: 'jacoco'
 
     repositories {
@@ -27,6 +26,7 @@ allprojects {
 
 subprojects {
 
+    apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'checkstyle'
     apply plugin: 'com.bmuschko.nexus'
@@ -94,7 +94,7 @@ subprojects {
     build.dependsOn jacocoTestReport, checkstyleMainHtml, checkstyleTestHtml
 }
 
-project('rulebook-core') {
+project('rulebook') {
     modifyPom {
         project {
             name 'RuleBook'
