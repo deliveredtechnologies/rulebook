@@ -16,7 +16,7 @@ public abstract class DecisionBook<T, U> extends RuleBook<T> {
    * @param result the initial value of the stored result
    * @return the current DecisionBook object
    */
-  public final DecisionBook<T, U> withDeafultResult(U result) {
+  public final DecisionBook<T, U> withDefaultResult(U result) {
     _result.setValue(result);
     return this;
   }

@@ -6,9 +6,10 @@
 
 ---
 
+<sub>&nbsp;[How It Works](#how-does-rulebook-work) &raquo; [Using RuleBook](#using-rulebook) &raquo; [POJO Rules](#pojo-rules) &raquo; [RuleBook with Spring](#using-rulebook-with-spring) &raquo; [Contributing](#want-to-contribute)</sub>
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.deliveredtechnologies/rulebook/badge.svg?style=flat&maxAge=600)][RuleBook Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-_The Case for RuleBook: [A Small Step Towards Simplfying Software Development](https://medium.com/@claytonlong_34858/a-small-step-towards-simplifying-software-development-3171846f5102#.1o185skm8)_
 
 **Current Maven Releases**
 
@@ -29,6 +30,8 @@ RuleBook is a rules abstraction based on the Chain of Responsibility pattern. Ea
 State in Rules is handled through Facts. A Fact is literally just data that is named and supplied to a Rule or RuleBook _(note: facts added to a RuleBook are applied to all rules in the RuleBook)_. Facts can be both read and written to. So, in that way, facts can be used to evaluate state at the completion of a RuleBook execution and they can also be used to pass data into a Rule or RuleBook.
 
 A special type of Rule called a Decision accepts Facts of one type and can store a Result of a different type. This works nicely when there are several different inputs all of the same type and there is a need to distill those inputs down to a different return type. Similar to how RuleBooks chain rules together, DecisionBooks chain Decisions together. And since a Decision is really just a special type of rule, DecisionBooks can also chain Rules and Decisions togehter. An example below illustrates how Rules and Decisions can be used together to create a Result based on the input of several Facts.
+
+<sub>[[Top](#rulebook-)]</sub>
 
 ### Using RuleBook
 **A HelloWorld Example**
@@ -170,7 +173,9 @@ In the above example, the default Result value was initialized to false. So, unl
 
 One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
 
-### _New in v0.2: POJO Rules!_
+<sub>[[Top](#rulebook-)]</sub>
+
+### _POJO Rules_
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
@@ -300,8 +305,73 @@ _Some Important Things to Note About POJOs..._
 * The annotated @When method must have no arguments and it must return a boolean result.
 * The annotated @Then method must have no arguments and it must return a RuleState result.
 
+<sub>[[Top](#rulebook-)]</sub>
+
+###_Using RuleBook with Spring_
+
+RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
+
+**Creating a Spring Enabled POJO Rule**
+```java
+@RuleBean
+public class HelloSpringRule {
+  @Given
+  private String hello;
+  
+  @Result
+  private String result;
+  
+  @When
+  public boolean when() {
+    return hello.equalsIgnoreCase("Hello");
+  }
+  
+  @Then
+  public RuleState then() {
+    result = "Hello ";
+    return RuleState.NEXT;
+  }
+}
+```
+
+**Configuring a RuleBook in Spring**
+```java
+@Configuration
+public class SpringConfig {
+  @Autowired
+  private ApplicationContext context;
+  
+  @Bean
+  @Scope("prototype")
+  public RuleBookBean ruleBookBean() throws InvalidClassException {
+    RuleBookBean ruleBookBean = new RuleBookBean();
+    ruleBookBean.addRule(context.getBean(HelloSpringRule.class)); //add a Spring enabled POJO rule
+    ruleBookBean.addRule(StandardDecision.create()
+      .when(factMap -> factMap.getValue("world").equalsIgnoreCase("World"))
+      .then((factMap, result) -> {
+        result += "World";
+        return RuleState.BREAK;
+      });
+    return ruleBookBean;
+  }
+}
+```
+
+**Using a Spring Enabled RuleBook**
+```java
+  @Autowired
+  private ApplicationContext context;
+  
+  public void someMethod() {
+    RuleBookBean ruleBook = context.getBean(RuleBookBean.class));
+    ruleBook.given(new Fact("hello"), new Fact("hello")).run(); 
+    System.out.println(ruleBook.getResult()); //prints "Hello World"
+  }
+```
 
 <hr/>
+
+<sub>[[Top](#rulebook-)]</sub>
 
 ### _Want to Contribute?_
 
@@ -322,4 +392,4 @@ Contributions must adhere to the following criteria:
 
 Anyone may submit an issue, which can be either an enhancement/feature request or a bug to be remediated. If a feature request or a bug is approved, completed and an associated pull request is submitted that adheres to the above criteria, then the pull request will be merged and the contributor will be added to the list of contributors in the following release.
 
-
+<sub>[[Top](#rulebook-)]</sub>
