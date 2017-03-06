@@ -166,7 +166,7 @@ public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
 public class ExampleSolution {
   public static void main(String[] args) {
     HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
-    decisionBook.withDeafultResult(false)
+    decisionBook.withDefaultResult(false)
       .given(
         new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
         new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
@@ -293,7 +293,7 @@ public class CashOnHandRule {
 ```java
 public static void main(String[] args) {
   RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook");
-  ruleBook.withDeafultResult(false)
+  ruleBook.withDefaultResult(false)
     .given(
       new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
       new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
