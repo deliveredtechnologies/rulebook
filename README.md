@@ -50,13 +50,13 @@ public class ExampleRuleBook extends RuleBook {
     addRule(StandardRule.create().when(f -> true).then(f -> {
       System.out.print("Hello");
       return NEXT; //continue to the next Rule
-    });
+    }));
     
     //second rule prints "World"
     addRule(StandardRule.create().when(f -> true).then(f -> {
       System.out.println("World");
       return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-    });
+    }));
   }
 }
 ```
@@ -77,13 +77,13 @@ public class ExampleRuleBook extends RuleBook<String> {
     addRule(StandardRule.create().when(f -> f.containsKey("hello")).then(f -> {
       System.out.print(f.getValue("hello"));
       return NEXT; //continue to the next Rule
-    });
+    }));
     
     //second rule prints "World" value from worldFact
     addRule(StandardRule.create().when(f -> f.containsKey("world")).then(f -> {
       System.out.println(f.getValue("world"));
       return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-    });
+    }));
   }
 }
 ```
