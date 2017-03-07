@@ -22,6 +22,10 @@ allprojects {
         jcenter()
         mavenCentral()
     }
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 }
 
 subprojects {
@@ -51,10 +55,6 @@ subprojects {
     compileJava.doFirst {
         println "source compatibility  " + sourceCompatibility
         println "target compatibility  " + targetCompatibility
-    }
-
-    tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
     }
 
     jacocoTestReport {
@@ -200,5 +200,11 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.destination "${buildDir}/reports/jacoco/test/"
     }
+}
+
+task alljavadoc(type: Javadoc) {
+    source subprojects.sourceSets.main.allSource
+    classpath = files(subprojects.sourceSets.main.compileClasspath)
+    destinationDir = file("${buildDir}/docs/javadoc")
 }
 
