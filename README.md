@@ -371,7 +371,7 @@ public class SpringConfig {
   
   public void someMethod() {
     RuleBookBean ruleBook = context.getBean(RuleBookBean.class));
-    ruleBook.given(new Fact("hello"), new Fact("hello")).run(); 
+    ruleBook.given(new Fact("hello", "Hello"), new Fact("world", "World")).run(); 
     System.out.println(ruleBook.getResult()); //prints "Hello World"
   }
 ```
