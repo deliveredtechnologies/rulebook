@@ -34,11 +34,12 @@ public class RuleBookTest {
     ruleBook.addRule(rule2);
     ruleBook.addRule(rule3);
     ruleBook.run();
+    ruleBook.run();
 
-    verify(rule1, times(1)).given(anyList());
+    verify(rule1, times(2)).given(anyList());
     verify(rule1, times(1)).setNextRule(rule2);
     verify(rule2, times(1)).setNextRule(rule3);
-    verify(ruleBook, times(1)).defineRules();
-    verify(rule1, times(1)).run();
+    verify(ruleBook, times(0)).defineRules(); //not run because rules were already added
+    verify(rule1, times(2)).run();
   }
 }
