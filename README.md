@@ -322,7 +322,7 @@ RuleBooks in Spring can be created using Spring configurations with RuleBookBean
 ```java
 @RuleBean
 public class HelloSpringRule {
-  @Given
+  @Given("hello")
   private String hello;
   
   @Result
