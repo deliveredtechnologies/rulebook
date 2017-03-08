@@ -23,7 +23,9 @@ public abstract class RuleBook<T> {
    * added.
    */
   public final void run() {
-    defineRules();
+    if (_headRule.isPresent() == false) {
+      defineRules();
+    }
     _headRule.ifPresent(rule -> rule.given(_facts));
     _headRule.ifPresent(Rule::run);
   }

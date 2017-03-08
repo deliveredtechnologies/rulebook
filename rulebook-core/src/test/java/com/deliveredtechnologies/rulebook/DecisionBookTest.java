@@ -39,7 +39,7 @@ public class DecisionBookTest {
 
     verify(decision1, times(1)).setNextRule(decision2);
     verify(decision1, times(1)).run();
-    verify(decisionBook, times(1)).defineRules();
+    verify(decisionBook, times(0)).defineRules();
     verify(decision1, times(1)).given(anyList());
 
   }
@@ -68,7 +68,7 @@ public class DecisionBookTest {
     verify(rule, times(1)).setNextRule(decision2);
     verify(decision1, times(1)).run();
     verify(decision1, times(1)).given(anyList());
-    verify(decisionBook).defineRules();
+    verify(decisionBook, times(0)).defineRules();
   }
 
   @Test
