@@ -22,6 +22,10 @@ allprojects {
         jcenter()
         mavenCentral()
     }
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 }
 
 subprojects {
@@ -38,6 +42,7 @@ subprojects {
 
     dependencies {
 
+        //logging
         compile("org.slf4j:slf4j-api:1.7.22")
 
         testCompile("junit:junit:4.12")
@@ -50,10 +55,6 @@ subprojects {
     compileJava.doFirst {
         println "source compatibility  " + sourceCompatibility
         println "target compatibility  " + targetCompatibility
-    }
-
-    tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
     }
 
     jacocoTestReport {
@@ -98,21 +99,26 @@ project('rulebook-core') {
     modifyPom {
         project {
             name 'RuleBook'
-            description 'A simple, intuitive rules abstraction for Java'
-            url 'https://github.com/Clayton7510/RuleBook'
-            inceptionYear '2017'
+            description 'A simple and intuitive rules abstraction for Java'
+            url "${properties['project.compatibility']}"
+            inceptionYear "${properties['project.inceptionYear']}"
 
             scm {
-                url 'git@github.com:Clayton7510/RuleBook'
-                connection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
-                developerConnection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
+                url "${properties['project.scm.url']}"
+                connection "${properties['project.scm.connection']}"
+                developerConnection "${properties['project.scm.developerConnection']}"
+            }
+
+            issueManagement {
+                system "${properties['project.issueManagement.system']}"
+                url "${properties['project.issueManagementUrl']}"
             }
 
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
+                    name "${properties['project.license.name']}"
+                    url "${properties['project.license.url']}"
+                    distribution "${properties['project.license.distribution']}"
                 }
             }
 
@@ -135,30 +141,39 @@ project('rulebook-core') {
 
 project('rulebook-spring') {
 
+    def springVersion = properties['spring.version']
+
     dependencies {
         compile project(":rulebook-core")
-        compile ("org.springframework:spring-context:4.3.6.RELEASE")
-        testCompile ("org.springframework:spring-test:4.3.6.RELEASE")
+
+        //spring dependencies
+        compile ("org.springframework:spring-context:${springVersion}")
+        testCompile ("org.springframework:spring-test:${springVersion}")
     }
 
     modifyPom {
         project {
-            name 'RuleBook'
-            description 'A simple, intuitive rules abstraction for Java'
-            url 'https://github.com/Clayton7510/RuleBook'
-            inceptionYear '2017'
+            name 'RuleBook Spring'
+            description 'Spring support for RuleBook'
+            url "${properties['project.url']}"
+            inceptionYear "${properties['project.inceptionYear']}"
 
             scm {
-                url 'git@github.com:Clayton7510/RuleBook'
-                connection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
-                developerConnection 'scm:git:git@github.com:Clayton7510/RuleBook.git'
+                url "${properties['project.scm.url']}"
+                connection "${properties['project.scm.connection']}"
+                developerConnection "${properties['project.scm.developerConnection']}"
+            }
+
+            issueManagement {
+                system "${properties['project.issueManagement.system']}"
+                url "${properties['project.issueManagementUrl']}"
             }
 
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
+                    name "${properties['project.license.name']}"
+                    url "${properties['project.license.url']}"
+                    distribution "${properties['project.license.distribution']}"
                 }
             }
 
@@ -185,5 +200,11 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.destination "${buildDir}/reports/jacoco/test/"
     }
+}
+
+task alljavadoc(type: Javadoc) {
+    source subprojects.sourceSets.main.allSource
+    classpath = files(subprojects.sourceSets.main.compileClasspath)
+    destinationDir = file("${buildDir}/docs/javadoc")
 }
 
