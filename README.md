@@ -330,12 +330,12 @@ public class HelloSpringRule {
   
   @When
   public boolean when() {
-    return hello.equalsIgnoreCase("Hello");
+    return hello != null;
   }
   
   @Then
   public RuleState then() {
-    result = "Hello ";
+    result = hello + " ";
     return RuleState.NEXT;
   }
 }
@@ -354,9 +354,9 @@ public class SpringConfig {
     RuleBookBean ruleBookBean = new RuleBookBean();
     ruleBookBean.addRule(context.getBean(HelloSpringRule.class)); //add a Spring enabled POJO rule
     ruleBookBean.addRule(StandardDecision.create()
-      .when(factMap -> factMap.getValue("world").equalsIgnoreCase("World"))
+      .when(factMap -> factMap.containsKey("world"))
       .then((factMap, result) -> {
-        result += "World";
+        result += factMap.getValue("world");
         return RuleState.BREAK;
       });
     return ruleBookBean;
