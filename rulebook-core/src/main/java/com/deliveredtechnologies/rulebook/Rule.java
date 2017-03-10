@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 2/6/17.
  * A <code>Rule</code> is an interface that uses the following format:
  * rule.given(facts).when(some condition given facts).then(do something)
  */

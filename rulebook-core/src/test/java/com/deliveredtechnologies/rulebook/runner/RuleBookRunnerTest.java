@@ -11,8 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by clong on 2/18/17.
- * Tests for {@link RuleBookRunner}
+ * Tests for {@link RuleBookRunner}.
  */
 public class RuleBookRunnerTest {
   @Test

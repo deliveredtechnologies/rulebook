@@ -9,7 +9,6 @@ import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
 /**
- * Created by clong on 2/13/17.
  * Sample POJO rule that only contains facts, no result.
  */
 @Rule(order = 3)

@@ -15,8 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Created by clong on 2/7/17.
- * Tests for {@link DecisionBook}
+ * Tests for {@link DecisionBook}.
  */
 public class DecisionBookTest {
   @Test

@@ -4,8 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by clong on 2/6/17.
- * Tests for {@link FactMap}
+ * Tests for {@link FactMap}.
  */
 
 public class FactMapTest {

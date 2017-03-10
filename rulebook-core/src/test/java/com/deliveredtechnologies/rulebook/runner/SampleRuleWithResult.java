@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Result;
@@ -9,10 +10,10 @@ import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by clong on 2/13/17.
  * Sample POJO rule with facts and a result.
  */
 @Rule(order = 2)
@@ -26,6 +27,15 @@ public class SampleRuleWithResult {
   @Given
   private List<String> _strList;
 
+  @Given
+  private Map<String, String> _strMap;
+
+  @Given
+  private Set<String> _strSet;
+
+  @Given
+  private FactMap<String> _factMap;
+
   @Given("value1")
   private int _value1;
 
@@ -34,6 +44,9 @@ public class SampleRuleWithResult {
 
   @Given
   private List<Integer> _valueList;
+
+  @Given
+  private Map<String, Integer> _valueMap;
 
   @Result
   private String _result;
@@ -67,6 +80,18 @@ public class SampleRuleWithResult {
     return _strList;
   }
 
+  public Set<String> getStrSet() {
+    return _strSet;
+  }
+
+  public Map<String, String> getStrMap() {
+    return _strMap;
+  }
+
+  public FactMap<String> getFactMap() {
+    return _factMap;
+  }
+
   public int getValue1() {
     return _value1;
   }
@@ -77,6 +102,10 @@ public class SampleRuleWithResult {
 
   public List<Integer> getValueList() {
     return _valueList;
+  }
+
+  public Map<String, Integer> getValueMap() {
+    return _valueMap;
   }
 
   public String getResult() {

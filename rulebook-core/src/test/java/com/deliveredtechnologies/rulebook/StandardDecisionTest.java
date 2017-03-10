@@ -15,8 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by clong on 2/7/17.
- * Tests for {@link StandardDecision}
+ * Tests for {@link StandardDecision}.
  */
 public class StandardDecisionTest {
 
