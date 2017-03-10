@@ -9,7 +9,6 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by clong on 2/12/17.
  * Rule defines a class to be injected into a {@link Decision}.
  */
 @Target(TYPE)

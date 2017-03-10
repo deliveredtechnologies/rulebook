@@ -21,15 +21,18 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by clong on 2/12/17.
  * RuleAdapter accepts a POJO annotated Rule class and adapts it to an actual Rule class.
  */
 public class RuleAdapter extends StandardDecision {
@@ -134,8 +137,10 @@ public class RuleAdapter extends StandardDecision {
             Object value = getFactMap().getValue(given.value());
             if (value != null) { //set the field to the Fact that has the name of the @Given value
               field.set(_ruleObj, value);
-            } else if (List.class.isAssignableFrom(field.getType())) { //set a List of Fact object values
-              field.set(_ruleObj, getFactMap().values().stream()
+            } else if (FactMap.class == field.getType()) { //if the field is a FactMap then give it the FactMap
+              field.set(_ruleObj, getFactMap());
+            } else if (Collection.class.isAssignableFrom(field.getType())) { //set a Collection of Fact object values
+              Stream stream = getFactMap().values().stream()
                   .filter(fact -> { //filter on only facts that contain objects matching the generic type
                       ParameterizedType paramType = (ParameterizedType)field.getGenericType();
                       Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
@@ -145,8 +150,21 @@ public class RuleAdapter extends StandardDecision {
                       ParameterizedType paramType = (ParameterizedType)field.getGenericType();
                       Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
                       return genericType.cast(((Fact)fact).getValue());
+                    });
+              if (List.class == field.getType()) { //Collection type is List
+                field.set(_ruleObj, stream.collect(Collectors.toList()));
+              } else if (Set.class == field.getType()) { //Collection type is Set
+                field.set(_ruleObj, stream.collect(Collectors.toSet()));
+              }
+            } else if (Map.class == field.getType()) { //Collection type is Map
+              Map map = (Map)getFactMap().keySet().stream()
+                  .filter(key -> {
+                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
+                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[1];
+                      return genericType.equals(getFactMap().getValue((String)key).getClass());
                     })
-                  .collect(Collectors.toList()));
+                  .collect(Collectors.toMap(key -> key, key -> getFactMap().getValue((String)key)));
+              field.set(_ruleObj, map);
             }
           }
         } catch (Exception ex) {

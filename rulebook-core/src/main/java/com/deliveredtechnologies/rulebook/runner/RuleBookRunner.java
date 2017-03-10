@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Created by clong on 2/12/17.
  * RuleBookRunner creates a RuleBook from a package containing {@link Rule} annotated POJOs.
  */
 public class RuleBookRunner extends DecisionBook {

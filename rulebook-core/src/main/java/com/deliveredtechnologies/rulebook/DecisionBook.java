@@ -3,7 +3,6 @@ package com.deliveredtechnologies.rulebook;
 import java.util.Optional;
 
 /**
- * Created by clong on 2/6/17.
  * DecisionBook is a type of {@link RuleBook} that stores a return type linked to all the rules in the DecisionBook.
  */
 public abstract class DecisionBook<T, U> extends RuleBook<T> {
