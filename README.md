@@ -16,7 +16,7 @@
 
 |Description | Group                   | Artifact |  Version      |Repository |
 |---         |---                      |---       |---            |---        |
-|Core RuleBook Functionality |com.deliveredtechnologies|rulebook-core  |0.3.1 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3-brightgreen.svg)][RuleBook-Core Maven Central]|
+|Core RuleBook Functionality |com.deliveredtechnologies|rulebook-core  |0.3.1 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central]|
 |Spring Support for RuleBook |com.deliveredtechnologies|rulebook-spring  |0.3.1 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Spring Maven Central]|
 
 **Current Maven _Development_ Releases** &raquo; For those who like to live dangerously...
