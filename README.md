@@ -7,6 +7,8 @@
 
 ---
 
+For more information, see: [Delivered Technologies: The Home of RuleBook](http://www.deliveredtechnologies.com/)
+
 <sub>&nbsp;[How It Works](#how-does-rulebook-work) &raquo; [Using RuleBook](#using-rulebook) &raquo; [POJO Rules](#pojo-rules) &raquo; [RuleBook with Spring](#using-rulebook-with-spring) &raquo; [Contributing](#want-to-contribute)</sub>
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
