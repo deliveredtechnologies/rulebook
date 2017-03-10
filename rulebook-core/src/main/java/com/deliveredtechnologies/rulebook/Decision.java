@@ -3,7 +3,6 @@ package com.deliveredtechnologies.rulebook;
 import java.util.function.BiFunction;
 
 /**
- * Created by clong on 2/6/17.
  * A special type of rule that has a return type, which may be different from the type of input (Facts).
  */
 public interface Decision<T, U> extends Rule<T> {

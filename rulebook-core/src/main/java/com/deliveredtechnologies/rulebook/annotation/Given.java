@@ -9,7 +9,6 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by clong on 2/12/17.
  * Given defines a field that is hydrated from a {@link Fact}.
  */
 @Target(FIELD)

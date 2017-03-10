@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by clong on 2/6/17.
  * RuleBook is an abstract class that follows the Template Method design pattern, leaving the defineRules() method
  * implementation for subclasses. This class facilitates the aggregation and chaining together of Rules.
  */

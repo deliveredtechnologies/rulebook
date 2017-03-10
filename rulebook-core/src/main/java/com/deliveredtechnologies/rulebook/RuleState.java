@@ -1,7 +1,7 @@
 package com.deliveredtechnologies.rulebook;
 
 /**
- * Created by clong on 2/6/17.
+ * Enumeration for whether the continue the rule chain or break it.
  */
 public enum RuleState {
     BREAK, NEXT

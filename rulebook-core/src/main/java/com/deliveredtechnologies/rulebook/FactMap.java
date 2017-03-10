@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.Optional;
 
 /**
- * Created by clong on 2/6/17.
  * A FactMap is an extension of {@link HashMap}; it stores facts by their name and provides convenience methods for
- * accessing {@link Fact} objects
+ * accessing {@link Fact} objects.
  */
 public class FactMap<T> extends HashMap<String, Fact<T>> {
   /**

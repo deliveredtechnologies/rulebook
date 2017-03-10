@@ -12,8 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by clong on 2/6/17.
- * Tests for {@link RuleBook}
+ * Tests for {@link RuleBook}.
  */
 public class RuleBookTest {
   @Test

@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 2/6/17.
  * StandardRule is a standard rule implementation that can be used with a {@link RuleBook}.
  */
 public class StandardRule<T> implements Rule<T> {

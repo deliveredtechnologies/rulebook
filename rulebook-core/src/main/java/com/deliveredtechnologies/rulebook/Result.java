@@ -1,7 +1,6 @@
 package com.deliveredtechnologies.rulebook;
 
 /**
- * Created by clong on 2/7/17.
  * This is a wrapper class for the actual result.
  * This is needed to ensure that an instance is available and that a reference is maintained to the actual that
  * can be manipulated in the then {@link java.util.function.BiFunction}.

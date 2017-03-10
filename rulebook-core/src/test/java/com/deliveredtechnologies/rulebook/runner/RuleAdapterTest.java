@@ -20,8 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by clong on 2/13/17.
- * Tests for {@link RuleAdapter}
+ * Tests for {@link RuleAdapter}.
  */
 public class RuleAdapterTest {
   private FactMap<Object> _factMap;
@@ -58,8 +57,13 @@ public class RuleAdapterTest {
     Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
     Assert.assertEquals(2, sampleRuleWithResult.getStrList().size());
+    Assert.assertEquals(2, sampleRuleWithResult.getStrSet().size());
+    Assert.assertEquals(2, sampleRuleWithResult.getStrMap().size());
+    Assert.assertEquals(_factMap, sampleRuleWithResult.getFactMap());
     Assert.assertEquals(1, sampleRuleWithResult.getValue1());
-    Assert.assertNull(sampleRuleWithResult.getValueSet());
+    Assert.assertEquals(1, sampleRuleWithResult.getValueSet().size());
+    Assert.assertEquals(1, sampleRuleWithResult.getValueList().size());
+    Assert.assertEquals(1, sampleRuleWithResult.getValueMap().size());
   }
 
   @Test
