@@ -308,7 +308,7 @@ public static void main(String[] args) {
 _Some Important Things to Note About POJOs..._
 * The order property on the @Rule annotation groups the order that rules are executed in.
 * Only Lists are injected with multiple Facts based on the type of the Facts.
-* If the object type of a Fact is declared as a @Given, its state mau not be changed outsite the instance of the POJO rule.
+* If the object type of a Fact is declared as a @Given, its state may not be changed outsite the instance of the POJO rule (e.g. Strings and other immutable objects).
 * If a Fact is declared as a @Given, any state changes made in the POJO rule instance seen after the rule completes.
 * The when() and then() methods don't have to be declared when() and then(), they just have to be annotated.
 * The annotated @When method must have no arguments and it must return a boolean result.
