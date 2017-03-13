@@ -15,7 +15,7 @@ public class AnnotationUtil {
   private AnnotationUtil() {}
 
   /**
-   * Gets the fields annotated of a specific type from the class and its parent classes
+   * Gets the fields annotated of a specific type from the class and its parent classes.
    * @param annotationClass the annotation type
    * @param clazz           the class that is expected to be annotated
    * @return                a {@link Set} of {@link Field} objects annotated with the annotatedClass
@@ -27,7 +27,7 @@ public class AnnotationUtil {
     }
     Set<Field> fields = getAnnotatedFields(annotationClass, clazz.getSuperclass());
     fields.addAll((Set<Field>)
-      Arrays.stream(clazz.getDeclaredFields())
+        Arrays.stream(clazz.getDeclaredFields())
         .filter(field -> field.getAnnotation(annotationClass) != null)
         .collect(Collectors.toSet()));
     return fields;
