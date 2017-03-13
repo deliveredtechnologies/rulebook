@@ -67,6 +67,24 @@ public class RuleAdapterTest {
   }
 
   @Test
+  public void givenAttributesShouldMapToInheritedFactsParams() throws InvalidClassException {
+    SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
+    RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
+    ruleAdapter.given(_factMap.get("fact1"), _factMap.get("fact2"), _factMap.get("value1"));
+
+    Assert.assertEquals("FirstFact", subRuleWithResult.getFact1());
+    Assert.assertEquals("SecondFact", subRuleWithResult.getFact2());
+    Assert.assertEquals(2, subRuleWithResult.getStrList().size());
+    Assert.assertEquals(2, subRuleWithResult.getStrSet().size());
+    Assert.assertEquals(2, subRuleWithResult.getStrMap().size());
+    Assert.assertEquals(_factMap, subRuleWithResult.getFactMap());
+    Assert.assertEquals(1, subRuleWithResult.getValue1());
+    Assert.assertEquals(1, subRuleWithResult.getValueSet().size());
+    Assert.assertEquals(1, subRuleWithResult.getValueList().size());
+    Assert.assertEquals(1, subRuleWithResult.getValueMap().size());
+  }
+
+  @Test
   public void whenAnnotatedMethodShouldConvertToPredicate() throws InvalidClassException {
 
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
