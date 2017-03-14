@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InvalidClassException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,16 +21,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtil.getAnnotatedFields;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethod;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
 /**
  * RuleAdapter accepts a POJO annotated Rule class and adapts it to an actual Rule class.
@@ -136,11 +135,14 @@ public class RuleAdapter extends StandardDecision {
           field.set(_ruleObj, getFactMap().get(given.value()));
         } else {
           Object value = getFactMap().getValue(given.value());
-          if (value != null) { //set the field to the Fact that has the name of the @Given value
+          if (value != null) {
+            //set the field to the Fact that has the name of the @Given value
             field.set(_ruleObj, value);
-          } else if (FactMap.class == field.getType()) { //if the field is a FactMap then give it the FactMap
+          } else if (FactMap.class == field.getType()) {
+            //if the field is a FactMap then give it the FactMap
             field.set(_ruleObj, getFactMap());
-          } else if (Collection.class.isAssignableFrom(field.getType())) { //set a Collection of Fact object values
+          } else if (Collection.class.isAssignableFrom(field.getType())) {
+            //set a Collection of Fact object values
             Stream stream = getFactMap().values().stream()
                 .filter(fact -> { //filter on only facts that contain objects matching the generic type
                     ParameterizedType paramType = (ParameterizedType)field.getGenericType();
@@ -152,12 +154,15 @@ public class RuleAdapter extends StandardDecision {
                     Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
                     return genericType.cast(((Fact)fact).getValue());
                   });
-            if (List.class == field.getType()) { //Collection type is List
+            if (List.class == field.getType()) {
+              //map List of Fact values to field
               field.set(_ruleObj, stream.collect(Collectors.toList()));
-            } else if (Set.class == field.getType()) { //Collection type is Set
+            } else if (Set.class == field.getType()) {
+              //map Set of Fact values to field
               field.set(_ruleObj, stream.collect(Collectors.toSet()));
             }
-          } else if (Map.class == field.getType()) { //Collection type is Map
+          } else if (Map.class == field.getType()) {
+            //map Map of Fact values to field
             Map map = (Map)getFactMap().keySet().stream()
                 .filter(key -> {
                     ParameterizedType paramType = (ParameterizedType)field.getGenericType();
@@ -183,15 +188,16 @@ public class RuleAdapter extends StandardDecision {
 
   /**
    * Method getThenMethodAsBiFunction returns a BiFunction using the annotated object, when a
-   * @Result annotated property and a @Then annotated method exists.
+   * Result annotated property and a Then annotated method exists.
    * @return  A {@link BiFunction} for classes that have a @Then method and a @Result
    */
   private Optional<BiFunction> getThenMethodAsBiFunction() {
-    return getResultField(_ruleObj).flatMap(resultField -> Arrays.stream(_ruleObj.getClass().getMethods())
-        .filter(method -> Arrays.stream(method.getAnnotations()).anyMatch(Then.class::isInstance)).findFirst()
+    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
+        .flatMap(resultField -> getAnnotatedMethod(Then.class, _ruleObj.getClass())
         .map(method -> toBiFunction(method, resultField)));
   }
 
+  @SuppressWarnings("unchecked")
   private BiFunction toBiFunction(Method method, Field resultField) {
     return (factMap, resultObj) -> {
       try {
@@ -214,46 +220,18 @@ public class RuleAdapter extends StandardDecision {
    * @return  a {@link Function} from the @Then annotated method of the obejct
    */
   private Optional<Function> getThenMethodAsFunction() {
-    if (getResultField(_ruleObj).isPresent()) {
+    if (getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
+        .isPresent()) {
       return Optional.empty();
     }
-    return Arrays.stream(_ruleObj.getClass().getMethods())
-        .filter(method -> Arrays.stream(method.getAnnotations()).anyMatch(Then.class::isInstance))
-        .findFirst()
-        .map(method -> obj -> {
-            try {
-              return method.invoke(_ruleObj);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-              return RuleState.BREAK;
-            }
-          });
-  }
 
-  /**
-   * Method getResultField is a utility method that gets the @Result annotated property when applicable.
-   * @param obj an object that is annotated and converts to a Rule
-   * @return  an Optional Field object containing either nothing or the property annotated with @Result
-   */
-  private static Optional<Field> getResultField(Object obj) {
-    return Stream.of(obj.getClass().getDeclaredFields())
-        .filter(field -> field.isAnnotationPresent(com.deliveredtechnologies.rulebook.annotation.Result.class))
-        .findFirst();
-  }
-
-  /**
-   * Method getAnnotation returns the annotation on a class or its parent annotation.
-   * @param clazz       the annotated class
-   * @param annotation  the annotation to find
-   * @param <A>         the type of the annotation
-   * @return            the actual annotation used or null if it doesn't exist
-   */
-  private static <A extends Annotation> A getAnnotation(Class<?> clazz, Class<A> annotation) {
-    return Optional.ofNullable(clazz.getAnnotation(annotation)).orElse((A)
-      Arrays.stream(clazz.getDeclaredAnnotations())
-        .flatMap(anno -> Arrays.stream(anno.getClass().getInterfaces())
-          .flatMap(iface -> Arrays.stream(iface.getDeclaredAnnotations())))
-        .filter(pAnno -> annotation.isInstance(pAnno))
-        .findFirst().orElse(null)
-    );
+    return getAnnotatedMethod(Then.class, _ruleObj.getClass())
+      .map(method -> (Function) obj -> {
+          try {
+            return method.invoke(_ruleObj);
+          } catch (IllegalAccessException | InvocationTargetException ex) {
+            return RuleState.BREAK;
+          }
+        });
   }
 }

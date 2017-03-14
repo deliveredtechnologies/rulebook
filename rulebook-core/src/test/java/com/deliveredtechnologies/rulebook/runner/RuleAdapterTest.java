@@ -105,6 +105,26 @@ public class RuleAdapterTest {
   }
 
   @Test
+  public void whenAnnotatedMethodInParentShouldConvertToPredicate() throws InvalidClassException {
+
+    SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
+    RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
+    Fact fact = (Fact)_factMap.get("fact1");
+    fact.setValue("SecondFact");
+    ruleAdapter.given(_factMap);
+
+    //when is true when fact1 eq fact2; so, here it should be true
+    Predicate predicate = ruleAdapter.getWhen();
+    Assert.assertTrue(predicate.test(null));
+
+    fact.setValue("FirstFact");
+    ruleAdapter.given(_factMap);
+
+    //after changing fact1, it should be false
+    Assert.assertFalse(predicate.test(null));
+  }
+
+  @Test
   public void suppliedWhenPredicateShouldTakePrecendence() throws InvalidClassException {
     Predicate predicate = mock(Predicate.class);
     when(predicate.test(any())).thenReturn(false);
@@ -137,6 +157,19 @@ public class RuleAdapterTest {
     Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(sampleRuleWithResult.getResult(), result.getValue());
+  }
+
+  @Test
+  public void thenAnnotatedMethodInParentWithResultShouldConvertToBiFunction() throws InvalidClassException {
+    Result<String> result = new Result<>();
+    SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
+    RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
+    ruleAdapter.given(_factMap);
+
+    BiFunction<FactMap, Result, RuleState> biFunction = (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen();
+    Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
+    Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
+    Assert.assertEquals(subRuleWithResult.getResult(), result.getValue());
   }
 
   @Test
