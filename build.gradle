@@ -133,6 +133,7 @@ project('rulebook-core') {
             contributors {
                 contributor {
                     name 'Nicholas Lambert'
+                    name 'wheezymustafa'
                 }
             }
         }
