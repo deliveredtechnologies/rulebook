@@ -19,7 +19,7 @@ public class RuleBookRunnerTest {
     RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
     ruleBookRunner.run();
 
-    verify(ruleBookRunner, times(3)).addRule(any(RuleAdapter.class));
+    verify(ruleBookRunner, times(4)).addRule(any(RuleAdapter.class));
   }
 
   @Test
