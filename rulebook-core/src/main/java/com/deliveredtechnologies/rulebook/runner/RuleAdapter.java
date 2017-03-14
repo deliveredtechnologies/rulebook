@@ -176,12 +176,6 @@ public class RuleAdapter extends StandardDecision {
       } catch (Exception ex) {
         LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
             + _ruleObj.getClass() + "'");
-        try {
-          field.set(_ruleObj, null);
-        } catch (IllegalAccessException iax) {
-          LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
-              + _ruleObj.getClass() + "'", iax);
-        }
       }
     }
   }
