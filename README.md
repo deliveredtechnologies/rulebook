@@ -9,26 +9,24 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-**Current Maven Releases**
-
-|Description | Group                   | Artifact |  Version      |Repository |
-|---         |---                      |---       |---            |---        |
-|Core RuleBook Functionality |com.deliveredtechnologies|rulebook-core  |0.3.1 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central]|
-|Spring Support for RuleBook |com.deliveredtechnologies|rulebook-spring  |0.3.1 |[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Spring Maven Central]|
-
-**Current Maven _Development_ Releases** &raquo; For those who like to live dangerously...
-
-| Group                   | Artifact |  Version      |Repository |
-|---                      |---       |---            |---        |
-|com.deliveredtechnologies|rulebook-core  |0.3.2-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
-|com.deliveredtechnologies|rulebook-spring  |0.3.2-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
-
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. Not to mention, RuleBook allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
 
 Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from each other? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for.
 
 <sub>[[Top](#rulebook-)]</sub>
+
+## Getting RuleBook
+
+### Maven Central Releases
+
+* rulebook-core [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central]
+* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Spring Maven Central]
+
+### Latest Sonatype SNAPSHOT (Development) Release
+
+* rulebook-core [![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ## Using RuleBook
 ### A HelloWorld Example Using the Java Domain Specific Language
