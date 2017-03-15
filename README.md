@@ -17,7 +17,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
 #### Contents
 
 * [1 Getting RuleBook](#1-getting-rulebook)
-  * [1.1 Building RuleBook](##11-building-rulebook)
+  * [1.1 Building RuleBook](#11-building-rulebook)
   * [1.2 Maven Central Releases](#12-maven-central-releases)
   * [1.3 Latest SNAPSHOT Releases](#13-latest-sonatype-snapshot-development-release)
   * [1.4 Adding RuleBook to Your Maven Project](#14-adding-rulebook-to-your-maven-project)
@@ -48,8 +48,8 @@ cd RuleBook
 
 ### 1.2 Maven Central Releases
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.3-brightgreen.svg)][RuleBook-Core Maven Central]
-* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.3-brightgreen.svg)][RuleBook-Spring Maven Central]
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.4-brightgreen.svg)][RuleBook-Core Maven Central]
+* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.4-brightgreen.svg)][RuleBook-Spring Maven Central]
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
