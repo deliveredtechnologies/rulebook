@@ -26,7 +26,16 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [2.1 Using the Java Domain Specific Language](#21-a-helloworld-example-using-the-java-domain-specific-language)
   * [2.2 Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
-
+* [3 POJO Rules](#3-pojo-rules)
+  * [3.1 A POJO Rules Example](#31-a-hello-world-example)
+  * [3.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
+* [4 Using RuleBook with Spring](#4-using-rulebook-with-spring)
+  * [4.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
+  * [4.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
+  * [4.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
+* [5 How to Contribute](#5-how-to-contribute)
+  * [5.1 Developer Guidelines](#51-developer-guidelines)
+  
 ## 1 Getting RuleBook
 
 ### 1.1 Building RuleBook
@@ -39,12 +48,12 @@ cd RuleBook
 
 ### 1.2 Maven Central Releases
 
-* rulebook-core [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central]
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central]
 * rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Spring Maven Central]
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core [![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 * rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
@@ -209,11 +218,11 @@ In the above example, the default Result value was initialized to false. So, unl
 
 <sub>[[Top](#contents)]</sub>
 
-## 3 _POJO Rules_
+## 3 POJO Rules
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
-### 3.1 A Hello World Example**
+### 3.1 A Hello World Example
 
 ```java
 package com.example.pojorules;
