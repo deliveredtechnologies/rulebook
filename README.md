@@ -17,12 +17,15 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
 #### Contents
 
 * [1 Getting RuleBook](#1-getting-rulebook)
-  * [1.1 Building RuleBook](#1.1-building-rulebook)
-  * [1.2 Maven Central Releases](#1.2-maven-central-releases)
-  * [1.3 Latest SNAPSHOT Releases](#1.2-latest)
-  * [1.4 Adding RuleBook to Your Maven Project](#1.2-latest)
-  * [1.5 Adding RuleBook to Your Gradle Project](#1.2-latest)
-* 
+  * [1.1 Building RuleBook](##11-building-rulebook)
+  * [1.2 Maven Central Releases](#12-maven-central-releases)
+  * [1.3 Latest SNAPSHOT Releases](#13-latest-sonatype-snapshot-development-release)
+  * [1.4 Adding RuleBook to Your Maven Project](#14-adding-rulebook-to-your-maven-project)
+  * [1.5 Adding RuleBook to Your Gradle Project](#15-adding-rulebook-to-your-gradle-project)
+* [2 Using RuleBook](#2-using-rulebook)
+  * [2.1 Using the Java Domain Specific Language](#21-a-helloworld-example-using-the-java-domain-specific-language)
+  * [2.2 Using Facts](#22-the-above-example-using-facts)
+  * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
 
 ## 1 Getting RuleBook
 
@@ -64,7 +67,7 @@ _Add the code below to your build.gradle_
 compile 'com.deliveredtechnologies:rulebook-core:0.3.1'
 ```
 
-[[Top](#contents)]
+<sub>[Top](#contents)</sub>
 
 ## 2 Using RuleBook
 ### 2.1 A HelloWorld Example Using the Java Domain Specific Language
