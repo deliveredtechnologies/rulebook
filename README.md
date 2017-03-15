@@ -7,10 +7,7 @@
 
 ---
 
-<sub>&nbsp;[How It Works](#how-does-rulebook-work) &raquo; [Using RuleBook](#using-rulebook) &raquo; [POJO Rules](#pojo-rules) &raquo; [RuleBook with Spring](#using-rulebook-with-spring) &raquo; [Contributing](#want-to-contribute)</sub>
-
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
 
 **Current Maven Releases**
 
@@ -26,22 +23,15 @@
 |com.deliveredtechnologies|rulebook-core  |0.3.2-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 |com.deliveredtechnologies|rulebook-spring  |0.3.2-SNAPSHOT |[![Sonatype Nexus](https://img.shields.io/badge/sonatype-SNAPSHOT-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)|
 
-### Why Another Rules Abstraction?
-Rules engines like Drools are more than many projects need. The format of the rules is also very specialized. And how rules are evaulated is not entirely straightforward. Other rules engines have other specialized requirements that can be foreign to many Java developers. That's why RuleBook is a dead simple, 100% Java rules abstraction without the mountain of specialized knowledge required by other [simple?] rules abstractions. It also executes rules in the order in which they are specified (ALWAYS!). 
+## Why RuleBook?
+RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. Not to mention, RuleBook allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
 
-RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from each other? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for.
-
-### How Does RuleBook Work?
-RuleBook is a rules abstraction based on the Chain of Responsibility pattern. Each rule specified in a RuleBook is chained together in the order in which it is specified. As one rule completes, the next rule is evaluated. Any rule can break the chain by returning RuleState.BREAK from the 'then' Function in the rule.
-
-State in Rules is handled through Facts. A Fact is literally just data that is named and supplied to a Rule or RuleBook _(note: facts added to a RuleBook are applied to all rules in the RuleBook)_. Facts can be both read and written to. So, in that way, facts can be used to evaluate state at the completion of a RuleBook execution and they can also be used to pass data into a Rule or RuleBook.
-
-A special type of Rule called a Decision accepts Facts of one type and can store a Result of a different type. This works nicely when there are several different inputs all of the same type and there is a need to distill those inputs down to a different return type. Similar to how RuleBooks chain rules together, DecisionBooks chain Decisions together. And since a Decision is really just a special type of rule, DecisionBooks can also chain Rules and Decisions togehter. An example below illustrates how Rules and Decisions can be used together to create a Result based on the input of several Facts.
+Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from each other? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for.
 
 <sub>[[Top](#rulebook-)]</sub>
 
-### Using RuleBook
-**A HelloWorld Example**
+## Using RuleBook
+### A HelloWorld Example Using the Java Domain Specific Language
 ```java
 public class ExampleRuleBook extends RuleBook {
   @Override
@@ -68,7 +58,7 @@ public class ExampleMainClass {
   }
 }
 ```
-**A HelloWorld Example Using Facts**
+### The Above Example Using Facts
 ```java
 public class ExampleRuleBook extends RuleBook<String> {
   @Override
@@ -97,7 +87,7 @@ public class ExampleMainClass {
   }
 }
 ```
-**A [Slightly] More Complex Scenario**
+### A [Slightly] More Complex Scenario
 
 _MegaBank issues home loans. Each home loan can have up to 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
 
@@ -178,15 +168,13 @@ public class ExampleSolution {
 ```
 In the above example, the default Result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
 
-One interesting thing about the HomeLoanDecisionBook is that Rules and Decisions were mixed in together. Why? Well, in this case, the requirement that there be no more than 3 applicants can disqualify an application immediately without having to change the default return value. And since a Rule is really a Decision that doesn't update the return value, using a Rule to specify the 3 applicants or less requirement works well.
-
 <sub>[[Top](#rulebook-)]</sub>
 
-### _POJO Rules_
+## _POJO Rules_
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
-**A Hello World Example**
+### A Hello World Example**
 
 ```java
 package com.example.pojorules;
@@ -227,7 +215,7 @@ public static void main(String args[]) {
 }
 ```
 
-**The MegaBank Example With POJOs**
+### The MegaBank Example With POJO Rules
 
 ```java
 @Rule(order = 1) //order specifies the order the rule should execute in; if not specified, any order may be used
@@ -303,23 +291,14 @@ public static void main(String[] args) {
 }
 ```
 
-_Some Important Things to Note About POJOs..._
-* The order property on the @Rule annotation groups the order that rules are executed in.
-* List, Map, and Set objects are injected with multiple Facts based on the type of the Facts and only when its @Given annotation has no value.
-* A FactMap object containing all the Facts available to the Rule may be injected in a POJO Rule by annotating a FactMap instance variable with @Given, where @Given has no value specified.
-* If the object type of a Fact is declared as a @Given, its state may not be changed outsite the instance of the POJO rule.
-* If a Fact is declared as a @Given, any state changes made in the POJO rule instance seen after the rule completes.
-* The when() and then() methods don't have to be declared when() and then(), they just have to be annotated.
-* The annotated @When method must have no arguments and it must return a boolean result.
-* The annotated @Then method must have no arguments and it must return a RuleState result.
-
 <sub>[[Top](#rulebook-)]</sub>
 
-###_Using RuleBook with Spring_
+## Using RuleBook with Spring
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
 
-**Creating a Spring Enabled POJO Rule**
+### Creating a Spring Enabled POJO Rule
+
 ```java
 @RuleBean
 public class HelloSpringRule {
@@ -342,7 +321,8 @@ public class HelloSpringRule {
 }
 ```
 
-**Configuring a RuleBook in Spring**
+### Configuring a RuleBook in Spring
+
 ```java
 @Configuration
 public class SpringConfig {
@@ -365,7 +345,8 @@ public class SpringConfig {
 }
 ```
 
-**Using a Spring Enabled RuleBook**
+### Using a Spring Enabled RuleBook
+
 ```java
   @Autowired
   private ApplicationContext context;
@@ -377,15 +358,13 @@ public class SpringConfig {
   }
 ```
 
-<hr/>
-
 <sub>[[Top](#rulebook-)]</sub>
 
-### _Want to Contribute?_
+## How to Contribute
 
 Suggestions and code contributions are welcome! Please see the _Developer Guidelines_ below.
 
-**_Developer Guidelines_**
+### Developer Guidelines
 
 Contributions must adhere to the following criteria:
 
