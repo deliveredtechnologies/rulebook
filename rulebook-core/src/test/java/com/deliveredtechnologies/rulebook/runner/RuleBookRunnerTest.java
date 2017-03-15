@@ -11,8 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by clong on 2/18/17.
- * Tests for {@link RuleBookRunner}
+ * Tests for {@link RuleBookRunner}.
  */
 public class RuleBookRunnerTest {
   @Test
@@ -20,7 +19,7 @@ public class RuleBookRunnerTest {
     RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
     ruleBookRunner.run();
 
-    verify(ruleBookRunner, times(3)).addRule(any(RuleAdapter.class));
+    verify(ruleBookRunner, times(4)).addRule(any(RuleAdapter.class));
   }
 
   @Test

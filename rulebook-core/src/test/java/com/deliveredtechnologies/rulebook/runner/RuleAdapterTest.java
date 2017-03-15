@@ -20,8 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by clong on 2/13/17.
- * Tests for {@link RuleAdapter}
+ * Tests for {@link RuleAdapter}.
  */
 public class RuleAdapterTest {
   private FactMap<Object> _factMap;
@@ -58,8 +57,31 @@ public class RuleAdapterTest {
     Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
     Assert.assertEquals(2, sampleRuleWithResult.getStrList().size());
+    Assert.assertEquals(2, sampleRuleWithResult.getStrSet().size());
+    Assert.assertEquals(2, sampleRuleWithResult.getStrMap().size());
+    Assert.assertEquals(_factMap, sampleRuleWithResult.getFactMap());
     Assert.assertEquals(1, sampleRuleWithResult.getValue1());
-    Assert.assertNull(sampleRuleWithResult.getValueSet());
+    Assert.assertEquals(1, sampleRuleWithResult.getValueSet().size());
+    Assert.assertEquals(1, sampleRuleWithResult.getValueList().size());
+    Assert.assertEquals(1, sampleRuleWithResult.getValueMap().size());
+  }
+
+  @Test
+  public void givenAttributesShouldMapToInheritedFactsParams() throws InvalidClassException {
+    SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
+    RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
+    ruleAdapter.given(_factMap.get("fact1"), _factMap.get("fact2"), _factMap.get("value1"));
+
+    Assert.assertEquals("FirstFact", subRuleWithResult.getFact1());
+    Assert.assertEquals("SecondFact", subRuleWithResult.getFact2());
+    Assert.assertEquals(2, subRuleWithResult.getStrList().size());
+    Assert.assertEquals(2, subRuleWithResult.getStrSet().size());
+    Assert.assertEquals(2, subRuleWithResult.getStrMap().size());
+    Assert.assertEquals(_factMap, subRuleWithResult.getFactMap());
+    Assert.assertEquals(1, subRuleWithResult.getValue1());
+    Assert.assertEquals(1, subRuleWithResult.getValueSet().size());
+    Assert.assertEquals(1, subRuleWithResult.getValueList().size());
+    Assert.assertEquals(1, subRuleWithResult.getValueMap().size());
   }
 
   @Test
@@ -67,6 +89,26 @@ public class RuleAdapterTest {
 
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
+    Fact fact = (Fact)_factMap.get("fact1");
+    fact.setValue("SecondFact");
+    ruleAdapter.given(_factMap);
+
+    //when is true when fact1 eq fact2; so, here it should be true
+    Predicate predicate = ruleAdapter.getWhen();
+    Assert.assertTrue(predicate.test(null));
+
+    fact.setValue("FirstFact");
+    ruleAdapter.given(_factMap);
+
+    //after changing fact1, it should be false
+    Assert.assertFalse(predicate.test(null));
+  }
+
+  @Test
+  public void whenAnnotatedMethodInParentShouldConvertToPredicate() throws InvalidClassException {
+
+    SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
+    RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
     Fact fact = (Fact)_factMap.get("fact1");
     fact.setValue("SecondFact");
     ruleAdapter.given(_factMap);
@@ -115,6 +157,19 @@ public class RuleAdapterTest {
     Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(sampleRuleWithResult.getResult(), result.getValue());
+  }
+
+  @Test
+  public void thenAnnotatedMethodInParentWithResultShouldConvertToBiFunction() throws InvalidClassException {
+    Result<String> result = new Result<>();
+    SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
+    RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
+    ruleAdapter.given(_factMap);
+
+    BiFunction<FactMap, Result, RuleState> biFunction = (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen();
+    Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
+    Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
+    Assert.assertEquals(subRuleWithResult.getResult(), result.getValue());
   }
 
   @Test

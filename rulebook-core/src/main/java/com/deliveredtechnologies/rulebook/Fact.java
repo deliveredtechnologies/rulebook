@@ -1,9 +1,8 @@
 package com.deliveredtechnologies.rulebook;
 
 /**
- * Created by clong on 2/6/17.
- * A Fact is a single piece of data that can be supplied to a {@link Rule}
- * Facts are not immutable; they may be changed by rules and used to derive a result state
+ * A Fact is a single piece of data that can be supplied to a {@link Rule}.
+ * Facts are not immutable; they may be changed by rules and used to derive a result state.
  */
 public class Fact<T> {
   private String _name;

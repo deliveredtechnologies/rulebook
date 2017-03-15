@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
+
 /**
- * Created by clong on 2/12/17.
  * RuleBookRunner creates a RuleBook from a package containing {@link Rule} annotated POJOs.
  */
 public class RuleBookRunner extends DecisionBook {
@@ -71,7 +72,7 @@ public class RuleBookRunner extends DecisionBook {
               String className = fileName.substring(0, fileName.length() - 6);
               try {
                 Class<?> ruleClass = Class.forName(packageName + "." + className);
-                if (Stream.of(ruleClass.getDeclaredAnnotations()).anyMatch(annotation -> annotation instanceof Rule)) {
+                if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleClass) != null) {
                   classes.add(ruleClass);
                 }
               } catch (ClassNotFoundException e) {
@@ -79,7 +80,7 @@ public class RuleBookRunner extends DecisionBook {
               }
             });
       classes.sort(
-          (class1, class2) -> class1.getAnnotation(Rule.class).order() - class2.getAnnotation(Rule.class).order());
+          (class1, class2) -> getAnnotation(Rule.class, class1).order() - getAnnotation(Rule.class, class2).order());
 
       return classes;
     } catch (URISyntaxException ex) {

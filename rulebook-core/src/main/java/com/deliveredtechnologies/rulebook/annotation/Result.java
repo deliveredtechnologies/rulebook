@@ -7,7 +7,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by clong on 2/12/17.
+ * Result is used to map a single field to a Result in a {@link com.deliveredtechnologies.rulebook.Decision}.
  */
 @Target(FIELD)
 @Retention(RUNTIME)

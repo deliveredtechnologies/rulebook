@@ -10,7 +10,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 2/6/17.
  * StandardDecision is the standard implementation of {@link Decision}.
  */
 public class StandardDecision<T, U> implements Decision<T, U> {

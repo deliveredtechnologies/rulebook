@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Created by clong on 2/6/17.
- * Tests for {@link StandardRule}
+ * Tests for {@link StandardRule}.
  */
 public class StandardRuleTest {
   @Test
