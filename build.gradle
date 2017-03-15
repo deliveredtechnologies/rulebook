@@ -15,6 +15,16 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
 
+def projectUrl = properties['project.url']
+def projectYear = properties['project.inceptionYear']
+def projectScmUrl = properties['project.scm.url']
+def projectScmConnection = properties['project.scm.connection']
+def projectLicenseName = properties['project.license.name']
+def projectLicenseUrl = properties['project.license.url']
+def projectLicenseDistro = properties['project.license.distribution']
+def projectIssueMgmtSystem = properties['project.issuemgmt.system']
+def projectIssueMgmtUrl = properties['project.issuemgmt.url']
+
 allprojects {
     apply plugin: 'jacoco'
 
@@ -100,25 +110,25 @@ project('rulebook-core') {
         project {
             name 'RuleBook'
             description 'A simple and intuitive rules abstraction for Java'
-            url "${properties['project.compatibility']}"
-            inceptionYear "${properties['project.inceptionYear']}"
+            url "${projectUrl}"
+            inceptionYear "${projectYear}"
 
             scm {
-                url "${properties['project.scm.url']}"
-                connection "${properties['project.scm.connection']}"
-                developerConnection "${properties['project.scm.developerConnection']}"
+                url "${projectScmUrl}"
+                connection "${projectScmConnection}"
+                developerConnection "${projectScmConnection}"
             }
 
             issueManagement {
-                system "${properties['project.issueManagement.system']}"
-                url "${properties['project.issueManagementUrl']}"
+                system "${projectIssueMgmtSystem}"
+                url "${projectIssueMgmtUrl}"
             }
 
             licenses {
                 license {
-                    name "${properties['project.license.name']}"
-                    url "${properties['project.license.url']}"
-                    distribution "${properties['project.license.distribution']}"
+                    name "${projectLicenseName}"
+                    url "${projectLicenseUrl}"
+                    distribution "${projectLicenseDistro}"
                 }
             }
 
@@ -133,6 +143,8 @@ project('rulebook-core') {
             contributors {
                 contributor {
                     name 'Nicholas Lambert'
+                }
+                contributor {
                     name 'wheezymustafa'
                 }
             }
@@ -156,25 +168,25 @@ project('rulebook-spring') {
         project {
             name 'RuleBook Spring'
             description 'Spring support for RuleBook'
-            url "${properties['project.url']}"
-            inceptionYear "${properties['project.inceptionYear']}"
+            url "${projectUrl}"
+            inceptionYear "${projectYear}"
 
             scm {
-                url "${properties['project.scm.url']}"
-                connection "${properties['project.scm.connection']}"
-                developerConnection "${properties['project.scm.developerConnection']}"
+                url "${projectScmUrl}"
+                connection "${projectScmConnection}"
+                developerConnection "${projectScmConnection}"
             }
 
             issueManagement {
-                system "${properties['project.issueManagement.system']}"
-                url "${properties['project.issueManagementUrl']}"
+                system "${projectIssueMgmtSystem}"
+                url "${projectIssueMgmtUrl}"
             }
 
             licenses {
                 license {
-                    name "${properties['project.license.name']}"
-                    url "${properties['project.license.url']}"
-                    distribution "${properties['project.license.distribution']}"
+                    name "${projectLicenseName}"
+                    url "${projectLicenseUrl}"
+                    distribution "${projectLicenseDistro}"
                 }
             }
 
