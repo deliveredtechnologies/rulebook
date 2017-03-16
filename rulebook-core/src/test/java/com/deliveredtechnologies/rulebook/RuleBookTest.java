@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -29,7 +30,7 @@ public class RuleBookTest {
       }
     });
 
-    ruleBook.given(fact).addRule(rule1);
+    ruleBook.given(fact).given("goodbye", "world").addRule(rule1);
     ruleBook.addRule(rule2);
     ruleBook.addRule(rule3);
     ruleBook.run();
@@ -38,6 +39,7 @@ public class RuleBookTest {
     verify(rule1, times(2)).given(anyList());
     verify(rule1, times(1)).setNextRule(rule2);
     verify(rule2, times(1)).setNextRule(rule3);
+    verify(ruleBook, times(1)).given("goodbye", "world");
     verify(ruleBook, times(0)).defineRules(); //not run because rules were already added
     verify(rule1, times(2)).run();
   }

@@ -43,6 +43,18 @@ public abstract class RuleBook<T> {
   }
 
   /**
+   * The given() method accepts a key/value pair as a Fact for this RuleBook.
+   *
+   * @param name  the name of the Fact
+   * @param value the value of the Fact
+   * @return      the current RuleBook object
+   */
+  public RuleBook<T> given(String name, T value) {
+    _facts.add(new Fact<T>(name, value));
+    return this;
+  }
+
+  /**
    * The addRule() method adds a rule to the end of the Rules chain.
    *
    * @param rule the Rule to be added
