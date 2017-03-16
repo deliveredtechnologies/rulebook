@@ -35,7 +35,7 @@ public class StandardRuleTest {
   @SuppressWarnings("unchecked")
   public void thenIsRunIfWhenIsTrue() {
     Rule<String> rule = spy(
-        StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+        StandardRule.create(String.class).given("hello", "world"));
     Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
     when(action.apply(any(FactMap.class))).thenReturn(NEXT);
 

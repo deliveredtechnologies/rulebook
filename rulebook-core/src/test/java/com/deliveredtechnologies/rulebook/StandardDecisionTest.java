@@ -22,9 +22,9 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("checked")
   public void standardDecisionIsCreated() {
-    StandardDecision<String, Boolean> decision1 = new StandardDecision<>();
-    StandardDecision<String, Boolean> decision2 = StandardDecision.create(String.class, Boolean.class);
-    StandardDecision decision3 = StandardDecision.create();
+    Decision<String, Boolean> decision1 = new StandardDecision<>();
+    Decision<String, Boolean> decision2 = StandardDecision.create(String.class, Boolean.class);
+    Decision decision3 = StandardDecision.create();
 
     Assert.assertNotNull(decision1);
     Assert.assertNotNull(decision2);
@@ -34,8 +34,8 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void thenIsRunAndResultIsSetIfWhenIsTrue() {
-    StandardDecision<String, Boolean> decision = StandardDecision.create(String.class, Boolean.class)
-        .given(new Fact<>("hello", "world"))
+    Decision<String, Boolean> decision = StandardDecision.create(String.class, Boolean.class)
+        .given("helo", "world")
         .when(facts -> true)
         .then((facts, result) -> {
             result.setValue(true);
@@ -49,7 +49,7 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void thenIsRunIfWhenIsTrue() {
-    StandardDecision<String, Boolean> rule = spy(
+    Decision<String, Boolean> rule = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
     Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
     when(action.apply(any(FactMap.class))).thenReturn(NEXT);
@@ -62,7 +62,7 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void thenIsNotRunIfWhenIsFalse() {
-    StandardDecision<String, Boolean> rule = spy(
+    Decision<String, Boolean> rule = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
     Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
     when(action.apply(any(FactMap.class))).thenReturn(NEXT);
@@ -75,9 +75,9 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void nextRuleInChainIsRunAndResultIsSetIfWhenIsFalse() {
-    StandardDecision<String, Boolean> decision1 = spy(
+    Decision<String, Boolean> decision1 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-    StandardDecision<String, Boolean> decision2 = spy(
+    Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
     decision1 = decision1.when(facts -> false);
@@ -96,9 +96,9 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void nextRuleInChainIsRunAndResultIsSetIfWhenIsTrueAndThenReturnsNext() {
-    StandardDecision<String, Boolean> decision1 = spy(
+    Decision<String, Boolean> decision1 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-    StandardDecision<String, Boolean> decision2 = spy(
+    Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
     decision1 = decision1.when(facts -> true).then(f -> NEXT);
@@ -117,9 +117,9 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void nextRuleInChainIsNotRunIfWhenIsTrueAndThenReturnsBreak() {
-    StandardDecision<String, Boolean> decision1 = spy(
+    Decision<String, Boolean> decision1 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-    StandardDecision<String, Boolean> decision2 = spy(
+    Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
     decision1 = decision1.when(f -> true).then(facts -> BREAK);

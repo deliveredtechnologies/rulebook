@@ -58,6 +58,18 @@ public class StandardRule<T> implements Rule<T> {
   }
 
   /**
+   * The given() method accepts a name/value pair to be used as a Fact.
+   * @param name  name of the Fact
+   * @param value object provided as the Fact with the given name
+   * @return      the current object
+   */
+  @Override
+  public Rule<T> given(String name, T value) {
+    _facts.put(name, new Fact(name, value));
+    return this;
+  }
+
+  /**
    * The given() method accepts Facts to be evaluated in the Rule.
    * @param facts     Facts to be used by the Rule
    * @return the current object

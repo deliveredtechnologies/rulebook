@@ -17,6 +17,15 @@ public interface Rule<T> {
   /**
    * The given() method sets the Facts to be used by the Rule.
    *
+   * @param name  name of the Fact
+   * @param value object provided as the Fact with the given name
+   * @return      the current Rule object
+   */
+  Rule<T> given(String name, T value);
+
+  /**
+   * The given() method sets the Facts to be used by the Rule.
+   *
    * @param facts Facts to be used by the Rule
    * @return the current Rule object
    */

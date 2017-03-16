@@ -69,6 +69,18 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   }
 
   /**
+   * The given() method accepts a name/value pair to be used as a Fact.
+   * @param name  name of the Fact
+   * @param value object provided as the Fact with the given name
+   * @return      the current object
+   */
+  @Override
+  public StandardDecision<T, U> given(String name, T value) {
+    _facts.put(name, new Fact<T>(name, value));
+    return this;
+  }
+
+  /**
    * The given() method accepts Facts for the StandardDecision.
    * @param facts     Facts to be used by the Rule
    * @return the current object for chaining other methods
@@ -76,7 +88,6 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @Override
   public StandardDecision<T, U> given(Fact<T>... facts) {
     Arrays.stream(facts).forEach(fact -> _facts.put(fact.getName(), fact));
-
     return this;
   }
 
