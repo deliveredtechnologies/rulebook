@@ -50,15 +50,13 @@ public class DecisionBookTest {
     Rule<String> rule = (Rule<String>) mock(Rule.class);
     Decision<String, Boolean> decision2 = (Decision<String, Boolean>) spy(Decision.class);
 
-    Fact<String> fact = new Fact<String>("hello", "Hello");
-
     DecisionBook<String, Boolean> decisionBook = spy(new DecisionBook<String, Boolean>() {
       @Override
       protected void defineRules() {
 
       }
     });
-    decisionBook.given(fact).addRule(decision1);
+    decisionBook.given("hello", "world").addRule(decision1);
     decisionBook.addRule(rule);
     decisionBook.addRule(decision2);
     decisionBook.run();
