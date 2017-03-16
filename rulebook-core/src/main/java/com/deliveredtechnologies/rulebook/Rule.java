@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -74,6 +75,14 @@ public interface Rule<T> {
    * @return the current Rule object
    */
   Rule<T> then(Function<FactMap<T>, RuleState> action);
+
+  /**
+   * The then() method performs some action based on facts. This then() method does not
+   * imply a return value, only that the next chained then() is executed.
+   * @param action  the action to be performed
+   * @return        the current Rule object
+   */
+  Rule<T> then(Consumer<FactMap<T>> action);
 
   /**
    * The setNextRule method adds the next Rule to the chain.

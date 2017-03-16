@@ -2,8 +2,10 @@ package com.deliveredtechnologies.rulebook;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -14,7 +16,7 @@ public class StandardRule<T> implements Rule<T> {
   private Optional<Rule<T>> _nextRule = Optional.empty();
   private FactMap<T> _facts = new FactMap<>();
   private Predicate<FactMap<T>> _test;
-  private Function<FactMap<T>, RuleState> _action;
+  private List _actionChain = new ArrayList();
 
   public StandardRule() {
   }
@@ -48,6 +50,16 @@ public class StandardRule<T> implements Rule<T> {
   @SuppressWarnings("unchecked")
   public void run() {
     if (getWhen().test(_facts)) {
+      for (Object action : (List<Object>)getThen()) {
+        if (action instanceof Function) {
+          if (((Function<FactMap<T>, RuleState>)action).apply(_facts) == BREAK) {
+            return;
+          }
+        }
+        else { //must be a consumer
+          ((Consumer<FactMap<T>>)action).accept(_facts);
+        }
+      }
       if (((Function<FactMap<T>, RuleState>)getThen()).apply(_facts) == BREAK) {
         return;
       }
@@ -128,8 +140,16 @@ public class StandardRule<T> implements Rule<T> {
    * @return the current object
    */
   @Override
+  @SuppressWarnings("unchecked")
   public Rule<T> then(Function<FactMap<T>, RuleState> action) {
-    _action = action;
+    _actionChain.add(action);
+    return this;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public Rule<T> then(Consumer<FactMap<T>> action) {
+    _actionChain.add(action);
     return this;
   }
 
@@ -150,6 +170,6 @@ public class StandardRule<T> implements Rule<T> {
 
   @Override
   public Object getThen() {
-    return _action;
+    return _actionChain;
   }
 }
