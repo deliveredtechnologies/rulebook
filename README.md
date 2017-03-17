@@ -87,16 +87,9 @@ public class ExampleRuleBook extends RuleBook {
   @Override
   public void defineRules() {
     //first rule prints "Hello"
-    addRule(StandardRule.create().when(f -> true).then(f -> {
-      System.out.print("Hello");
-      return NEXT; //continue to the next Rule
-    }));
-    
+    addRule(StandardRule.create().when(f -> true).then(f -> System.out.print("Hello")));
     //second rule prints "World"
-    addRule(StandardRule.create().when(f -> true).then(f -> {
-      System.out.println("World");
-      return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-    }));
+    addRule(StandardRule.create().when(f -> true).then(f -> System.out.println("World")));
   }
 }
 ```
@@ -114,26 +107,20 @@ public class ExampleRuleBook extends RuleBook<String> {
   @Override
   public void defineRules() {
     //first rule prints "Hello" value from helloFact
-    addRule(StandardRule.create().when(f -> f.containsKey("hello")).then(f -> {
-      System.out.print(f.getValue("hello"));
-      return NEXT; //continue to the next Rule
-    }));
-    
+    addRule(StandardRule.create().when(f -> f.containsKey("hello")).using("hello").then(System.out::print));
     //second rule prints "World" value from worldFact
-    addRule(StandardRule.create().when(f -> f.containsKey("world")).then(f -> {
-      System.out.println(f.getValue("world"));
-      return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-    }));
+    addRule(StandardRule.create().when(f -> f.containsKey("world")).using("world").then(System.out::println));
   }
 }
 ```
 ```java
 public class ExampleMainClass {
   public static void main(String[] args) {
-    Fact<String> helloFact = new Fact<>("hello", "Hello");
-    Fact<String> worldFact = new Fact<>("world", "World");
     RuleBook exampleRuleBook = new ExampleRuleBook();
-    exampleRuleBook.given(helloFact, worldFact).run();
+    exampleRuleBook
+      .given("hello", "Hello")
+      .given("world", "World")
+      .run();
   }
 }
 ```
@@ -175,30 +162,19 @@ public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
   @Override
   protected void defineRules() {
     //if there are more than 3 applicants then the loan is denied
-    addRule(StandardRule.create(ApplicantBean.class)
-      .when(factMap -> factMap.size() > 3)
-      .then(f -> BREAK)
-    );
+    addRule(StandardRule.create(ApplicantBean.class).when(factMap -> factMap.size() > 3).stop());
 
     //if everyone has a credit score of 700 or more then the loan is approved
     addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
       .when(factMap -> factMap.values().stream()
         .allMatch(applicantFact -> applicantFact.getValue().getCreditScore() >= 700))
-      .then((f, result) -> {
-        result.setValue(true);
-        return NEXT;
-      })
-    );
+      .then(f -> result.setValue(true)));
 
     //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved
     addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
       .when(factMap -> factMap.values().stream()
         .allMatch(applicantFact -> applicantFact.getValue().getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
-      .then((f, result) -> {
-        result.setValue(true);
-        return BREAK;
-      })
-    );
+      .then(f -> result.setValue(true)));
   }
 }
 ```
@@ -207,9 +183,8 @@ public class ExampleSolution {
   public static void main(String[] args) {
     HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
     decisionBook.withDefaultResult(false)
-      .given(
-        new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
-        new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
+      .given("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))
+      .given("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))
       .run();
 
     System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
