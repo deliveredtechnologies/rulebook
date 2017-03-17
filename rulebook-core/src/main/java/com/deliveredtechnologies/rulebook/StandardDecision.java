@@ -1,10 +1,13 @@
 package com.deliveredtechnologies.rulebook;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
+import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -21,6 +24,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   private Result<U> _result = new Result<>();
   private Predicate<FactMap<T>> _test;
   private List<Object> _actionChain = new ArrayList<>();
+  private Map<Integer, String[]> _factNameMap = new HashMap<>();
+  private RuleState _ruleState = NEXT;
 
   public StandardDecision() {
   }
@@ -57,26 +62,29 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @SuppressWarnings("unchecked")
   public void run() {
     if (getWhen().test(_facts)) {
-      for (Object action : getThen()) {
-        if (action instanceof BiFunction) {
-          if (((BiFunction<FactMap<T>, Result<U>, RuleState>)action).apply(_facts, _result) == BREAK) {
-            return;
+      List<Object> actionList = (List<Object>)getThen();
+      for (int i = 0; i < actionList.size(); i++) {
+        Object action = actionList.get(i);
+        String[] factNames = _factNameMap.get(i);
+        FactMap<T> usingFacts;
+        if (factNames != null) {
+          usingFacts = new FactMap<T>();
+          for (String factName : factNames) {
+            usingFacts.put(factName, _facts.get(factName));
           }
+        } else {
+          usingFacts = _facts;
         }
-        else if (action instanceof Function) {
-          if (((Function<FactMap<T>, RuleState>)action).apply(_facts) == BREAK) {
-            return;
-          }
-        }
-        else if (action instanceof BiConsumer) {
-          ((BiConsumer<FactMap<T>, Result<U>>)action).accept(_facts, _result);
-        }
-        else if (action instanceof Consumer) {
-          ((Consumer<FactMap<T>>)action).accept(_facts);
+        if (action instanceof BiConsumer) {
+          ((BiConsumer<FactMap<T>, Result<U>>)action).accept(usingFacts, _result);
+        } else if (action instanceof Consumer) {
+            ((Consumer<FactMap<T>>)action).accept(usingFacts);
         }
       }
+      if (_ruleState == BREAK) {
+        return;
+      }
     }
-
     _nextRule.ifPresent(rule -> rule.given(_facts));
     _nextRule.ifPresent(Rule::run);
   }
@@ -138,11 +146,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     return this;
   }
 
-  public StandardDecision<T, U> then(Consumer<FactMap<T>> action) {
-    _actionChain.add(action);
-    return this;
-  }
-
+  @Override
   public StandardDecision<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
     _actionChain.add(action);
     return this;
@@ -155,20 +159,30 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return NEXT if the next Rule should be run, otherwise BREAK
    */
   @Override
-  public StandardDecision<T, U> then(Function<FactMap<T>, RuleState> action) {
+  public StandardDecision<T, U> then(Consumer<FactMap<T>> action) {
     _actionChain.add(action);
     return this;
   }
 
-  /**
-   * The then() method accepts a {@link Function} that performs an action based on Facts, optionally sets a
-   * {@link Result}, and then returns a {@link RuleState} of either NEXT or BREAK.
-   * @param action the action to be performed
-   * @return NEXT if the next Decision should be run, otherwise BREAK
-   */
   @Override
-  public StandardDecision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
-    _actionChain.add(action);
+  public StandardDecision stop() {
+    _ruleState = BREAK;
+    return this;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public StandardDecision<T, U> using(String... factNames) {
+    if (_factNameMap.containsKey(((List<Object>)getThen()).size())) {
+      String[] existingFactNames = _factNameMap.get(((List<Object>)getThen()).size());
+      String[] allFactNames = new String[factNames.length + existingFactNames.length];
+      System.arraycopy(existingFactNames, 0, allFactNames, 0, existingFactNames.length);
+      System.arraycopy(factNames, 9, allFactNames, existingFactNames.length, factNames.length);
+      _factNameMap.put(((List<Object>)getThen()).size(), allFactNames);
+      return this;
+    }
+
+    _factNameMap.put(((List<Object>)getThen()).size(), factNames);
     return this;
   }
 
@@ -214,7 +228,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   }
 
   @Override
-  public List<Object> getThen() {
+  public Object getThen() {
     return _actionChain;
   }
 }

@@ -29,5 +29,10 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
   public T getValue(String name) {
     return Optional.ofNullable(this.get(name)).map(Fact::getValue).orElse(null);
   }
+
+  @Override
+  public String toString() {
+    return this.size() == 1 && this.getOne() instanceof String ? (String)this.getOne() : super.toString();
+  }
 }
 

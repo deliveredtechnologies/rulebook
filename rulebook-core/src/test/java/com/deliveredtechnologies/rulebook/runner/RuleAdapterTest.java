@@ -9,8 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InvalidClassException;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static org.mockito.Mockito.any;
@@ -147,55 +148,55 @@ public class RuleAdapterTest {
   }
 
   @Test
-  public void thenAnnotatedMethodWithResultShouldConvertToBiFunction() throws InvalidClassException {
+  public void thenAnnotatedMethodWithResultShouldConvertToBiConsumer() throws InvalidClassException {
     Result<String> result = new Result<>();
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
     ruleAdapter.given(_factMap);
 
-    BiFunction<FactMap, Result, RuleState> biFunction =
-      (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen().get(0);
-    Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
+    BiConsumer<FactMap, Result> biConsumer =
+      (BiConsumer<FactMap, Result>)((List<Object>)ruleAdapter.getThen()).get(0);
+    biConsumer.accept(_factMap, result);
+
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(sampleRuleWithResult.getResult(), result.getValue());
   }
 
   @Test
-  public void thenAnnotatedMethodInParentWithResultShouldConvertToBiFunction() throws InvalidClassException {
+  public void thenAnnotatedMethodInParentWithResultShouldConvertToBiConsumer() throws InvalidClassException {
     Result<String> result = new Result<>();
     SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
     ruleAdapter.given(_factMap);
 
-    BiFunction<FactMap, Result, RuleState> biFunction =
-      (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen().get(0);
-    Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
+    BiConsumer<FactMap, Result> biConsumer =
+      (BiConsumer<FactMap, Result>)((List<Object>)ruleAdapter.getThen()).get(0);
+    biConsumer.accept(_factMap, result);
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(subRuleWithResult.getResult(), result.getValue());
   }
 
   @Test
-  public void thenAnnotatedMethodWithResultShouldConvertToFunction() throws InvalidClassException {
+  public void thenAnnotatedMethodWithoutResultShouldConvertToConsumer() throws InvalidClassException {
     SampleRuleWithoutResult sampleRuleWithoutResult = new SampleRuleWithoutResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithoutResult);
     ruleAdapter.given(_factMap);
 
-    Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)ruleAdapter.getThen().get(0);
+    Consumer<FactMap> consumer = (Consumer<FactMap>)((List<Object>)ruleAdapter.getThen()).get(0);
+    consumer.accept(_factMap);
 
-    Assert.assertEquals(RuleState.NEXT, function.apply(null));
     Assert.assertEquals("So Factual!", ((Fact)_factMap.get("fact2")).getValue());
   }
 
   @Test
-  public void suppliedThenFunctionShouldTakePrecendenceOverPojo() throws InvalidClassException {
-    Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)mock(Function.class);
-    when(function.apply(any(FactMap.class))).thenReturn(RuleState.NEXT);
+  public void suppliedThenConsumerShouldTakePrecendenceOverPojo() throws InvalidClassException {
+    Consumer<FactMap> consumer = (Consumer<FactMap>)mock(Consumer.class);
     SampleRuleWithoutResult sampleRuleWithoutResult = new SampleRuleWithoutResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithoutResult);
-    ruleAdapter.given(_factMap).when(facts -> true).then(function).run();
+    ruleAdapter.given(_factMap).when(facts -> true).then(consumer).run();
 
-    verify(function, times(1)).apply(any(FactMap.class));
-    Assert.assertTrue(function == ruleAdapter.getThen().get(0));
+    verify(consumer, times(1)).accept(any(FactMap.class));
+    Assert.assertTrue(consumer == ((List<Object>)ruleAdapter.getThen()).get(0));
   }
 
   @Test
@@ -203,7 +204,7 @@ public class RuleAdapterTest {
     SampleRuleWithoutAnnotations sampleRule = new SampleRuleWithoutAnnotations();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRule);
 
-    Assert.assertEquals(0, ruleAdapter.getThen().size());
+    Assert.assertEquals(0, ((List<Object>)ruleAdapter.getThen()).size());
   }
 
   @Test(expected = InvalidClassException.class)

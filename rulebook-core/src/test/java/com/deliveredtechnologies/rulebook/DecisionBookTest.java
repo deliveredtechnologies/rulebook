@@ -81,14 +81,12 @@ public class DecisionBookTest {
             .when(facts -> true)
             .then((facts, result) -> {
                 result.getValue().append(facts.getValue("hello"));
-                return RuleState.NEXT;
               })
         );
         addRule(StandardDecision.create(String.class, StringBuffer.class)
             .when(facts -> true)
             .then((facts, results) -> {
                 results.getValue().append(facts.getValue("world"));
-                return RuleState.NEXT;
               })
         );
       }

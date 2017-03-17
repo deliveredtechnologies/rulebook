@@ -1,9 +1,12 @@
 package com.deliveredtechnologies.rulebook;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
+import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,6 +20,8 @@ public class StandardRule<T> implements Rule<T> {
   private FactMap<T> _facts = new FactMap<>();
   private Predicate<FactMap<T>> _test;
   private List _actionChain = new ArrayList();
+  private Map<Integer, String[]> _factNameMap = new HashMap<>();
+  private RuleState _ruleState = NEXT;
 
   public StandardRule() {
   }
@@ -42,26 +47,38 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The run() method runs the {@link Predicate} supplied by the when() method. If it evaluates to true then
-   * the {@link Function} supplied by the then() method is executed. If the then()
-   * method returns a BREAK {@link RuleState} then no further rules are evaluated. Otherwise, the next rule in the
+   * the {@link Consumer} supplied by the then() method is executed. If the break()
+   * method was invoked then no further rules are evaluated. Otherwise, the next rule in the
    * chain is evaluated.
    */
   @Override
   @SuppressWarnings("unchecked")
   public void run() {
     if (getWhen().test(_facts)) {
-      for (Object action : (List<Object>)getThen()) {
-        if (action instanceof Function) {
-          if (((Function<FactMap<T>, RuleState>)action).apply(_facts) == BREAK) {
-            return;
+      List<Object> actionList = (List<Object>)getThen();
+      for (int i =0; i < ((List<Object>)getThen()).size(); i++) {
+        Object action = actionList.get(i);
+        String[] factNames = _factNameMap.get(i);
+        FactMap<T> usingFacts;
+        if (factNames != null) {
+          usingFacts = new FactMap<T>();
+          for (String factName : factNames) {
+            usingFacts.put(factName, _facts.get(factName));
           }
         }
-        else { //must be a consumer
-          ((Consumer<FactMap<T>>)action).accept(_facts);
+        else {
+          usingFacts = _facts;
+        if (action instanceof Consumer) {
+            ((Consumer) action).accept(usingFacts);
+          } else {
+            ((Consumer) action).accept(usingFacts);
+          }
         }
       }
+      if (_ruleState == BREAK) {
+        return;
+      }
     }
-
     _nextRule.ifPresent(rule -> rule.given(_facts));
     _nextRule.ifPresent(Rule::run);
   }
@@ -130,23 +147,37 @@ public class StandardRule<T> implements Rule<T> {
   }
 
   /**
-   * The then() method accepts a {@link Function} that performs an action based on Facts and then returns a
-   * {@link RuleState} of either NEXT or BREAK.
+   * The then() method accepts a {@link Consumer} that performs an action based on Facts
    *
-   * @param action the action to be performed
-   * @return the current object
+   * @param action  the action to be performed
+   * @return        the current object
    */
   @Override
   @SuppressWarnings("unchecked")
-  public Rule<T> then(Function<FactMap<T>, RuleState> action) {
+  public Rule<T> then(Consumer<FactMap<T>> action) {
     _actionChain.add(action);
     return this;
   }
 
   @Override
+  public Rule<T> stop() {
+    _ruleState = BREAK;
+    return this;
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
-  public Rule<T> then(Consumer<FactMap<T>> action) {
-    _actionChain.add(action);
+  public StandardRule<T> using(String... factNames) {
+    if (_factNameMap.containsKey(((List<Object>)getThen()).size())) {
+      String[] existingFactNames = _factNameMap.get(((List<Object>)getThen()).size());
+      String[] allFactNames = new String[factNames.length + existingFactNames.length];
+      System.arraycopy(existingFactNames, 0, allFactNames, 0, existingFactNames.length);
+      System.arraycopy(factNames, 9, allFactNames, existingFactNames.length, factNames.length);
+      _factNameMap.put(((List<Object>)getThen()).size(), allFactNames);
+      return this;
+    }
+
+    _factNameMap.put(((List<Object>)getThen()).size(), factNames);
     return this;
   }
 
@@ -166,7 +197,7 @@ public class StandardRule<T> implements Rule<T> {
   }
 
   @Override
-  public List<Object> getThen() {
+  public Object getThen() {
     return _actionChain;
   }
 }

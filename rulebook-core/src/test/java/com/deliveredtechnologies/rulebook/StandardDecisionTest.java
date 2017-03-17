@@ -3,6 +3,7 @@ package com.deliveredtechnologies.rulebook;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
@@ -39,7 +40,6 @@ public class StandardDecisionTest {
         .when(facts -> true)
         .then((facts, result) -> {
             result.setValue(true);
-            return NEXT;
           });
     decision.run();
 
@@ -50,13 +50,12 @@ public class StandardDecisionTest {
   @SuppressWarnings("unchecked")
   public void thenIsRunIfWhenIsTrue() {
     Decision<String, Boolean> rule = spy(
-        StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-    Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
-    when(action.apply(any(FactMap.class))).thenReturn(NEXT);
+        StandardDecision.create(String.class, Boolean.class).given(new Fact<String>("hello", "world")));
+    Consumer<FactMap<String>> action = (Consumer<FactMap<String>>) mock(Consumer.class);
 
     rule.when(f -> true).then(action).run();
 
-    verify(action, times(1)).apply(any(FactMap.class));
+    verify(action, times(1)).accept(any(FactMap.class));
   }
 
   @Test
@@ -64,12 +63,11 @@ public class StandardDecisionTest {
   public void thenIsNotRunIfWhenIsFalse() {
     Decision<String, Boolean> rule = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
-    Function<FactMap<String>, RuleState> action = (Function<FactMap<String>, RuleState>) mock(Function.class);
-    when(action.apply(any(FactMap.class))).thenReturn(NEXT);
+    Consumer<FactMap<String>> action = (Consumer<FactMap<String>>) mock(Consumer.class);
 
     rule.when(f -> false).then(action).run();
 
-    verify(action, times(0)).apply(any(FactMap.class));
+    verify(action, times(0)).accept(any(FactMap.class));
   }
 
   @Test
@@ -83,7 +81,6 @@ public class StandardDecisionTest {
     decision1 = decision1.when(facts -> false);
     decision2 = decision2.when(facts -> true).then((facts, result) -> {
         result.setValue(true);
-        return BREAK;
       });
     decision1.setNextRule(decision2);
     decision1.run();
@@ -101,10 +98,9 @@ public class StandardDecisionTest {
     Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-    decision1 = decision1.when(facts -> true).then(f -> NEXT);
+    decision1 = decision1.when(facts -> true).then(f -> {});
     decision2 = decision2.when(facts -> true).then((facts, result) -> {
         result.setValue(true);
-        return BREAK;
       });
     decision1.setNextRule(decision2);
     decision1.run();
@@ -122,11 +118,8 @@ public class StandardDecisionTest {
     Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-    decision1 = decision1.when(f -> true).then(facts -> BREAK);
-    decision2 = decision2.when(f -> true).then((facts, result) -> {
-        result.setValue(true);
-        return BREAK;
-      });
+    decision1 = decision1.when(f -> true).then(facts -> {}).stop();
+    decision2 = decision2.when(f -> true).then((facts, result) -> result.setValue(true)).stop();
     decision1.setNextRule(decision2);
     decision1.run();
 
