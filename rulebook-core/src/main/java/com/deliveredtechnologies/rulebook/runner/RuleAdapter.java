@@ -6,6 +6,7 @@ import com.deliveredtechnologies.rulebook.Rule;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.StandardDecision;
 import com.deliveredtechnologies.rulebook.annotation.Given;
+import com.deliveredtechnologies.rulebook.annotation.Result;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 import org.slf4j.Logger;
@@ -16,12 +17,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,6 +35,7 @@ import java.util.stream.Stream;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethod;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethods;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
 /**
@@ -103,21 +108,27 @@ public class RuleAdapter extends StandardDecision {
   }
 
   /**
-   * Method getThen() returns the 'then' action to be used; either a {@link Function} object or a
-   * {@link BiFunction} object. If no action was specified then a default Function object that returns
-   * {@link RuleState} NEXT is used.
+   * Method getThen() returns the 'then' action to be used; either a {@link Function} object, a
+   * {@link BiFunction} object, or a {@link Consumer} object. If no action was specified then a default Function object
+   * that returns {@link RuleState} NEXT is used.
    * @return  either a Function object or a BiFunction object
    */
-  public Object getThen() {
-    //Use what was explicitly set by then() first
-    if (super.getThen() != null) {
-      return super.getThen();
+  @Override
+  public List<Object> getThen() {
+    if (super.getThen().size() < 1) {
+      List<Object> thenList = new ArrayList<>();
+      for (Method thenMethod : getAnnotatedMethods(Then.class, _ruleObj.getClass())) {
+        thenMethod.setAccessible(true);
+        Object then = getThenMethodAsBiFunction(thenMethod).map(Object.class::cast)
+          .orElse(getThenMethodAsFunction(thenMethod).map(Object.class::cast)
+            .orElse(getThenMethodAsBiConsumer(thenMethod).map(Object.class::cast)
+              .orElse(getThenMethodAsConsumer(thenMethod).map(Object.class::cast)
+                .orElse((Function)factMap -> RuleState.NEXT))));
+        thenList.add(then);
+      }
+      super.getThen().addAll(thenList);
     }
-
-    //If nothing was explicitly set, convert what's in the class to a BiFunction or a Function
-    //If the action still can't be determined then just give back a Function that moves down the chain
-    return getThenMethodAsBiFunction().map(Object.class::cast)
-        .orElse(getThenMethodAsFunction().orElse(factMap -> RuleState.NEXT));
+    return super.getThen();
   }
 
   /**
@@ -185,10 +196,12 @@ public class RuleAdapter extends StandardDecision {
    * Result annotated property and a Then annotated method exists.
    * @return  A {@link BiFunction} for classes that have a @Then method and a @Result
    */
-  private Optional<BiFunction> getThenMethodAsBiFunction() {
-    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
-        .flatMap(resultField -> getAnnotatedMethod(Then.class, _ruleObj.getClass())
-        .map(method -> toBiFunction(method, resultField)));
+  private Optional<BiFunction> getThenMethodAsBiFunction(Method method) {
+    if (method.getReturnType().isAssignableFrom(RuleState.class)) {
+      return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
+        .map(resultField -> toBiFunction(method, resultField));
+    }
+    return Optional.empty();
   }
 
   @SuppressWarnings("unchecked")
@@ -203,6 +216,7 @@ public class RuleAdapter extends StandardDecision {
         }
         return retVal;
       } catch (IllegalAccessException | InvocationTargetException ex) {
+        LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to BiFunction", ex);
         return RuleState.BREAK;
       }
     };
@@ -213,19 +227,45 @@ public class RuleAdapter extends StandardDecision {
    * property.
    * @return  a {@link Function} from the @Then annotated method of the obejct
    */
-  private Optional<Function> getThenMethodAsFunction() {
-    if (getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
-        .isPresent()) {
-      return Optional.empty();
+  private Optional<Function> getThenMethodAsFunction(Method method) {
+    if (method.getReturnType().isAssignableFrom(RuleState.class)) {
+      return Optional.of((Function) obj -> {
+        try {
+          return method.invoke(_ruleObj);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+          LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to Function", ex);
+          return RuleState.BREAK;
+        }
+      });
     }
+    return Optional.empty();
+  }
 
-    return getAnnotatedMethod(Then.class, _ruleObj.getClass())
-      .map(method -> (Function) obj -> {
-          try {
-            return method.invoke(_ruleObj);
-          } catch (IllegalAccessException | InvocationTargetException ex) {
-            return RuleState.BREAK;
-          }
-        });
+  private Optional<BiConsumer> getThenMethodAsBiConsumer(Method method) {
+    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
+      .map(resultField -> (BiConsumer) (facts, result) -> {
+        try {
+          method.invoke(_ruleObj);
+          resultField.setAccessible(true);
+          Object resultVal = resultField.get(_ruleObj);
+          ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+          LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to BiConsumer", ex);
+        }
+      });
+  }
+
+  private Optional<Consumer> getThenMethodAsConsumer(Method method) {
+    if (method.getReturnType().equals(Void.TYPE)) {
+      return Optional.of((Consumer) obj -> {
+        try {
+          method.invoke(_ruleObj);
+        }
+        catch (IllegalAccessException | InvocationTargetException ex) {
+          LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to Consumer", ex);
+        }
+      });
+    }
+    return Optional.empty();
   }
 }

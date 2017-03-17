@@ -153,7 +153,8 @@ public class RuleAdapterTest {
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
     ruleAdapter.given(_factMap);
 
-    BiFunction<FactMap, Result, RuleState> biFunction = (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen();
+    BiFunction<FactMap, Result, RuleState> biFunction =
+      (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen().get(0);
     Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(sampleRuleWithResult.getResult(), result.getValue());
@@ -166,7 +167,8 @@ public class RuleAdapterTest {
     RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
     ruleAdapter.given(_factMap);
 
-    BiFunction<FactMap, Result, RuleState> biFunction = (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen();
+    BiFunction<FactMap, Result, RuleState> biFunction =
+      (BiFunction<FactMap, Result, RuleState>)ruleAdapter.getThen().get(0);
     Assert.assertEquals(RuleState.NEXT, biFunction.apply(null, result));
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(subRuleWithResult.getResult(), result.getValue());
@@ -178,7 +180,7 @@ public class RuleAdapterTest {
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithoutResult);
     ruleAdapter.given(_factMap);
 
-    Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)ruleAdapter.getThen();
+    Function<FactMap, RuleState> function = (Function<FactMap, RuleState>)ruleAdapter.getThen().get(0);
 
     Assert.assertEquals(RuleState.NEXT, function.apply(null));
     Assert.assertEquals("So Factual!", ((Fact)_factMap.get("fact2")).getValue());
@@ -193,16 +195,15 @@ public class RuleAdapterTest {
     ruleAdapter.given(_factMap).when(facts -> true).then(function).run();
 
     verify(function, times(1)).apply(any(FactMap.class));
-    Assert.assertTrue(function == ruleAdapter.getThen());
+    Assert.assertTrue(function == ruleAdapter.getThen().get(0));
   }
 
   @Test
   public void pojoWithNoThenAnnotationDefaultsToNext() throws InvalidClassException {
     SampleRuleWithoutAnnotations sampleRule = new SampleRuleWithoutAnnotations();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRule);
-    Function function = (Function)ruleAdapter.getThen();
 
-    Assert.assertEquals(RuleState.NEXT, function.apply(null));
+    Assert.assertEquals(0, ruleAdapter.getThen().size());
   }
 
   @Test(expected = InvalidClassException.class)

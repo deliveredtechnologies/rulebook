@@ -2,10 +2,13 @@ package com.deliveredtechnologies.rulebook;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -17,8 +20,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   private FactMap<T> _facts = new FactMap<>();
   private Result<U> _result = new Result<>();
   private Predicate<FactMap<T>> _test;
-  private Function<FactMap<T>, RuleState> _action;
-  private Optional<BiFunction<FactMap<T>, Result<U>, RuleState>> _actionResult = Optional.empty();
+  private List<Object> _actionChain = new ArrayList<>();
 
   public StandardDecision() {
   }
@@ -55,12 +57,23 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @SuppressWarnings("unchecked")
   public void run() {
     if (getWhen().test(_facts)) {
-      if (getThen() instanceof BiFunction) {
-        if (((BiFunction<FactMap<T>, Result<U>, RuleState>) getThen()).apply(_facts, _result) == BREAK) {
-          return;
+      for (Object action : getThen()) {
+        if (action instanceof BiFunction) {
+          if (((BiFunction<FactMap<T>, Result<U>, RuleState>)action).apply(_facts, _result) == BREAK) {
+            return;
+          }
         }
-      } else if (((Function<FactMap<T>, RuleState>)getThen()).apply(_facts) == BREAK) {
-        return;
+        else if (action instanceof Function) {
+          if (((Function<FactMap<T>, RuleState>)action).apply(_facts) == BREAK) {
+            return;
+          }
+        }
+        else if (action instanceof BiConsumer) {
+          ((BiConsumer<FactMap<T>, Result<U>>)action).accept(_facts, _result);
+        }
+        else if (action instanceof Consumer) {
+          ((Consumer<FactMap<T>>)action).accept(_facts);
+        }
       }
     }
 
@@ -125,6 +138,16 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     return this;
   }
 
+  public StandardDecision<T, U> then(Consumer<FactMap<T>> action) {
+    _actionChain.add(action);
+    return this;
+  }
+
+  public StandardDecision<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
+    _actionChain.add(action);
+    return this;
+  }
+
   /**
    * The then() method accepts a {@link Function} that performs an action based on Facts and then returns a
    * {@link RuleState} of either NEXT or BREAK.
@@ -133,7 +156,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> then(Function<FactMap<T>, RuleState> action) {
-    _action = action;
+    _actionChain.add(action);
     return this;
   }
 
@@ -145,7 +168,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   public StandardDecision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action) {
-    _actionResult = Optional.ofNullable(action);
+    _actionChain.add(action);
     return this;
   }
 
@@ -191,7 +214,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   }
 
   @Override
-  public Object getThen() {
-    return _actionResult.map(Object.class::cast).orElse(_action);
+  public List<Object> getThen() {
+    return _actionChain;
   }
 }

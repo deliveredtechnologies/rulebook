@@ -60,9 +60,6 @@ public class StandardRule<T> implements Rule<T> {
           ((Consumer<FactMap<T>>)action).accept(_facts);
         }
       }
-      if (((Function<FactMap<T>, RuleState>)getThen()).apply(_facts) == BREAK) {
-        return;
-      }
     }
 
     _nextRule.ifPresent(rule -> rule.given(_facts));
@@ -169,7 +166,7 @@ public class StandardRule<T> implements Rule<T> {
   }
 
   @Override
-  public Object getThen() {
+  public List<Object> getThen() {
     return _actionChain;
   }
 }
