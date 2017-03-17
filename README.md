@@ -91,7 +91,7 @@ public class ExampleRuleBook extends RuleBook {
   }
 }
 ```
-***...or use 2 rules
+**...or use 2 rules**
 ```java
 public class ExampleRuleBook extends RuleBook {
   @Override
