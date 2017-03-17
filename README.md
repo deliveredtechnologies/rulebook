@@ -86,8 +86,18 @@ compile 'com.deliveredtechnologies:rulebook-core:0.3.4'
 public class ExampleRuleBook extends RuleBook {
   @Override
   public void defineRules() {
+    //one rule prints "Hello World"
+    addRule(StandardRule.create().when(f -> true).then(f -> System.out.print("Hello ")).then(f -> System.out.println("World")));
+  }
+}
+```
+**...or use 2 rules
+```java
+public class ExampleRuleBook extends RuleBook {
+  @Override
+  public void defineRules() {
     //first rule prints "Hello"
-    addRule(StandardRule.create().when(f -> true).then(f -> System.out.print("Hello")));
+    addRule(StandardRule.create().when(f -> true).then(f -> System.out.print("Hello ")));
     //second rule prints "World"
     addRule(StandardRule.create().when(f -> true).then(f -> System.out.println("World")));
   }
