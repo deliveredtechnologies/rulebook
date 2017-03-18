@@ -103,6 +103,7 @@ public class ExampleRuleBook extends RuleBook {
   }
 }
 ```
+**now, run it!**
 ```java
 public class ExampleMainClass {
   public static void main(String[] args) {
@@ -135,6 +136,7 @@ public class ExampleRuleBook extends RuleBook<String> {
   }
 }
 ```
+**now, run it!**
 ```java
 public class ExampleMainClass {
   public static void main(String[] args) {
