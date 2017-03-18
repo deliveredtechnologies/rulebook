@@ -123,7 +123,7 @@ public class ExampleRuleBook extends RuleBook<String> {
   }
 }
 ```
-**..or it could be a single rule
+**..or it could be a single rule**
 ```java
 public class ExampleRuleBook extends RuleBook<String> {
   @Override
