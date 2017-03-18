@@ -1,5 +1,7 @@
 package com.deliveredtechnologies.rulebook;
 
+import com.deliveredtechnologies.rulebook.util.ArrayUtils;
+
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
 
@@ -61,7 +63,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @Override
   @SuppressWarnings("unchecked")
   public void run() {
-    if (getWhen().test(_facts)) {
+    if (getWhen() == null || getWhen().test(_facts)) {
       List<Object> actionList = (List<Object>)getThen();
       for (int i = 0; i < actionList.size(); i++) {
         Object action = actionList.get(i);
@@ -175,9 +177,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   public StandardDecision<T, U> using(String... factNames) {
     if (_factNameMap.containsKey(((List<Object>)getThen()).size())) {
       String[] existingFactNames = _factNameMap.get(((List<Object>)getThen()).size());
-      String[] allFactNames = new String[factNames.length + existingFactNames.length];
-      System.arraycopy(existingFactNames, 0, allFactNames, 0, existingFactNames.length);
-      System.arraycopy(factNames, 9, allFactNames, existingFactNames.length, factNames.length);
+      String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);
       _factNameMap.put(((List<Object>)getThen()).size(), allFactNames);
       return this;
     }
