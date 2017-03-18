@@ -87,7 +87,9 @@ public class ExampleRuleBook extends RuleBook {
   @Override
   public void defineRules() {
     //one rule prints "Hello World"
-    addRule(StandardRule.create().then(f -> System.out.print("Hello ")).then(f -> System.out.println("World")));
+    addRule(StandardRule.create()
+      .then(f -> System.out.print("Hello "))
+      .then(f -> System.out.println("World")));
   }
 }
 ```
@@ -118,9 +120,13 @@ public class ExampleRuleBook extends RuleBook<String> {
   @Override
   public void defineRules() {
     //first rule prints "Hello" value from helloFact
-    addRule(StandardRule.create().when(f -> f.containsKey("hello")).using("hello").then(System.out::print));
+    addRule(StandardRule.create().when(f -> f.containsKey("hello"))
+      .using("hello")
+      .then(System.out::print));
     //second rule prints "World" value from worldFact
-    addRule(StandardRule.create().when(f -> f.containsKey("world")).using("world").then(System.out::println));
+    addRule(StandardRule.create().when(f -> f.containsKey("world"))
+      .using("world")
+      .then(System.out::println));
   }
 }
 ```
