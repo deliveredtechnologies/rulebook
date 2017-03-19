@@ -268,7 +268,7 @@ Although the reason for FactMaps is important, that doesn't mean anyone wants to
 
 **getValue(String name)** gets the value of the Fact by the name of the Fact
 
-**setValue(String name, T value) ** sets the Fact with the name specified to the new value 
+**setValue(String name, T value)** sets the Fact with the name specified to the new value 
 
 **put(Fact fact)** adds a Fact to the FactMap, using the Fact's name as the key for the Map
 
