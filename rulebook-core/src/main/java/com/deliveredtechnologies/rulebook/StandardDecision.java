@@ -55,38 +55,47 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   }
 
   /**
-   * The run() method runs the {@link Predicate} supplied by the <code>when()</code> method.
-   * If it evaluates to true then the {@link BiFunction} supplied by the then() method is executed.
-   * If the BiFuction is not available then the {@link Function} is called instead. If the then() method returns a
-   * BREAK {@link RuleState} then no further rules are evaluated, otherwise the next rule in the chain is evaluated.
+   * The run() method runs the {@link Predicate} supplied by the when() method.<br/>
+   * If it evaluates to true then the {@link BiConsumer}(s) and {@link Consumer}(s) supplied by the then() method(s)
+   * are executed.<br/>
+   * If the stop() method was invoked then no further rules are evaluated.<br/>
+   * Otherwise, the next rule in the chain is evaluated.
    */
   @Override
   @SuppressWarnings("unchecked")
   public void run() {
+    //invoke then() action(s) if when() is true or if when() was never specified
     if (getWhen() == null || getWhen().test(_facts)) {
+      //iterate through the then() actions specified
       List<Object> actionList = (List<Object>)getThen();
       for (int i = 0; i < actionList.size(); i++) {
         Object action = actionList.get(i);
         String[] factNames = _factNameMap.get(i);
         FactMap<T> usingFacts;
+        //if using() was specified for the specific then(), use only those facts specified
         if (factNames != null) {
           usingFacts = new FactMap<T>();
           for (String factName : factNames) {
             usingFacts.put(factName, _facts.get(factName));
           }
         } else {
+          //if no using() was specified, provide the then() with all available facts
           usingFacts = _facts;
         }
         if (action instanceof BiConsumer) {
+          //invoke the then() BiConsumer action
           ((BiConsumer<FactMap<T>, Result<U>>)action).accept(usingFacts, _result);
         } else if (action instanceof Consumer) {
-            ((Consumer<FactMap<T>>)action).accept(usingFacts);
+          //invoke the then() BiConsumer action
+          ((Consumer<FactMap<T>>)action).accept(usingFacts);
         }
       }
+      //if stop() was invoked, stop the rule chain after then is finished executing
       if (_ruleState == BREAK) {
         return;
       }
     }
+    //continue down the rule chain
     _nextRule.ifPresent(rule -> rule.given(_facts));
     _nextRule.ifPresent(Rule::run);
   }
@@ -105,8 +114,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   /**
    * The given() method accepts Facts for the StandardDecision.
-   * @param facts     Facts to be used by the Rule
-   * @return the current object for chaining other methods
+   * @param facts Facts to be used by the Rule
+   * @return      the current object for chaining other methods
    */
   @Override
   public StandardDecision<T, U> given(Fact<T>... facts) {
@@ -116,8 +125,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   /**
    * The given() method accepts Facts for the StandardDecision.
-   * @param facts     a List of Facts to be used by the Rule
-   * @return the current object
+   * @param facts a List of Facts to be used by the Rule
+   * @return      the current object
    */
   @Override
   public StandardDecision<T, U> given(List<Fact<T>> facts) {
@@ -128,8 +137,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   /**
    * The given() method accepts Facts for the StandardDecision.
-   * @param facts     a {@link FactMap}
-   * @return the current object
+   * @param facts a {@link FactMap}
+   * @return      the current object
    */
   @Override
   public StandardDecision<T, U> given(FactMap<T> facts) {
@@ -139,8 +148,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   /**
    * The when() method accepts a {@link Predicate} that returns true or false based on Facts.
-   * @param test      the condition(s) to be evaluated against the Facts
-   * @return true, if the then() statement should be evaluated, otherwise false
+   * @param test  the condition(s) to be evaluated against the Facts
+   * @return      true, if the then() statement(s) should be evaluated, otherwise false
    */
   @Override
   public StandardDecision<T, U> when(Predicate<FactMap<T>> test) {
@@ -148,6 +157,12 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     return this;
   }
 
+  /**
+   * The then() method accepts a {@link BiConsumer} that performs an action based on Facts.<br/>
+   * The arguments of the BiConsumer are a {@link FactMap} and a {@link Result}, respectively.
+   * @param action  the action to be performed
+   * @return        the current object
+   */
   @Override
   public StandardDecision<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
     _actionChain.add(action);
@@ -155,10 +170,9 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   }
 
   /**
-   * The then() method accepts a {@link Function} that performs an action based on Facts and then returns a
-   * {@link RuleState} of either NEXT or BREAK.
-   * @param action    the action to be performed
-   * @return NEXT if the next Rule should be run, otherwise BREAK
+   * The then() method accepts a {@link Consumer} that performs an action based on Facts.
+   * @param action  the action to be performed
+   * @return        the current object
    */
   @Override
   public StandardDecision<T, U> then(Consumer<FactMap<T>> action) {
@@ -166,12 +180,23 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     return this;
   }
 
+  /**
+   * The stop() method causes the rule chain to stop if the when() condition true and only
+   * after the then() actions have been executed.
+   * @return  the current object
+   */
   @Override
   public StandardDecision stop() {
     _ruleState = BREAK;
     return this;
   }
 
+  /**
+   * The using() method reduces the facts to those specifically named here.
+   * The using() method only applies to the then() method immediately following it.
+   * @param factNames the names of the facts to be used
+   * @return          the current object
+   */
   @Override
   @SuppressWarnings("unchecked")
   public StandardDecision<T, U> using(String... factNames) {
@@ -206,7 +231,6 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   /**
    * The setResult() method sets the stored Result.
-   *
    * @param result the instantiated result
    */
   @Override
@@ -222,11 +246,21 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     return _facts;
   }
 
+  /**
+   * The getWhen() method returns the {@link Predicate} to be used for the condition of the Rule.
+   * @return  the Predicate used for the condition
+   */
   @Override
   public Predicate<FactMap<T>> getWhen() {
     return _test;
   }
 
+  /**
+   * The getThen() method returns a {@link List} of {@link Consumer} objects that combined
+   * together in sequence represent the then() action(s). The Object return type is retained
+   * for backward compatibility.
+   * @return  a List of Consumer objects
+   */
   @Override
   public Object getThen() {
     return _actionChain;

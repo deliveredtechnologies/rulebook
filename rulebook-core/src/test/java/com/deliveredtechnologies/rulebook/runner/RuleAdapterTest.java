@@ -155,7 +155,7 @@ public class RuleAdapterTest {
     ruleAdapter.given(_factMap);
 
     BiConsumer<FactMap, Result> biConsumer =
-      (BiConsumer<FactMap, Result>)((List<Object>)ruleAdapter.getThen()).get(0);
+        (BiConsumer<FactMap, Result>)((List<Object>)ruleAdapter.getThen()).get(0);
     biConsumer.accept(_factMap, result);
 
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
@@ -170,7 +170,7 @@ public class RuleAdapterTest {
     ruleAdapter.given(_factMap);
 
     BiConsumer<FactMap, Result> biConsumer =
-      (BiConsumer<FactMap, Result>)((List<Object>)ruleAdapter.getThen()).get(0);
+        (BiConsumer<FactMap, Result>)((List<Object>)ruleAdapter.getThen()).get(0);
     biConsumer.accept(_factMap, result);
     Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
     Assert.assertEquals(subRuleWithResult.getResult(), result.getValue());

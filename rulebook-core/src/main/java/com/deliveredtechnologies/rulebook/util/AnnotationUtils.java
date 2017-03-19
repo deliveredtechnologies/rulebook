@@ -18,7 +18,7 @@ public class AnnotationUtils {
   private AnnotationUtils() {}
 
   /**
-   * Method getAnnotatedFields gets the fields annotated of a specific type from the class and its parent classes.
+   * Method getAnnotatedFields gets the fields annotated of a specific type from the class and its parent classes. <br/>
    * The List is in order of closest parent => current obj fields, parent obj fields, etc.
    * @param annotation      the annotation type
    * @param clazz           the class that is expected to be annotated
@@ -50,8 +50,8 @@ public class AnnotationUtils {
   }
 
   /**
-   * Method getAnnotatedMethods gets the methods annotated of a specific type from the class and its parent classes.
-   * The List is in order of closest parent => current obj methods, parent obj methods, etc.
+   * Method getAnnotatedMethods gets the methods annotated of a specific type from the class and its parent
+   * classes.<br/> The List is in order of closest parent => current obj methods, parent obj methods, etc.
    * @param annotation      the type of the annotation
    * @param clazz           the annotated class
    * @return                a List of Methods that have been annotated using annotation in the class clazz

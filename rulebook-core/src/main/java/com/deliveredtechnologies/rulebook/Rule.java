@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * A <code>Rule</code> is an interface that uses the following format:
+ * Rule is an interface that uses the following format:
  * rule.given(facts).when(some condition given facts).then(do something)
  */
 public interface Rule<T> {
@@ -17,7 +17,6 @@ public interface Rule<T> {
 
   /**
    * The given() method sets the Facts to be used by the Rule.
-   *
    * @param name  name of the Fact
    * @param value object provided as the Fact with the given name
    * @return      the current Rule object
@@ -26,7 +25,6 @@ public interface Rule<T> {
 
   /**
    * The given() method sets the Facts to be used by the Rule.
-   *
    * @param facts Facts to be used by the Rule
    * @return the current Rule object
    */
@@ -55,14 +53,14 @@ public interface Rule<T> {
 
   /**
    * The when() method takes in a {@link Predicate} that evaluates the facts against a condition.
-   * @param test      the condition(s) to be evaluated against the Facts
-   * @return the current Rule object
+   * @param test  the condition(s) to be evaluated against the Facts
+   * @return      the current Rule object
    */
   Rule<T> when(Predicate<FactMap<T>> test);
 
   /**
-   * The then() method performs some action based on facts. This then() method does not
-   * imply a return value, only that the next chained then() is executed.
+   * The then() method performs some action based on facts.<br/>
+   * This then() method does not imply a return value, only that the next chained then() is executed.
    * @param action  the action to be performed
    * @return        the current Rule object
    */
@@ -75,14 +73,15 @@ public interface Rule<T> {
   Rule<T> stop();
 
   /**
-   * Reduces the Facts used by the then() method to only the value of the Fact specified by the factName.
+   * The using() method reduces the Facts used by the then() method to only the value of the Fact specified
+   * by the factName.
    * @param factName  the name of the Fact value to be used by the then() method.
    * @return          thencurrent Rule object
    */
   Rule<T> using(String... factName);
 
   /**
-   * Method getThen() gets an instance of a functional interface responsbile for the action to be performed by
+   * Method getThen() gets the instance(s) of the functional interface(s) responsible for the action to be performed by
    * the Rule.
    * @return  a functional interface Object
    */

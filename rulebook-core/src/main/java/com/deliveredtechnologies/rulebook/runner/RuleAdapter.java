@@ -6,7 +6,6 @@ import com.deliveredtechnologies.rulebook.Rule;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.StandardDecision;
 import com.deliveredtechnologies.rulebook.annotation.Given;
-import com.deliveredtechnologies.rulebook.annotation.Result;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 import org.slf4j.Logger;
@@ -25,16 +24,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethod;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethods;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
@@ -120,7 +118,7 @@ public class RuleAdapter extends StandardDecision {
       for (Method thenMethod : getAnnotatedMethods(Then.class, _ruleObj.getClass())) {
         thenMethod.setAccessible(true);
         Object then = getThenMethodAsBiConsumer(thenMethod).map(Object.class::cast)
-          .orElse(getThenMethodAsConsumer(thenMethod).orElse(factMap -> {}));
+            .orElse(getThenMethodAsConsumer(thenMethod).orElse(factMap -> { }));
         thenList.add(then);
       }
       ((List<Object>)super.getThen()).addAll(thenList);
@@ -188,36 +186,39 @@ public class RuleAdapter extends StandardDecision {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private Optional<BiConsumer> getThenMethodAsBiConsumer(Method method) {
     return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
       .map(resultField -> (BiConsumer) (facts, result) -> {
-        try {
-          Object retVal = method.invoke(_ruleObj);
-          if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
-            stop();
+          try {
+            Object retVal = method.invoke(_ruleObj);
+            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+              stop();
+            }
+            resultField.setAccessible(true);
+            Object resultVal = resultField.get(_ruleObj);
+            ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
+          } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.error("Unable to access "
+                + _ruleObj.getClass().getName()
+                + " when converting then to BiConsumer", ex);
           }
-          resultField.setAccessible(true);
-          Object resultVal = resultField.get(_ruleObj);
-          ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-          LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to BiConsumer", ex);
-        }
-      });
+        });
   }
 
   private Optional<Consumer> getThenMethodAsConsumer(Method method) {
-    if (!getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass()).isPresent()) {
+    if (!getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class,
+        _ruleObj.getClass()).isPresent()) {
       return Optional.of((Consumer) obj -> {
-        try {
-          Object retVal = method.invoke(_ruleObj);
-          if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
-            stop();
+          try {
+            Object retVal = method.invoke(_ruleObj);
+            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+              stop();
+            }
+          } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to Consumer", ex);
           }
-        }
-        catch (IllegalAccessException | InvocationTargetException ex) {
-          LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to Consumer", ex);
-        }
-      });
+        });
     }
     return Optional.empty();
   }

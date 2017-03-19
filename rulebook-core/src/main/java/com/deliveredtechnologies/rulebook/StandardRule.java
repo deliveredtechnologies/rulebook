@@ -48,39 +48,43 @@ public class StandardRule<T> implements Rule<T> {
   }
 
   /**
-   * The run() method runs the {@link Predicate} supplied by the when() method. If it evaluates to true then
-   * the {@link Consumer} supplied by the then() method is executed. If the break()
-   * method was invoked then no further rules are evaluated. Otherwise, the next rule in the
-   * chain is evaluated.
+   * The run() method runs the {@link Predicate} supplied by the when() method. <br/>
+   * If it evaluates to true then the {@link Consumer}(s) supplied by the then() method(s) are executed. <br/>
+   * If the stop() method was invoked then no further rules are evaluated. <br/>
+   * Otherwise, the next rule in the chain is evaluated.
    */
   @Override
   @SuppressWarnings("unchecked")
   public void run() {
+    //invoke then() action(s) if when() is true or if when() was never specified
     if (getWhen() == null || getWhen().test(_facts)) {
+      //iterate through the then() actions specified
       List<Object> actionList = (List<Object>)getThen();
-      for (int i =0; i < ((List<Object>)getThen()).size(); i++) {
+      for (int i = 0; i < ((List<Object>)getThen()).size(); i++) {
         Object action = actionList.get(i);
         String[] factNames = _factNameMap.get(i);
         FactMap<T> usingFacts;
+        //if using() was specified for the specific then(), use only those facts specified
         if (factNames != null) {
           usingFacts = new FactMap<T>();
           for (String factName : factNames) {
             usingFacts.put(factName, _facts.get(factName));
           }
-        }
-        else {
+        } else {
+          //if no using() was specified, provide the then() with all available facts
           usingFacts = _facts;
         }
         if (action instanceof Consumer) {
-          ((Consumer) action).accept(usingFacts);
-        } else {
+          //invoke the then() Consumer action
           ((Consumer) action).accept(usingFacts);
         }
       }
+      //if stop() was invoked, stop the rule chain after then is finished executing
       if (_ruleState == BREAK) {
         return;
       }
     }
+    //continue down the rule chain
     _nextRule.ifPresent(rule -> rule.given(_facts));
     _nextRule.ifPresent(Rule::run);
   }
@@ -99,8 +103,8 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The given() method accepts Facts to be evaluated in the Rule.
-   * @param facts     Facts to be used by the Rule
-   * @return the current object
+   * @param facts Facts to be used by the Rule
+   * @return      the current object
    */
   @Override
   public Rule<T> given(Fact<T>... facts) {
@@ -113,9 +117,8 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The given() method accepts Facts to be evaluated in the Rule.
-   *
    * @param facts a List of Facts to be used by the Rule
-   * @return the current object
+   * @return      the current object
    */
   @Override
   public Rule<T> given(List<Fact<T>> facts) {
@@ -128,8 +131,8 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The given() method accepts Facts to be evaluated in the Rule.
-   * @param facts     a {@link FactMap}
-   * @return the current object
+   * @param facts a {@link FactMap}
+   * @return      the current object
    */
   @Override
   public Rule<T> given(FactMap<T> facts) {
@@ -139,8 +142,8 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The when() method accepts a {@link Predicate} that returns true or false based on Facts.
-   * @param test      the condition(s) to be evaluated against the Facts
-   * @return the current object
+   * @param test  the condition(s) to be evaluated against the Facts
+   * @return      the current object
    */
   @Override
   public Rule<T> when(Predicate<FactMap<T>> test) {
@@ -149,7 +152,7 @@ public class StandardRule<T> implements Rule<T> {
   }
 
   /**
-   * The then() method accepts a {@link Consumer} that performs an action based on Facts
+   * The then() method accepts a {@link Consumer} that performs an action based on Facts.
    *
    * @param action  the action to be performed
    * @return        the current object
@@ -161,12 +164,23 @@ public class StandardRule<T> implements Rule<T> {
     return this;
   }
 
+  /**
+   * The stop() method causes the rule chain to stop if the when() condition true and only
+   * after the then() actions have been executed.
+   * @return  the current object
+   */
   @Override
   public Rule<T> stop() {
     _ruleState = BREAK;
     return this;
   }
 
+  /**
+   * The using() method reduces the facts to those specifically named here.
+   * The using() method only applies to the then() method immediately following it.
+   * @param factNames the names of the facts to be used
+   * @return          the current object
+   */
   @Override
   @SuppressWarnings("unchecked")
   public StandardRule<T> using(String... factNames) {
@@ -183,7 +197,6 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The setNextRule() method sets the next Rule in the chain.
-   *
    * @param rule the next Rule to add to the chain
    */
   @Override
@@ -191,11 +204,21 @@ public class StandardRule<T> implements Rule<T> {
     _nextRule = Optional.ofNullable(rule);
   }
 
+  /**
+   * The getWhen() method returns the {@link Predicate} to be used for the condition of the Rule.
+   * @return  the Predicate condition
+   */
   @Override
   public Predicate<FactMap<T>> getWhen() {
     return _test;
   }
 
+  /**
+   * The getThen() method returns a {@link List} of {@link Consumer} objects that combined
+   * together in sequence represent the then() action(s). The Object return type is retained
+   * for backward compatibility.
+   * @return  a List of Consumer objects
+   */
   @Override
   public Object getThen() {
     return _actionChain;

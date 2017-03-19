@@ -77,7 +77,7 @@ public class StandardDecisionTest {
   @SuppressWarnings("unchecked")
   public void thenIsRunIfWhenDoesNotExist() {
     Decision<String, Boolean> rule = spy(
-      StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+        StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
     Consumer<FactMap<String>> action = (Consumer<FactMap<String>>) mock(Consumer.class);
 
     rule.then(action).run();
@@ -89,7 +89,7 @@ public class StandardDecisionTest {
   @SuppressWarnings("unchecked")
   public void thenMethodsCanBeChained() {
     StandardDecision<String, String> rule =
-      StandardDecision.create(String.class, String.class).given(new Fact<>("hello", "world"));
+        StandardDecision.create(String.class, String.class).given(new Fact<>("hello", "world"));
     Consumer<FactMap<String>> action1 = (Consumer<FactMap<String>>) mock(Consumer.class);
     BiConsumer<FactMap<String>, Result<String>> action2 = (facts, result) -> result.setValue("New");
     Consumer<FactMap<String>> action3 = (Consumer<FactMap<String>>) mock(Consumer.class);
@@ -130,7 +130,7 @@ public class StandardDecisionTest {
     Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-    decision1 = decision1.when(facts -> true).then(f -> {});
+    decision1 = decision1.when(facts -> true).then(f -> { });
     decision2 = decision2.when(facts -> true).then((facts, result) -> {
         result.setValue(true);
       });
@@ -150,7 +150,7 @@ public class StandardDecisionTest {
     Decision<String, Boolean> decision2 = spy(
         StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
 
-    decision1 = decision1.when(f -> true).then(facts -> {}).stop();
+    decision1 = decision1.when(f -> true).then(facts -> { }).stop();
     decision2 = decision2.when(f -> true).then((facts, result) -> result.setValue(true)).stop();
     decision1.setNextRule(decision2);
     decision1.run();
@@ -166,11 +166,11 @@ public class StandardDecisionTest {
     Consumer<FactMap<Object>> action = mock(Consumer.class);
     ArgumentCaptor<FactMap> captor = ArgumentCaptor.forClass(FactMap.class);
     Decision decision = StandardDecision.create()
-      .given("fact1", "First Fact")
-      .given("fact2", "Second Fact")
-      .given("fact3", "Third Fact")
-      .using("fact3", "fact1")
-      .then(action);
+        .given("fact1", "First Fact")
+        .given("fact2", "Second Fact")
+        .given("fact3", "Third Fact")
+        .using("fact3", "fact1")
+        .then(action);
     decision.run();
 
     verify(action, times(1)).accept(captor.capture());
@@ -186,14 +186,14 @@ public class StandardDecisionTest {
     Consumer<FactMap<Object>> action = mock(Consumer.class);
     ArgumentCaptor<FactMap> captor = ArgumentCaptor.forClass(FactMap.class);
     Decision decision = StandardDecision.create()
-      .given("fact1", "First Fact")
-      .given("fact2", "Second Fact")
-      .given("fact3", "Third Fact")
-      .given("fact4", "Fourth Fact")
-      .given("fact5", "Fifth Fact")
-      .using("fact3", "fact1")
-      .using("fact5")
-      .then(action);
+        .given("fact1", "First Fact")
+        .given("fact2", "Second Fact")
+        .given("fact3", "Third Fact")
+        .given("fact4", "Fourth Fact")
+        .given("fact5", "Fifth Fact")
+        .using("fact3", "fact1")
+        .using("fact5")
+        .then(action);
     decision.run();
 
     verify(action, times(1)).accept(captor.capture());
@@ -208,26 +208,29 @@ public class StandardDecisionTest {
   public void usingResizesFactsForEachThen() {
     BiConsumer<FactMap<Object>, Result<String>> action1 = mock(BiConsumer.class);
     Consumer<FactMap<Object>> action2 = mock(Consumer.class);
-    ArgumentCaptor<FactMap> captor1 = ArgumentCaptor.forClass(FactMap.class);
-    ArgumentCaptor<FactMap> captor2 = ArgumentCaptor.forClass(FactMap.class);
     Decision rule1 = StandardDecision.create(Object.class, String.class)
-      .given("fact1", "First Fact")
-      .given("fact2", "Second Fact")
-      .given("fact3", "Third Fact")
-      .given("fact4", "Fourth Fact")
-      .given("fact5", "Fifth Fact")
-      .using("fact3", "fact1")
-      .using("fact5")
-      .then(action1)
-      .using("fact1", "fact2")
-      .then(action2);
+        .given("fact1", "First Fact")
+        .given("fact2", "Second Fact")
+        .given("fact3", "Third Fact")
+        .given("fact4", "Fourth Fact")
+        .given("fact5", "Fifth Fact")
+        .using("fact3", "fact1")
+        .using("fact5")
+        .then(action1)
+        .using("fact1", "fact2")
+        .then(action2);
     rule1.run();
+
+    ArgumentCaptor<FactMap> captor1 = ArgumentCaptor.forClass(FactMap.class);
 
     verify(action1, times(1)).accept(captor1.capture(), any());
     Assert.assertEquals(3, captor1.getValue().size());
     Assert.assertEquals("First Fact", captor1.getValue().getValue("fact1"));
     Assert.assertEquals("Third Fact", captor1.getValue().getValue("fact3"));
     Assert.assertEquals("Fifth Fact", captor1.getValue().getValue("fact5"));
+
+    ArgumentCaptor<FactMap> captor2 = ArgumentCaptor.forClass(FactMap.class);
+
     verify(action2, times(1)).accept(captor2.capture());
     Assert.assertEquals(2, captor2.getValue().size());
     Assert.assertEquals("First Fact", captor2.getValue().getValue("fact1"));

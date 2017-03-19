@@ -51,7 +51,7 @@ public class StandardRuleTest {
   @SuppressWarnings("unchecked")
   public void thenIsRunIfWhenDoesNotExist() {
     Rule<String> rule = spy(
-      StandardRule.create(String.class).given("hello", "world"));
+        StandardRule.create(String.class).given("hello", "world"));
     Consumer<FactMap<String>> action = (Consumer<FactMap<String>>) mock(Consumer.class);
 
     rule.then(action).run();
@@ -75,7 +75,7 @@ public class StandardRuleTest {
   @SuppressWarnings("unchecked")
   public void multipleThenMethodsCanBeChainedTogether() {
     Rule<String> rule = spy(
-      StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+        StandardRule.create(String.class).given(new Fact<>("hello", "world")));
     Consumer<FactMap<String>> action1 = (Consumer<FactMap<String>>) mock(Consumer.class);
     Consumer<FactMap<String>> action2 = (Consumer<FactMap<String>>) mock(Consumer.class);
 
@@ -145,11 +145,11 @@ public class StandardRuleTest {
     Consumer<FactMap<Object>> action = mock(Consumer.class);
     ArgumentCaptor<FactMap> captor = ArgumentCaptor.forClass(FactMap.class);
     Rule rule1 = StandardRule.create()
-      .given("fact1", "First Fact")
-      .given("fact2", "Second Fact")
-      .given("fact3", "Third Fact")
-      .using("fact3", "fact1")
-      .then(action);
+        .given("fact1", "First Fact")
+        .given("fact2", "Second Fact")
+        .given("fact3", "Third Fact")
+        .using("fact3", "fact1")
+        .then(action);
     rule1.run();
 
     verify(action, times(1)).accept(captor.capture());
@@ -165,14 +165,14 @@ public class StandardRuleTest {
     Consumer<FactMap<Object>> action = mock(Consumer.class);
     ArgumentCaptor<FactMap> captor = ArgumentCaptor.forClass(FactMap.class);
     Rule rule1 = StandardRule.create()
-      .given("fact1", "First Fact")
-      .given("fact2", "Second Fact")
-      .given("fact3", "Third Fact")
-      .given("fact4", "Fourth Fact")
-      .given("fact5", "Fifth Fact")
-      .using("fact3", "fact1")
-      .using("fact5")
-      .then(action);
+        .given("fact1", "First Fact")
+        .given("fact2", "Second Fact")
+        .given("fact3", "Third Fact")
+        .given("fact4", "Fourth Fact")
+        .given("fact5", "Fifth Fact")
+        .using("fact3", "fact1")
+        .using("fact5")
+        .then(action);
     rule1.run();
 
     verify(action, times(1)).accept(captor.capture());
@@ -187,26 +187,29 @@ public class StandardRuleTest {
   public void usingResizesFactsForEachThen() {
     Consumer<FactMap<Object>> action1 = mock(Consumer.class);
     Consumer<FactMap<Object>> action2 = mock(Consumer.class);
-    ArgumentCaptor<FactMap> captor1 = ArgumentCaptor.forClass(FactMap.class);
-    ArgumentCaptor<FactMap> captor2 = ArgumentCaptor.forClass(FactMap.class);
     Rule rule1 = StandardRule.create()
-      .given("fact1", "First Fact")
-      .given("fact2", "Second Fact")
-      .given("fact3", "Third Fact")
-      .given("fact4", "Fourth Fact")
-      .given("fact5", "Fifth Fact")
-      .using("fact3", "fact1")
-      .using("fact5")
-      .then(action1)
-      .using("fact1", "fact2")
-      .then(action2);
+        .given("fact1", "First Fact")
+        .given("fact2", "Second Fact")
+        .given("fact3", "Third Fact")
+        .given("fact4", "Fourth Fact")
+        .given("fact5", "Fifth Fact")
+        .using("fact3", "fact1")
+        .using("fact5")
+        .then(action1)
+        .using("fact1", "fact2")
+        .then(action2);
     rule1.run();
+
+    ArgumentCaptor<FactMap> captor1 = ArgumentCaptor.forClass(FactMap.class);
 
     verify(action1, times(1)).accept(captor1.capture());
     Assert.assertEquals(3, captor1.getValue().size());
     Assert.assertEquals("First Fact", captor1.getValue().getValue("fact1"));
     Assert.assertEquals("Third Fact", captor1.getValue().getValue("fact3"));
     Assert.assertEquals("Fifth Fact", captor1.getValue().getValue("fact5"));
+
+    ArgumentCaptor<FactMap> captor2 = ArgumentCaptor.forClass(FactMap.class);
+
     verify(action2, times(1)).accept(captor2.capture());
     Assert.assertEquals(2, captor2.getValue().size());
     Assert.assertEquals("First Fact", captor2.getValue().getValue("fact1"));
