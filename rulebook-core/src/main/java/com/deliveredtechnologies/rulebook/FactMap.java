@@ -45,14 +45,24 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
   }
 
   /**
+   * This put() method is a convenience method for adding a Fact to a FactMap.<br/>
+   * It uses the name of the Fact as the key and the Fact as the value.
+   * @param fact  the Fact to be added to the FactMap
+   * @return      the Fact that was just added
+   */
+  public Fact<T> put(Fact<T> fact) {
+    return this.put(fact.getName(), fact);
+  }
+
+  /**
    * The toString() method gets the FactMap converted a string.<br/>
-   * If there is only one Fact, the String value is the value of the Fact.<br/>
+   * If there is only one Fact, the String value is the String value of the Fact.<br/>
    * Otherwise, the String value is the value of the parent {@link HashMap}.
    * @return  the String value of the FactMap
    */
   @Override
   public String toString() {
-    return this.size() == 1 && this.getOne() instanceof String ? (String)this.getOne() : super.toString();
+    return this.size() == 1 ? this.getOne().toString() : super.toString();
   }
 }
 

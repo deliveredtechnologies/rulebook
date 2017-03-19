@@ -43,4 +43,17 @@ public class RuleBookTest {
     verify(ruleBook, times(0)).defineRules(); //not run because rules were already added
     verify(rule1, times(2)).run();
   }
+
+  @Test
+  public void addingNullRuleToRuleBookDoesntBreak() {
+    RuleBook<String> ruleBook = spy(new RuleBook<String>() {
+      @Override
+      protected void defineRules() {
+        addRule(null);
+      }
+    });
+    ruleBook.run();
+
+    verify(ruleBook, times(1)).defineRules();
+  }
 }

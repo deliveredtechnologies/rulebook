@@ -49,4 +49,13 @@ public class Fact<T> {
   public void setValue(T value) {
     this._value = value;
   }
+
+  /**
+   * The toString() method returns the toString of the object contained in the Fact.
+   * @return  the toString() of the object contained in the Fact
+   */
+  @Override
+  public String toString() {
+    return _value.toString();
+  }
 }
