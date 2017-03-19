@@ -272,6 +272,8 @@ Although the reason for FactMaps is important, that doesn't mean anyone wants to
 
 **toString()** toString gets the toString() method of the Fact's value when only one Fact exists
 
+<sub>[Top](#contents)</sub>
+
 ## 4 POJO Rules
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
