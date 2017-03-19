@@ -14,8 +14,6 @@ RuleBook rules are built in the way that Java developers think: Java code. And t
 
 Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from each other? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for!
 
-_More detailed information can be found at [Delivered Technologies : The Home of RuleBook](http://www.deliveredtechnologies.com)_
-
 #### Contents
 
 * [1 Getting RuleBook](#1-getting-rulebook)
