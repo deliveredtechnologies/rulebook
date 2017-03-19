@@ -236,7 +236,7 @@ The RuleBook Java Domain Specific Language (DSL) is Given-When-Then, popularized
 
 ### 3.1 Given-When-Then: The Basis of the RuleBook Language 
 
-Much like with the Given-When-Then language for defining tests that was popularized by BDD, RuleBook uses methods to create Given-When-Then language for defining rules. Similarily, the RuleBook Given-When-Then methods have the following meanings.
+Much like with the Given-When-Then language for defining tests that was popularized by BDD, RuleBook uses methods to create a  Given-When-Then language for defining rules. Similarily, the RuleBook Given-When-Then methods have the following meanings.
 
 * **Given** some Fact(s)
 * **When** a condition evaluates to true
