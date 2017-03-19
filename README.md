@@ -28,15 +28,15 @@ _More detailed information can be found at [Delivered Technologies : The Home of
   * [2.1 A Hello World Example](#21-a-helloworld-example)
   * [2.2 An Example Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
-* [3 POJO Rules](#3-pojo-rules)
-  * [3.1 A POJO Rules Example](#31-a-hello-world-example)
-  * [3.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
-* [4 Using RuleBook with Spring](#4-using-rulebook-with-spring)
-  * [4.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
-  * [4.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
-  * [4.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
-* [5 How to Contribute](#5-how-to-contribute)
-  * [5.1 Developer Guidelines](#51-developer-guidelines)
+* [4 POJO Rules](#3-pojo-rules)
+  * [4.1 A POJO Rules Example](#31-a-hello-world-example)
+  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
+* [5 Using RuleBook with Spring](#4-using-rulebook-with-spring)
+  * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
+  * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
+  * [5.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
+* [6 How to Contribute](#5-how-to-contribute)
+  * [6.1 Developer Guidelines](#51-developer-guidelines)
   
 ## 1 Getting RuleBook
 
@@ -267,11 +267,11 @@ Although the reason for FactMaps is important, that doesn't mean anyone wants to
 
 **toString()** toString gets the toString() method of the Fact's value when only one Fact exists
 
-## 3 POJO Rules
+## 4 POJO Rules
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
-### 3.1 A Hello World Example
+### 4.1 A Hello World Example
 
 ```java
 package com.example.pojorules;
@@ -312,7 +312,7 @@ public static void main(String args[]) {
 }
 ```
 
-### 3.2 The MegaBank Example With POJO Rules
+### 4.2 The MegaBank Example With POJO Rules
 
 ```java
 @Rule(order = 1) //order specifies the order the rule should execute in; if not specified, any order may be used
@@ -390,11 +390,11 @@ public static void main(String[] args) {
 
 <sub>[[Top](#contents)]</sub>
 
-## 4 Using RuleBook with Spring
+## 5 Using RuleBook with Spring
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
 
-### 4.1 Creating a Spring Enabled POJO Rule
+### 5.1 Creating a Spring Enabled POJO Rule
 
 ```java
 @RuleBean
@@ -418,7 +418,7 @@ public class HelloSpringRule {
 }
 ```
 
-### 4.2 Configuring a RuleBook in Spring
+### 5.2 Configuring a RuleBook in Spring
 
 ```java
 @Configuration
@@ -442,7 +442,7 @@ public class SpringConfig {
 }
 ```
 
-### 4.3 Using a Spring Enabled RuleBook
+### 5.3 Using a Spring Enabled RuleBook
 
 ```java
   @Autowired
@@ -457,11 +457,11 @@ public class SpringConfig {
 
 <sub>[[Top](#contents)]</sub>
 
-## 5 How to Contribute
+## 6 How to Contribute
 
 Suggestions and code contributions are welcome! Please see the _Developer Guidelines_ below.
 
-### 5.1 Developer Guidelines
+### 6.1 Developer Guidelines
 
 Contributions must adhere to the following criteria:
 
