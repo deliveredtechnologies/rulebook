@@ -39,7 +39,6 @@ public class TestConfig {
         .when(factMap -> true)
         .then((factMap, result) -> {
             result.setValue("SecondRule");
-            return RuleState.BREAK;
           }));
     return ruleBookBean;
   }

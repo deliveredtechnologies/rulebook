@@ -10,6 +10,12 @@ package com.deliveredtechnologies.rulebook;
 public class Result<T> {
   private T _value;
 
+  public Result() {}
+
+  public Result(T value) {
+    this._value = value;
+  }
+
   /**
    * The method getValue() returns the object contained in the Result object.
    *

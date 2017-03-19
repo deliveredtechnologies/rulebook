@@ -1,11 +1,34 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * A special type of rule that has a return type, which may be different from the type of input (Facts).
  */
 public interface Decision<T, U> extends Rule<T> {
+
+  @Override
+  Decision<T, U> given(String name, T value);
+
+  @Override
+  Decision<T, U> given(Fact<T>... facts);
+
+  @Override
+  Decision<T, U> given(List<Fact<T>> facts);
+
+  @Override
+  Decision<T, U> given(FactMap<T> facts);
+
+  @Override
+  Decision<T, U> when(Predicate<FactMap<T>> test);
+
+  @Override
+  Decision<T, U> then(Consumer<FactMap<T>> action);
 
   /**
    * The then method specifies the action taken if <code>when()</code> evaluates to true.
@@ -14,7 +37,13 @@ public interface Decision<T, U> extends Rule<T> {
    * @param action the action to be performed
    * @return the current <code>Rule</code> object
    */
-  Decision<T, U> then(BiFunction<FactMap<T>, Result<U>, RuleState> action);
+  Decision<T, U> then(BiConsumer<FactMap<T>, Result<U>> action);
+
+  @Override
+  Decision<T, U> using(String... factName);
+
+  @Override
+  Decision<T, U> stop();
 
   /**
    * The <code>getResult()</code> method returns the stored result from the Decision

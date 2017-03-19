@@ -25,18 +25,23 @@ _More detailed information can be found at [Delivered Technologies : The Home of
   * [1.4 Adding RuleBook to Your Maven Project](#14-adding-rulebook-to-your-maven-project)
   * [1.5 Adding RuleBook to Your Gradle Project](#15-adding-rulebook-to-your-gradle-project)
 * [2 Using RuleBook](#2-using-rulebook)
-  * [2.1 Using the Java Domain Specific Language](#21-a-helloworld-example-using-the-java-domain-specific-language)
-  * [2.2 Using Facts](#22-the-above-example-using-facts)
+  * [2.1 A Hello World Example](#21-a-helloworld-example)
+  * [2.2 An Example Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
-* [3 POJO Rules](#3-pojo-rules)
-  * [3.1 A POJO Rules Example](#31-a-hello-world-example)
-  * [3.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
-* [4 Using RuleBook with Spring](#4-using-rulebook-with-spring)
-  * [4.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
-  * [4.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
-  * [4.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
-* [5 How to Contribute](#5-how-to-contribute)
-  * [5.1 Developer Guidelines](#51-developer-guidelines)
+* [3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)
+  * [3.1 Given-When-Then: The Basis of the RuleBook Language](#31-given-when-then-the-basis-of-the-rulebook-language)
+  * [3.2 The Using Method](#32-the-using-method)
+  * [3.3 The Stop Method](#33-the-stop-method)
+  * [3.4 Working With Facts](#34-working-with-facts)
+* [4 POJO Rules](#3-pojo-rules)
+  * [4.1 A POJO Rules Example](#31-a-hello-world-example)
+  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
+* [5 Using RuleBook with Spring](#4-using-rulebook-with-spring)
+  * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
+  * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
+  * [5.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
+* [6 How to Contribute](#5-how-to-contribute)
+  * [6.1 Developer Guidelines](#51-developer-guidelines)
   
 ## 1 Getting RuleBook
 
@@ -81,25 +86,31 @@ compile 'com.deliveredtechnologies:rulebook-core:0.3.4'
 <sub>[Top](#contents)</sub>
 
 ## 2 Using RuleBook
-### 2.1 A HelloWorld Example Using the Java Domain Specific Language
+### 2.1 A HelloWorld Example
+```java
+public class ExampleRuleBook extends RuleBook {
+  @Override
+  public void defineRules() {
+    //one rule prints "Hello World"
+    addRule(StandardRule.create()
+      .then(f -> System.out.print("Hello "))
+      .then(f -> System.out.println("World")));
+  }
+}
+```
+**...or use 2 rules**
 ```java
 public class ExampleRuleBook extends RuleBook {
   @Override
   public void defineRules() {
     //first rule prints "Hello"
-    addRule(StandardRule.create().when(f -> true).then(f -> {
-      System.out.print("Hello");
-      return NEXT; //continue to the next Rule
-    }));
-    
+    addRule(StandardRule.create().then(f -> System.out.print("Hello ")));
     //second rule prints "World"
-    addRule(StandardRule.create().when(f -> true).then(f -> {
-      System.out.println("World");
-      return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-    }));
+    addRule(StandardRule.create().then(f -> System.out.println("World")));
   }
 }
 ```
+**now, run it!**
 ```java
 public class ExampleMainClass {
   public static void main(String[] args) {
@@ -114,26 +125,37 @@ public class ExampleRuleBook extends RuleBook<String> {
   @Override
   public void defineRules() {
     //first rule prints "Hello" value from helloFact
-    addRule(StandardRule.create().when(f -> f.containsKey("hello")).then(f -> {
-      System.out.print(f.getValue("hello"));
-      return NEXT; //continue to the next Rule
-    }));
-    
+    addRule(StandardRule.create().when(f -> f.containsKey("hello"))
+      .using("hello")
+      .then(System.out::print));
     //second rule prints "World" value from worldFact
-    addRule(StandardRule.create().when(f -> f.containsKey("world")).then(f -> {
-      System.out.println(f.getValue("world"));
-      return BREAK; //it doesn't matter if NEXT or BREAK is returned here since it's the last Rule
-    }));
+    addRule(StandardRule.create().when(f -> f.containsKey("world"))
+      .using("world")
+      .then(System.out::println));
   }
 }
 ```
+**..or it could be a single rule**
+```java
+public class ExampleRuleBook extends RuleBook<String> {
+  @Override
+  public void defineRules() {
+    //first rule prints "Hello" value from helloFact
+    addRule(StandardRule.create().when(f -> f.containsKey("hello") && f.containsKey)
+      .using("hello").then(System.out::print)
+      .using("world").then(System.out::println));
+  }
+}
+```
+**now, run it!**
 ```java
 public class ExampleMainClass {
   public static void main(String[] args) {
-    Fact<String> helloFact = new Fact<>("hello", "Hello");
-    Fact<String> worldFact = new Fact<>("world", "World");
     RuleBook exampleRuleBook = new ExampleRuleBook();
-    exampleRuleBook.given(helloFact, worldFact).run();
+    exampleRuleBook
+      .given("hello", "Hello")
+      .given("world", "World")
+      .run();
   }
 }
 ```
@@ -175,30 +197,19 @@ public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
   @Override
   protected void defineRules() {
     //if there are more than 3 applicants then the loan is denied
-    addRule(StandardRule.create(ApplicantBean.class)
-      .when(factMap -> factMap.size() > 3)
-      .then(f -> BREAK)
-    );
+    addRule(StandardRule.create(ApplicantBean.class).when(factMap -> factMap.size() > 3).stop());
 
     //if everyone has a credit score of 700 or more then the loan is approved
     addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
       .when(factMap -> factMap.values().stream()
         .allMatch(applicantFact -> applicantFact.getValue().getCreditScore() >= 700))
-      .then((f, result) -> {
-        result.setValue(true);
-        return NEXT;
-      })
-    );
+      .then(f -> result.setValue(true)));
 
     //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved
     addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
       .when(factMap -> factMap.values().stream()
         .allMatch(applicantFact -> applicantFact.getValue().getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
-      .then((f, result) -> {
-        result.setValue(true);
-        return BREAK;
-      })
-    );
+      .then(f -> result.setValue(true)));
   }
 }
 ```
@@ -207,9 +218,8 @@ public class ExampleSolution {
   public static void main(String[] args) {
     HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
     decisionBook.withDefaultResult(false)
-      .given(
-        new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
-        new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
+      .given("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))
+      .given("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))
       .run();
 
     System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
@@ -220,11 +230,57 @@ In the above example, the default Result value was initialized to false. So, unl
 
 <sub>[[Top](#contents)]</sub>
 
-## 3 POJO Rules
+## 3 The Java Domain Specific Language Explained
+
+The RuleBook Java Domain Specific Language (DSL) is Given-When-Then, popularized by Behavior Driven Development (BDD) and associated testing frameworks (e.g. Cucumber and Spock). And many of the ideas that went into creating the RuleBook Java DSL are borrowed from BDD, including: _**Sentences should be used to describe rules**_ and _**Rules should be defined using a ubiquitous language that translates into the codebase**_.
+
+### 3.1 Given-When-Then: The Basis of the RuleBook Language 
+
+Much like with the Given-When-Then language for defining tests that was popularized by BDD, RuleBook uses methods to create a  Given-When-Then language for defining rules. Similarily, the RuleBook Given-When-Then methods have the following meanings.
+
+* **Given** some Fact(s)
+* **When** a condition evaluates to true
+* **Then** a action is triggered
+
+**Given** methods can accept one or more Facts in various different forms and are used as a collection of information provided to a single Rule/Decision or a chain of Rules/Decisions called a RuleBook/DecisionBook.
+
+**When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule/Decision.
+
+**Then** methods accept a Consumer (or BiConsumer for Decisions) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule or Decision that will all be 
+invoked in the order specified if the when() condition evaluates to true.
+
+### 3.2 The Using Method
+**Using** methods reduce the set of Facts available to a then() method. Mutiple using methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
+
+### 3.3 The Stop Method
+**Stop** methods break the rule chain. If a stop method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
+
+### 3.4 Working With Facts
+As stated above, Facts are provided to Rules and Decisions using the given() method. The Facts available to Rules/Decisions and RuleBooks/DecisionBooks are contained in a FactMap, which is a special kind of Map that allows for easy access to the underlying objects contained in Facts. The reason why Facts exist is so that there is always a reference to the objects that Rules and Decisions work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to representative object.
+
+#### 3.4.1 The Single Fact Convenience Method
+Facts really only have a single convenience method. Since the FactMap is what is passed into then when() and then() methods, most of the convenience methods around Facts are made available in the FactMap. However, there is one... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the Fact can be used.
+
+#### 3.4.2 The FactMap Convenience Methods
+Although the reason for FactMaps is important, that doesn't mean anyone wants to chain a bunch of boiler plate calls to get to the value object contained in an underlying Fact. So, some convenience methods are there to make life easier when working with when() and then() methods.
+
+**getOne()** gets the value of the Fact when only one Fact exists in the FactMap
+
+**getValue(String name)** gets the value of the Fact by the name of the Fact
+
+**setValue(String name, T value)** sets the Fact with the name specified to the new value 
+
+**put(Fact fact)** adds a Fact to the FactMap, using the Fact's name as the key for the Map
+
+**toString()** toString gets the toString() method of the Fact's value when only one Fact exists
+
+<sub>[Top](#contents)</sub>
+
+## 4 POJO Rules
 
 As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annotated POJOs in a package and then use _RuleBookRunner_ to scan the package for rules and create a RuleBook out of them. It's that simple!
 
-### 3.1 A Hello World Example
+### 4.1 A Hello World Example
 
 ```java
 package com.example.pojorules;
@@ -265,7 +321,7 @@ public static void main(String args[]) {
 }
 ```
 
-### 3.2 The MegaBank Example With POJO Rules
+### 4.2 The MegaBank Example With POJO Rules
 
 ```java
 @Rule(order = 1) //order specifies the order the rule should execute in; if not specified, any order may be used
@@ -343,11 +399,11 @@ public static void main(String[] args) {
 
 <sub>[[Top](#contents)]</sub>
 
-## 4 Using RuleBook with Spring
+## 5 Using RuleBook with Spring
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
 
-### 4.1 Creating a Spring Enabled POJO Rule
+### 5.1 Creating a Spring Enabled POJO Rule
 
 ```java
 @RuleBean
@@ -371,7 +427,7 @@ public class HelloSpringRule {
 }
 ```
 
-### 4.2 Configuring a RuleBook in Spring
+### 5.2 Configuring a RuleBook in Spring
 
 ```java
 @Configuration
@@ -395,7 +451,7 @@ public class SpringConfig {
 }
 ```
 
-### 4.3 Using a Spring Enabled RuleBook
+### 5.3 Using a Spring Enabled RuleBook
 
 ```java
   @Autowired
@@ -410,11 +466,11 @@ public class SpringConfig {
 
 <sub>[[Top](#contents)]</sub>
 
-## 5 How to Contribute
+## 6 How to Contribute
 
 Suggestions and code contributions are welcome! Please see the _Developer Guidelines_ below.
 
-### 5.1 Developer Guidelines
+### 6.1 Developer Guidelines
 
 Contributions must adhere to the following criteria:
 

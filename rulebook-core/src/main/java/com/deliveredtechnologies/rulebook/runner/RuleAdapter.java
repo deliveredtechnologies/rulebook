@@ -16,21 +16,24 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethod;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethods;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
 /**
@@ -103,21 +106,24 @@ public class RuleAdapter extends StandardDecision {
   }
 
   /**
-   * Method getThen() returns the 'then' action to be used; either a {@link Function} object or a
-   * {@link BiFunction} object. If no action was specified then a default Function object that returns
-   * {@link RuleState} NEXT is used.
+   * Method getThen() returns the 'then' action to be used; either a {@link Function} object, a
+   * {@link BiFunction} object, or a {@link Consumer} object. If no action was specified then a default Function object
+   * that returns {@link RuleState} NEXT is used.
    * @return  either a Function object or a BiFunction object
    */
+  @Override
   public Object getThen() {
-    //Use what was explicitly set by then() first
-    if (super.getThen() != null) {
-      return super.getThen();
+    if (((List<Object>)super.getThen()).size() < 1) {
+      List<Object> thenList = new ArrayList<>();
+      for (Method thenMethod : getAnnotatedMethods(Then.class, _ruleObj.getClass())) {
+        thenMethod.setAccessible(true);
+        Object then = getThenMethodAsBiConsumer(thenMethod).map(Object.class::cast)
+            .orElse(getThenMethodAsConsumer(thenMethod).orElse(factMap -> { }));
+        thenList.add(then);
+      }
+      ((List<Object>)super.getThen()).addAll(thenList);
     }
-
-    //If nothing was explicitly set, convert what's in the class to a BiFunction or a Function
-    //If the action still can't be determined then just give back a Function that moves down the chain
-    return getThenMethodAsBiFunction().map(Object.class::cast)
-        .orElse(getThenMethodAsFunction().orElse(factMap -> RuleState.NEXT));
+    return super.getThen();
   }
 
   /**
@@ -180,52 +186,40 @@ public class RuleAdapter extends StandardDecision {
     }
   }
 
-  /**
-   * Method getThenMethodAsBiFunction returns a BiFunction using the annotated object, when a
-   * Result annotated property and a Then annotated method exists.
-   * @return  A {@link BiFunction} for classes that have a @Then method and a @Result
-   */
-  private Optional<BiFunction> getThenMethodAsBiFunction() {
-    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
-        .flatMap(resultField -> getAnnotatedMethod(Then.class, _ruleObj.getClass())
-        .map(method -> toBiFunction(method, resultField)));
-  }
-
   @SuppressWarnings("unchecked")
-  private BiFunction toBiFunction(Method method, Field resultField) {
-    return (factMap, resultObj) -> {
-      try {
-        Object retVal = method.invoke(_ruleObj);
-        resultField.setAccessible(true);
-        Object resultVal = resultField.get(_ruleObj);
-        if (resultVal != null) {
-          ((com.deliveredtechnologies.rulebook.Result) resultObj).setValue(resultVal);
-        }
-        return retVal;
-      } catch (IllegalAccessException | InvocationTargetException ex) {
-        return RuleState.BREAK;
-      }
-    };
-  }
-
-  /**
-   * Method getThenMethodAsFunction returns a Function when a @Then annotated method exists without a @Result annotated
-   * property.
-   * @return  a {@link Function} from the @Then annotated method of the obejct
-   */
-  private Optional<Function> getThenMethodAsFunction() {
-    if (getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
-        .isPresent()) {
-      return Optional.empty();
-    }
-
-    return getAnnotatedMethod(Then.class, _ruleObj.getClass())
-      .map(method -> (Function) obj -> {
+  private Optional<BiConsumer> getThenMethodAsBiConsumer(Method method) {
+    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
+      .map(resultField -> (BiConsumer) (facts, result) -> {
           try {
-            return method.invoke(_ruleObj);
+            Object retVal = method.invoke(_ruleObj);
+            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+              stop();
+            }
+            resultField.setAccessible(true);
+            Object resultVal = resultField.get(_ruleObj);
+            ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
           } catch (IllegalAccessException | InvocationTargetException ex) {
-            return RuleState.BREAK;
+            LOGGER.error("Unable to access "
+                + _ruleObj.getClass().getName()
+                + " when converting then to BiConsumer", ex);
           }
         });
+  }
+
+  private Optional<Consumer> getThenMethodAsConsumer(Method method) {
+    if (!getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class,
+        _ruleObj.getClass()).isPresent()) {
+      return Optional.of((Consumer) obj -> {
+          try {
+            Object retVal = method.invoke(_ruleObj);
+            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+              stop();
+            }
+          } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.error("Unable to access " + _ruleObj.getClass().getName() + " when converting then to Consumer", ex);
+          }
+        });
+    }
+    return Optional.empty();
   }
 }
