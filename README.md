@@ -245,7 +245,7 @@ Much like the Given-When-Then language for defining tests that was popularized b
 **When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule/Decision.
 
 **Then** methods accept a Consumer (or BiConsumer for Decisions) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule or Decision that will all be 
-invoked in the order specified if the when() condition evaluates to true.
+invoked in the order they are specified if the when() condition evaluates to true.
 
 ### 3.2 The Using Method
 **Using** methods reduce the set of Facts available to a then() method. Mutiple using methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
