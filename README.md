@@ -16,36 +16,36 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
 
 #### Contents
 
-* [1 Getting RuleBook](#1-getting-rulebook)
+* **[1 Getting RuleBook](#1-getting-rulebook)**
   * [1.1 Building RuleBook](#11-building-rulebook)
   * [1.2 Maven Central Releases](#12-maven-central-releases)
   * [1.3 Latest SNAPSHOT Releases](#13-latest-sonatype-snapshot-development-release)
   * [1.4 Adding RuleBook to Your Maven Project](#14-adding-rulebook-to-your-maven-project)
   * [1.5 Adding RuleBook to Your Gradle Project](#15-adding-rulebook-to-your-gradle-project)
-* [2 Using RuleBook](#2-using-rulebook)
+* **[2 Using RuleBook](#2-using-rulebook)**
   * [2.1 A Hello World Example](#21-a-helloworld-example)
   * [2.2 An Example Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
-* [3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)
+* **[3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)**
   * [3.1 Given-When-Then: The Basis of the RuleBook Language](#31-given-when-then-the-basis-of-the-rulebook-language)
   * [3.2 The Using Method](#32-the-using-method)
   * [3.3 The Stop Method](#33-the-stop-method)
   * [3.4 Working With Facts](#34-working-with-facts)
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
-* [4 POJO Rules](#3-pojo-rules)
+* **[4 POJO Rules](#3-pojo-rules)**
   * [4.1 A POJO Rules Example](#31-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
   * [4.3 POJO Rules Explained](#43-pojo-rules-explained)
     * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
-* [5 Using RuleBook with Spring](#4-using-rulebook-with-spring)
+* **[5 Using RuleBook with Spring](#4-using-rulebook-with-spring)**
   * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
   * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
   * [5.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
   * [5.4 Spring Enabled POJO Rules Explained](#54-spring-enabled-pojo-rules-explained)
-* [6 How to Contribute](#5-how-to-contribute)
+* **[6 How to Contribute](#5-how-to-contribute)**
   * [6.1 Developer Guidelines](#51-developer-guidelines)
   
 ## 1 Getting RuleBook
