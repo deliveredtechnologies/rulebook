@@ -32,6 +32,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [3.3 The Stop Method](#33-the-stop-method)
   * [3.4 Working With Facts](#34-working-with-facts)
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
+    * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
 * [4 POJO Rules](#3-pojo-rules)
   * [4.1 A POJO Rules Example](#31-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
