@@ -44,6 +44,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
   * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
   * [5.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
+  * [5.4 Spring Enabled POJO Rules Explained](#54-spring-enabled-pojo-rules-explained)
 * [6 How to Contribute](#5-how-to-contribute)
   * [6.1 Developer Guidelines](#51-developer-guidelines)
   
@@ -494,7 +495,7 @@ public class SpringConfig {
   }
 ```
 
-### 5.4 Spring Enabled POJO Beans Explained
+### 5.4 Spring Enabled POJO Rules Explained
 
 In the Spring configuration, a RuleBookBean is used. RuleBookBean is a special type of RuleBook RuleBookRunner made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
 
