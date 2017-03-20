@@ -36,6 +36,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
 * [4 POJO Rules](#3-pojo-rules)
   * [4.1 A POJO Rules Example](#31-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
+  * [4.3 POJO Rules Explained](#43-pojo-rules-explained)
 * [5 Using RuleBook with Spring](#4-using-rulebook-with-spring)
   * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
   * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
@@ -403,11 +404,15 @@ POJO Rules are annotated with @Rule at the class level. This lets the RuleBookRu
 
 The @When annotation denotes the method that is used as the condition for executing the ‘then’ action. The method annotated with @When should accept no arguments and it should return a boolean result.
 
-The @Then annotation denotes the action of the rule that is executed if the ‘when’ condition evaluates to true. The method annotated with @Then should accept no arugments and it should return a RuleState result.
+The @Then annotation denotes the action(s) of the rule that is executed if the ‘when’ condition evaluates to true. The method(s) annotated with @Then should accept no arugments and it can optionally return a RuleState result. If more than one method in a POJO rule is annotated with @Then, then all rules annotated with @Then are executed if the 'when' condition evaluates to true.
 
 The @Result annotation denotes the result of the Rule. Of course, some Rules may not have a result. In that case, just don’t use the @Result annotation. It’s that simple.
 
+### 4.3.1 Ordering POJO Rules
 
+### 4.3.2 Injecting Collections into POJO Rules
+
+### 4.3.3 POJO Rule Annotation Inheritance
 
 <sub>[[Top](#contents)]</sub>
 
