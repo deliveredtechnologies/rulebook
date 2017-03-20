@@ -31,6 +31,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [3.2 The Using Method](#32-the-using-method)
   * [3.3 The Stop Method](#33-the-stop-method)
   * [3.4 Working With Facts](#34-working-with-facts)
+    * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
 * [4 POJO Rules](#3-pojo-rules)
   * [4.1 A POJO Rules Example](#31-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
@@ -394,6 +395,18 @@ public static void main(String[] args) {
   System.out.println("Application is " + (approval ? "approved!" : "not approved!"));
 }
 ```
+
+### 4.3 POJO Rules Explained
+
+POJO Rules are annotated with @Rule at the class level. This lets the RuleBookRunner know that the class you defined is really a Rule. Facts are injected into POJO Rules using @Given annotations. The value passed into the @Given annotation is the name of the Fact given to the RuleBookRunner. The types annotated by @Given can either be the generic type of the matching Fact or the Fact type as seen above. The big difference between the two is that changes applied to immutable objects are not propigated down the rule chain if the Fact’s generic object is changed (because it would then be a new object). However, if you set the value on a Fact object, those changes will be persisted down the rule chain.
+
+The @When annotation denotes the method that is used as the condition for executing the ‘then’ action. The method annotated with @When should accept no arguments and it should return a boolean result.
+
+The @Then annotation denotes the action of the rule that is executed if the ‘when’ condition evaluates to true. The method annotated with @Then should accept no arugments and it should return a RuleState result.
+
+The @Result annotation denotes the result of the Rule. Of course, some Rules may not have a result. In that case, just don’t use the @Result annotation. It’s that simple.
+
+
 
 <sub>[[Top](#contents)]</sub>
 
