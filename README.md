@@ -168,68 +168,83 @@ public class ExampleMainClass {
 ```
 ### 2.3 A [Slightly] More Complex Scenario
 
-_MegaBank issues home loans. Each home loan can have up to 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
+MegaBank issues home loans. If an applicant's credit score is less than 600 then they must pay 4x the current rate. If an applicant’s credit score is between 600, but less than 700, then they must pay a an additional point on top of their rate. If an applicant’s credit score is at least 700 and they have at least $25,000 cash on hand, then they get a quarter point reduction on their rate. If an applicant is a first time home buyer then they get a 20% reduction on their calculated rate after adjustments are made based on credit score (note: first time home buyer discount is only available for applicants with a 600 credit score or greater)._
 
 This type of problem lends itself well to Decisions. As stated above, Decsisions accept one type of Fact and return a different type of Result. In this case, the Facts are applicant information for each applicant and the Result is whether the loan is approved or denied. The following code example shows how the rules for this scenario can be implemeted.
 
 ```java
 public class ApplicantBean {
   private int creditScore;
-  private BigDecimal cashOnHand;
+  private Float cashOnHand;
+  private boolean firstTimeHomeBuyer;
 
-  public ApplicantBean(int creditScore, BigDecimal cashOnHand) {
+  public ApplicantBean(int creditScore, float cashOnHand, boolean firstTimeHomeBuyer) {
     this.creditScore = creditScore;
     this.cashOnHand = cashOnHand;
+    this.firstTimeHomeBuyer = firstTimeHomeBuyer;
   }
 
   public int getCreditScore() {
     return creditScore;
   }
 
-  public void setCreditScore(int creditScore) {
+  public void setCreditScore(int creditScore) {     
     this.creditScore = creditScore;
   }
 
-  public BigDecimal getCashOnHand() {
+  public Float getCashOnHand() {
     return cashOnHand;
   }
 
-  public void setCashOnHand(BigDecimal cashOnHand) {
+  public void setCashOnHand(Float cashOnHand) {
     this.cashOnHand = cashOnHand;
+  }
+
+  public boolean isFirstTimeHomeBuyer() {
+    return firstTimeHomeBuyer;
+  }
+
+  public void setFirstTimeHomeBuyer(boolean firstTimeHomeBuyer) {
+    this.firstTimeHomeBuyer = firstTimeHomeBuyer;
   }
 }
 ```
 ```java
-public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
+public class HomeLoanRateDecisionBook extends DecisionBook<ApplicantBean, Float> {
   @Override
   protected void defineRules() {
-    //if there are more than 3 applicants then the loan is denied
-    addRule(StandardRule.create(ApplicantBean.class).when(factMap -> factMap.size() > 3).stop());
+    //credit score under 600 gets a 4x rate increase
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() < 600)
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop());
 
-    //if everyone has a credit score of 700 or more then the loan is approved
-    addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
-      .when(factMap -> factMap.values().stream()
-        .allMatch(applicantFact -> applicantFact.getValue().getCreditScore() >= 700))
-      .then(f -> result.setValue(true)));
+    //credit score between 600 and 700 pays a 1 point increase
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() < 700)
+      .then((facts, result) -> result.setValue(result.getValue() + 1)));
 
-    //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved
-    addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
-      .when(factMap -> factMap.values().stream()
-        .allMatch(applicantFact -> applicantFact.getValue().getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
-      .then(f -> result.setValue(true)));
-  }
+    //credit score is 700 and they have at least $25,000 cash on hand
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() >= 700 &&
+            facts.getOne().getCashOnHand() >= 25000)
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+
+    //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().isFirstTimeHomeBuyer())
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+    }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
-    decisionBook.withDefaultResult(false)
-      .given("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))
-      .given("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))
-      .run();
-
-    System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
+    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
+    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
+    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    
+    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
   }
 }
 ```
