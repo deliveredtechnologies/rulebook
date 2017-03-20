@@ -40,10 +40,10 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
     * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
-* **[5 Using RuleBook with Spring](#4-using-rulebook-with-spring)**
-  * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
-  * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
-  * [5.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
+* **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
+  * [5.1 Creating a Spring Enabled POJO Rule](#51-creating-a-spring-enabled-pojo-rule)
+  * [5.2 Configuring a RuleBook in Spring](#52-configuring-a-rulebook-in-spring)
+  * [5.3 Using a Spring Enabled RuleBook](#53-using-a-spring-enabled-rulebook)
   * [5.4 Spring Enabled POJO Rules Explained](#54-spring-enabled-pojo-rules-explained)
 * **[6 How to Contribute](#5-how-to-contribute)**
   * [6.1 Developer Guidelines](#51-developer-guidelines)
