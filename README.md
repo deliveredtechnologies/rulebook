@@ -90,7 +90,7 @@ _Add the code below to your build.gradle_
 compile 'com.deliveredtechnologies:rulebook-core:0.3.4'
 ```
 
-<sub>[Top](#contents)</sub>
+<sub>[[Top](#contents)]</sub>
 
 ## 2 Using RuleBook
 ### 2.1 A HelloWorld Example
