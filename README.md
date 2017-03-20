@@ -414,11 +414,11 @@ The @Then annotation denotes the action(s) of the rule that is executed if the �
 
 The @Result annotation denotes the result of the Rule. Of course, some Rules may not have a result. In that case, just don’t use the @Result annotation. It’s that simple.
 
-### 4.3.1 Ordering POJO Rules
+#### 4.3.1 Ordering POJO Rules
 
 The ‘order’ property can \[optionally\] be used with the @Rule annoataion to specify the orner in which POJO Rules will execute [as seen above](#42-the-megabank-example-with-pojo-rules). If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same order, which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group is ordered among other rules, but the execution of the rules within that group doesn’t matter.
 
-### 4.3.2 Injecting Collections into POJO Rules
+#### 4.3.2 Injecting Collections into POJO Rules
 
 If the following conditions are met then the objects contained in all Facts of generic type specified are injected into a collection:
 
@@ -426,7 +426,7 @@ If the following conditions are met then the objects contained in all Facts of g
 * The @Given annotation on the collection has no value specified
 * The generic type of the List, Set, Map (the first generic type in a Map is String - representing the name of the Fact injected) or FactMap is the same type of at least one Fact supplied to the RuleBookRunner
 
-### 4.3.3 POJO Rule Annotation Inheritance
+#### 4.3.3 POJO Rule Annotation Inheritance
 
 As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That means if you have a subclass, whose parent is annotated with RuleBook annotations (i.e. @Given, @When, @Then, @Result) then the subclass will inherit the parent’s annotations. @Given and @Result attributes injected in the parent, will be available to the subclass. @Then and @When methods defined in the parent will be visible in the subclass.
 
