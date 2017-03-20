@@ -253,10 +253,10 @@ Much like the Given-When-Then language for defining tests that was popularized b
 **Then** methods accept a Consumer (or BiConsumer for Decisions) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule or Decision that will all be 
 invoked in the order they are specified if the when() condition evaluates to true.
 
-### 3.2 The Using Method
+### 3.2 Using
 **Using** methods reduce the set of Facts available to a then() method. Mutiple using methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
 
-### 3.3 The Stop Method
+### 3.3 Stop
 **Stop** methods break the rule chain. If a stop method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
 
 ### 3.4 Working With Facts
