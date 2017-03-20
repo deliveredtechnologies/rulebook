@@ -7,6 +7,9 @@ import java.util.List;
  * ArrayUtils is a utility class for arrays.
  */
 public class ArrayUtils {
+
+  private ArrayUtils() { }
+
   /**
    * The combine() static method combines the contents of two arrays into a single array of the same type.
    * @param array1  the array to be concatenated on the left
