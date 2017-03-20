@@ -425,6 +425,8 @@ If the following conditions are met then the objects contained in all Facts of g
 
 ### 4.3.3 POJO Rule Annotation Inheritance
 
+As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That means if you have a subclass, whose parent is annotated with RuleBook annotations (i.e. @Given, @When, @Then, @Result) then the subclass will inherit the parent’s annotations. @Given and @Result attributes injected in the parent, will be available to the subclass. @Then and @When methods defined in the parent will be visible in the subclass.
+
 <sub>[[Top](#contents)]</sub>
 
 ## 5 Using RuleBook with Spring
