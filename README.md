@@ -43,10 +43,10 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
   * [5.1 Adding RuleBook Spring to Your Maven Project](#51-adding-rulebook-spring-to-your-maven-project)
   * [5.2 Adding RuleBook Spring to Your Gradle Project](#52-adding-rulebook-spring-to-your-gradle-project)
-  * [5.3 Creating a Spring Enabled POJO Rule](#51-creating-a-spring-enabled-pojo-rule)
-  * [5.4 Configuring a RuleBook in Spring](#52-configuring-a-rulebook-in-spring)
-  * [5.5 Using a Spring Enabled RuleBook](#53-using-a-spring-enabled-rulebook)
-  * [5.6 Spring Enabled POJO Rules Explained](#54-spring-enabled-pojo-rules-explained)
+  * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-a-spring-enabled-pojo-rule)
+  * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
+  * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
+  * [5.6 Spring Enabled POJO Rules Explained](#56-spring-enabled-pojo-rules-explained)
 * **[6 How to Contribute](#5-how-to-contribute)**
   * [6.1 Developer Guidelines](#51-developer-guidelines)
   
