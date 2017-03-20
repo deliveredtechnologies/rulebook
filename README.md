@@ -41,10 +41,12 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
-  * [5.1 Creating a Spring Enabled POJO Rule](#51-creating-a-spring-enabled-pojo-rule)
-  * [5.2 Configuring a RuleBook in Spring](#52-configuring-a-rulebook-in-spring)
-  * [5.3 Using a Spring Enabled RuleBook](#53-using-a-spring-enabled-rulebook)
-  * [5.4 Spring Enabled POJO Rules Explained](#54-spring-enabled-pojo-rules-explained)
+  * [5.1 Adding RuleBook Spring to Your Maven Project](#51-adding-rulebook-spring-to-your-maven-project)
+  * [5.2 Adding RuleBook Spring to Your Gradle Project](#52-adding-rulebook-spring-to-your-gradle-project)
+  * [5.3 Creating a Spring Enabled POJO Rule](#51-creating-a-spring-enabled-pojo-rule)
+  * [5.4 Configuring a RuleBook in Spring](#52-configuring-a-rulebook-in-spring)
+  * [5.5 Using a Spring Enabled RuleBook](#53-using-a-spring-enabled-rulebook)
+  * [5.6 Spring Enabled POJO Rules Explained](#54-spring-enabled-pojo-rules-explained)
 * **[6 How to Contribute](#5-how-to-contribute)**
   * [6.1 Developer Guidelines](#51-developer-guidelines)
   
@@ -434,7 +436,27 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
 
-### 5.1 Creating a Spring Enabled POJO Rule
+### 5.1 Adding RuleBook Spring to Your Maven Project
+
+_Add the code below to your pom.xml_
+
+```xml
+<dependency>
+    <groupId>com.deliveredtechnologies</groupId>
+    <artifactId>rulebook-spring</artifactId>
+    <version>0.3.4</version>
+</dependency>
+```
+
+### 5.2 Adding RuleBook Spring to Your Gradle Project
+
+_Add the code below to your build.gradle_
+
+```groovy
+compile 'com.deliveredtechnologies:rulebook-spring:0.3.4'
+```
+
+### 5.3 Creating a Spring Enabled POJO Rule
 
 ```java
 @RuleBean
@@ -458,7 +480,7 @@ public class HelloSpringRule {
 }
 ```
 
-### 5.2 Configuring a RuleBook in Spring
+### 5.4 Configuring a RuleBook in Spring
 
 ```java
 @Configuration
@@ -482,7 +504,7 @@ public class SpringConfig {
 }
 ```
 
-### 5.3 Using a Spring Enabled RuleBook
+### 5.5 Using a Spring Enabled RuleBook
 
 ```java
   @Autowired
@@ -495,7 +517,7 @@ public class SpringConfig {
   }
 ```
 
-### 5.4 Spring Enabled POJO Rules Explained
+### 5.6 Spring Enabled POJO Rules Explained
 
 In the Spring configuration, a RuleBookBean is used. RuleBookBean is a special type of RuleBook RuleBookRunner made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
 
