@@ -1,6 +1,5 @@
 package com.deliveredtechnologies.rulebook;
 
-import com.deliveredtechnologies.rulebook.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +27,21 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   private static Logger LOGGER = LoggerFactory.getLogger(StandardDecision.class);
 
   private Class<T> _factType;
+  private Class<U> _resultType;
   private Optional<Rule<T>> _nextRule = Optional.empty();
   private FactMap _facts = new FactMap();
   private Result<U> _result = new Result<>();
   private Predicate<FactMap<T>> _test;
   private List<Object> _actionChain = new ArrayList<>();
-  private Map<Integer, String[]> _factNameMap = new HashMap<>();
+  private Map<Integer, List<String>> _factNameMap = new HashMap<>();
   private RuleState _ruleState = NEXT;
 
-  public StandardDecision() {
+  protected StandardDecision() {
+  }
+
+  public StandardDecision(Class<T> factClazz, Class<U> resultClazz) {
+    _factType = factClazz;
+    _resultType = resultClazz;
   }
 
   /**
@@ -50,7 +55,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return a new instance of StandardDecision
    */
   public static <T, U> StandardDecision<T, U> create(Class<T> factType, Class<U> returnType) {
-    return new StandardDecision<>();
+    return new StandardDecision<>(factType, returnType);
   }
 
   /**
@@ -58,7 +63,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return a new instance of StandardDecision
    */
   public static StandardDecision<Object, Object> create() {
-    return new StandardDecision<>();
+    return new StandardDecision<Object, Object>(Object.class, Object.class);
   }
 
   /**
@@ -78,7 +83,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
         List<Object> actionList = getThen();
         for (int i = 0; i < actionList.size(); i++) {
           Object action = actionList.get(i);
-          String[] factNames = _factNameMap.get(i);
+          List<String> factNames = _factNameMap.get(i);
           FactMap<T> usingFacts;
           //if using() was specified for the specific then(), use only those facts specified
           if (factNames != null) {
@@ -88,10 +93,10 @@ public class StandardDecision<T, U> implements Decision<T, U> {
             }
           } else {
             //if no using() was specified, provide the then() with all available facts
-            usingFacts = new FactMap((Map<String, T>)_facts.values().stream()
-              .filter(fact -> _factType.isInstance(((Fact)fact).getValue()))
+            usingFacts = new FactMap<T>((Map<String, Fact<T>>)_facts.values().stream()
+              .filter((Object fact) -> _factType.isInstance(((Fact)fact).getValue()))
               .collect(Collectors
-                .toMap(fact -> ((Fact)fact).getName(), fact -> _factType.cast(((Fact)fact).getValue()))));
+                .toMap(fact -> ((Fact)fact).getName(), fact -> (Fact<T>)fact)));
           }
           if (action instanceof BiConsumer) {
             //invoke the then() BiConsumer action
@@ -220,17 +225,16 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @Override
   @SuppressWarnings("unchecked")
   public Decision<T, U> using(String... factNames) {
-    factNames = (String[]) Stream.of(factNames)
+    List<String>factNameList = Stream.of(factNames)
       .filter(name -> _factType.isInstance(_facts.getValue(name)))
-      .collect(Collectors.toList()).toArray();
+      .collect(Collectors.toList());
     if (_factNameMap.containsKey((getThen()).size())) {
-      String[] existingFactNames = _factNameMap.get((getThen()).size());
-      String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);
-      _factNameMap.put((getThen()).size(), allFactNames);
+      List<String> existingFactNames = _factNameMap.get((getThen()).size());
+      existingFactNames.addAll(factNameList);
       return this;
     }
 
-    _factNameMap.put((getThen()).size(), factNames);
+    _factNameMap.put((getThen()).size(), factNameList);
     return this;
   }
 

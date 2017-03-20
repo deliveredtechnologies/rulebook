@@ -1,6 +1,5 @@
 package com.deliveredtechnologies.rulebook;
 
-import com.deliveredtechnologies.rulebook.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,10 +27,10 @@ public class StandardRule<T> implements Rule<T> {
   private FactMap _facts = new FactMap();
   private Predicate<FactMap<T>> _test;
   private List<Object> _actionChain = new ArrayList<>();
-  private Map<Integer, String[]> _factNameMap = new HashMap<>();
+  private Map<Integer, List<String>> _factNameMap = new HashMap<>();
   private RuleState _ruleState = NEXT;
 
-  private StandardRule() {
+  protected StandardRule() {
   }
 
   public StandardRule(Class<T> clazz) {
@@ -56,7 +54,7 @@ public class StandardRule<T> implements Rule<T> {
    * @return a new instance of a StandardRule
    */
   public static StandardRule<Object> create() {
-    return new StandardRule<>();
+    return new StandardRule<>(Object.class);
   }
 
   /**
@@ -75,7 +73,7 @@ public class StandardRule<T> implements Rule<T> {
         List<Object> actionList = getThen();
         for (int i = 0; i < (getThen()).size(); i++) {
           Object action = actionList.get(i);
-          String[] factNames = _factNameMap.get(i);
+          List<String> factNames = _factNameMap.get(i);
           FactMap<T> usingFacts;
           //if using() was specified for the specific then(), use only those facts specified
           if (factNames != null) {
@@ -85,10 +83,10 @@ public class StandardRule<T> implements Rule<T> {
             }
           } else {
             //if no using() was specified, provide the then() with all available facts
-            usingFacts = (FactMap<T>)_facts.values().stream()
+            usingFacts = new FactMap<T>((Map<String, Fact<T>>)_facts.values().stream()
               .filter((Object fact) -> _factType.isInstance(((Fact)fact).getValue()))
               .collect(Collectors
-                .toMap(fact -> ((Fact)fact).getName(), fact -> _factType.cast(((Fact)fact).getValue())));
+                .toMap(fact -> ((Fact)fact).getName(), fact -> (Fact<T>)fact)));
           }
           //invoke the then() Consumer action
           ((Consumer) action).accept(usingFacts);
@@ -209,17 +207,18 @@ public class StandardRule<T> implements Rule<T> {
   @Override
   @SuppressWarnings("unchecked")
   public StandardRule<T> using(String... factNames) {
-    factNames = (String[])Stream.of(factNames)
-      .filter(name -> _factType.isInstance(_facts.getValue(name)))
-      .collect(Collectors.toList()).toArray();
+    List<String> factNameList = Stream.of(factNames)
+      .filter(name -> {
+        return _factType.isInstance(_facts.getValue(name));
+      })
+      .collect(Collectors.toList());
     if (_factNameMap.containsKey((getThen()).size())) {
-      String[] existingFactNames = _factNameMap.get((getThen()).size());
-      String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);
-      _factNameMap.put((getThen()).size(), allFactNames);
+      List<String> existingFactNames = _factNameMap.get((getThen()).size());
+      existingFactNames.addAll(factNameList);
       return this;
     }
 
-    _factNameMap.put((getThen()).size(), factNames);
+    _factNameMap.put((getThen()).size(), factNameList);
     return this;
   }
 

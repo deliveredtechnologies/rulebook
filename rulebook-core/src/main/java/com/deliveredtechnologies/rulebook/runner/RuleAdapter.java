@@ -52,6 +52,7 @@ public class RuleAdapter extends StandardDecision {
    * @throws InvalidClassException  if the POJO does not have the @Rule annotation
    */
   public RuleAdapter(Object ruleObj) throws InvalidClassException {
+    super(Object.class, Object.class);
     if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleObj.getClass()) == null) {
       throw new InvalidClassException(ruleObj.getClass() + " is not a Rule; missing @Rule annotation");
     }

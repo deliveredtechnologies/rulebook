@@ -110,23 +110,24 @@ public class FactMap<T> implements Map<String, Fact<T>> {
 
   @Override
   public void clear() {
-
+    _facts.clear();
   }
 
   @Override
   public Set<String> keySet() {
-    return null;
+    return _facts.keySet();
   }
 
   @Override
   public Collection<Fact<T>> values() {
-    return null;
+    return _facts.values();
   }
 
   @Override
   public Set<Entry<String, Fact<T>>> entrySet() {
-    return null;
+    return _facts.entrySet();
   }
+
 
   /**
    * The toString() method gets the FactMap converted a string.<br/>
