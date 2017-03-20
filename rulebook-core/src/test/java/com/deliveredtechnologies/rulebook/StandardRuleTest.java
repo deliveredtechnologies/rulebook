@@ -104,6 +104,23 @@ public class StandardRuleTest {
 
   @Test
   @SuppressWarnings("unchecked")
+  public void nextRuleInChainIsRunIfWhenErrors() {
+    Rule<String> rule1 = spy(
+        StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+    Rule<String> rule2 = spy(
+        StandardRule.create(String.class).given(new Fact<>("hello", "world")));
+    Consumer<FactMap<String>> action = (Consumer<FactMap<String>>) mock(Consumer.class);
+
+    rule1 = rule1.when(facts -> facts.getValue("nothing").equals("something")).then(action);
+    rule1.setNextRule(rule2.when(facts -> true).then(action));
+    rule1.run();
+
+    verify(rule2, times(1)).run();
+    verify(action, times(1)).accept(any(FactMap.class));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
   public void nextRuleInChainIsRunIfWhenIsTrueAndStopIsNotCalled() {
     FactMap<String> factMap = new FactMap<>();
     factMap.put("hello", new Fact<>("hello", "world"));

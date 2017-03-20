@@ -1,6 +1,8 @@
 package com.deliveredtechnologies.rulebook;
 
 import com.deliveredtechnologies.rulebook.util.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
@@ -18,6 +20,8 @@ import java.util.function.Predicate;
  * StandardRule is a standard rule implementation that can be used with a {@link RuleBook}.
  */
 public class StandardRule<T> implements Rule<T> {
+  private static Logger LOGGER = LoggerFactory.getLogger(StandardRule.class);
+
   private Optional<Rule<T>> _nextRule = Optional.empty();
   private FactMap<T> _facts = new FactMap<>();
   private Predicate<FactMap<T>> _test;
@@ -56,33 +60,37 @@ public class StandardRule<T> implements Rule<T> {
   @Override
   @SuppressWarnings("unchecked")
   public void run() {
-    //invoke then() action(s) if when() is true or if when() was never specified
-    if (getWhen() == null || getWhen().test(_facts)) {
-      //iterate through the then() actions specified
-      List<Object> actionList = getThen();
-      for (int i = 0; i < (getThen()).size(); i++) {
-        Object action = actionList.get(i);
-        String[] factNames = _factNameMap.get(i);
-        FactMap<T> usingFacts;
-        //if using() was specified for the specific then(), use only those facts specified
-        if (factNames != null) {
-          usingFacts = new FactMap<T>();
-          for (String factName : factNames) {
-            usingFacts.put(factName, _facts.get(factName));
+    try {
+      //invoke then() action(s) if when() is true or if when() was never specified
+      if (getWhen() == null || getWhen().test(_facts)) {
+        //iterate through the then() actions specified
+        List<Object> actionList = getThen();
+        for (int i = 0; i < (getThen()).size(); i++) {
+          Object action = actionList.get(i);
+          String[] factNames = _factNameMap.get(i);
+          FactMap<T> usingFacts;
+          //if using() was specified for the specific then(), use only those facts specified
+          if (factNames != null) {
+            usingFacts = new FactMap<T>();
+            for (String factName : factNames) {
+              usingFacts.put(factName, _facts.get(factName));
+            }
+          } else {
+            //if no using() was specified, provide the then() with all available facts
+            usingFacts = _facts;
           }
-        } else {
-          //if no using() was specified, provide the then() with all available facts
-          usingFacts = _facts;
-        }
-        if (action instanceof Consumer) {
           //invoke the then() Consumer action
           ((Consumer) action).accept(usingFacts);
         }
+        //if stop() was invoked, stop the rule chain after then is finished executing
+        if (_ruleState == BREAK) {
+          return;
+        }
       }
-      //if stop() was invoked, stop the rule chain after then is finished executing
-      if (_ruleState == BREAK) {
-        return;
-      }
+    } catch (Exception ex) {
+      //catch errors in case something like one rule was chained expecting a Fact that doesn't exist
+      //eventually, we'll have to resolve that kind of issue ahead of time
+      LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
     //continue down the rule chain
     _nextRule.ifPresent(rule -> rule.given(_facts));

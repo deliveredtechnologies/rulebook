@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.deliveredtechnologies.rulebook.RuleState.BREAK;
 import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
@@ -120,6 +121,26 @@ public class StandardDecisionTest {
     verify(decision1, times(1)).run();
     verify(decision2, times(1)).run();
     Assert.assertTrue(decision2.getResult());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void nextRuleInChainIsRunIfWhenErrors() {
+    Decision<String, Boolean> decision1 = spy(
+        StandardDecision.create(String.class, Boolean.class).given(new Fact<>("hello", "world")));
+    Decision<String, Boolean> decision2 = spy(
+        StandardDecision.create(String.class, Boolean.class).given(new Fact<>("goodbye", "world")));
+    BiConsumer<FactMap<String>, Result<Boolean>> biConsumer = mock(BiConsumer.class);
+
+    decision1 = decision1.when(facts -> facts.getValue("nothing").equals("something")).then(biConsumer);
+    decision2 = decision2.when(facts -> true).then((facts, result) -> result.setValue(false));
+    decision1.setNextRule(decision2);
+    decision1.run();
+
+    verify(decision1, times(1)).run();
+    verify(decision2, times(1)).run();
+    verify(biConsumer, times(0)).accept(any(FactMap.class), any(Result.class));
+    Assert.assertFalse(decision2.getResult());
   }
 
   @Test
