@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * ArrayUtils is a utility class for arrays.
  */
-public class ArrayUtils {
+public final class ArrayUtils {
 
   private ArrayUtils() { }
 

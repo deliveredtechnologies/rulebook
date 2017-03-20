@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 /**
  * AnnotationUtils is a utility class for annotations.
  */
-public class AnnotationUtils {
-  private AnnotationUtils() {}
+public final class AnnotationUtils {
+  private AnnotationUtils() { }
 
   /**
    * Method getAnnotatedFields gets the fields annotated of a specific type from the class and its parent classes. <br/>
