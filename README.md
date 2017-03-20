@@ -519,9 +519,13 @@ public class SpringConfig {
 
 ### 5.6 Spring Enabled POJO Rules Explained
 
-In the Spring configuration, a RuleBookBean is used. RuleBookBean is a special type of RuleBook RuleBookRunner made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
+In the Spring configuration, a RuleBookBean is used. RuleBookBean is like a RuleBookRunner that's made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice that RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
 
 _Note: Since Facts hold references to objects, if the same exact Facts are used in two different RuleBooks, DecisionBooks, RuleBookRunners, or RuleBookBeans_
+
+#### 5.6.1 Ordering Spring Enabled POJO Rules
+
+Unlike regular POJO Rules, Spring Enabled POJO Rules don't have an order property in RuleBean. That's because the order of Spring Enabled POJO Rules is determined by the order they are configured. Simple, right?
 
 <sub>[[Top](#contents)]</sub>
 
