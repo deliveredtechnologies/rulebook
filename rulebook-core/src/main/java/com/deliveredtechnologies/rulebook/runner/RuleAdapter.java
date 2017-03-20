@@ -107,13 +107,12 @@ public class RuleAdapter extends StandardDecision {
 
   /**
    * Method getThen() returns the 'then' action to be used; either a {@link Function} object, a
-   * {@link BiFunction} object, or a {@link Consumer} object. If no action was specified then a default Function object
-   * that returns {@link RuleState} NEXT is used.
+   * {@link BiConsumer} object, or a {@link Consumer} object.
    * @return  either a Function object or a BiFunction object
    */
   @Override
-  public Object getThen() {
-    if (((List<Object>)super.getThen()).size() < 1) {
+  public List<Object> getThen() {
+    if ((super.getThen()).size() < 1) {
       List<Object> thenList = new ArrayList<>();
       for (Method thenMethod : getAnnotatedMethods(Then.class, _ruleObj.getClass())) {
         thenMethod.setAccessible(true);
@@ -121,7 +120,7 @@ public class RuleAdapter extends StandardDecision {
             .orElse(getThenMethodAsConsumer(thenMethod).orElse(factMap -> { }));
         thenList.add(then);
       }
-      ((List<Object>)super.getThen()).addAll(thenList);
+      (super.getThen()).addAll(thenList);
     }
     return super.getThen();
   }

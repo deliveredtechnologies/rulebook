@@ -21,7 +21,7 @@ public class StandardRule<T> implements Rule<T> {
   private Optional<Rule<T>> _nextRule = Optional.empty();
   private FactMap<T> _facts = new FactMap<>();
   private Predicate<FactMap<T>> _test;
-  private List _actionChain = new ArrayList();
+  private List<Object> _actionChain = new ArrayList<>();
   private Map<Integer, String[]> _factNameMap = new HashMap<>();
   private RuleState _ruleState = NEXT;
 
@@ -59,8 +59,8 @@ public class StandardRule<T> implements Rule<T> {
     //invoke then() action(s) if when() is true or if when() was never specified
     if (getWhen() == null || getWhen().test(_facts)) {
       //iterate through the then() actions specified
-      List<Object> actionList = (List<Object>)getThen();
-      for (int i = 0; i < ((List<Object>)getThen()).size(); i++) {
+      List<Object> actionList = getThen();
+      for (int i = 0; i < (getThen()).size(); i++) {
         Object action = actionList.get(i);
         String[] factNames = _factNameMap.get(i);
         FactMap<T> usingFacts;
@@ -184,14 +184,14 @@ public class StandardRule<T> implements Rule<T> {
   @Override
   @SuppressWarnings("unchecked")
   public StandardRule<T> using(String... factNames) {
-    if (_factNameMap.containsKey(((List<Object>)getThen()).size())) {
-      String[] existingFactNames = _factNameMap.get(((List<Object>)getThen()).size());
+    if (_factNameMap.containsKey((getThen()).size())) {
+      String[] existingFactNames = _factNameMap.get((getThen()).size());
       String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);
-      _factNameMap.put(((List<Object>)getThen()).size(), allFactNames);
+      _factNameMap.put((getThen()).size(), allFactNames);
       return this;
     }
 
-    _factNameMap.put(((List<Object>)getThen()).size(), factNames);
+    _factNameMap.put((getThen()).size(), factNames);
     return this;
   }
 
@@ -215,12 +215,11 @@ public class StandardRule<T> implements Rule<T> {
 
   /**
    * The getThen() method returns a {@link List} of {@link Consumer} objects that combined
-   * together in sequence represent the then() action(s). The Object return type is retained
-   * for backward compatibility.
+   * together in sequence represent the then() action(s).
    * @return  a List of Consumer objects
    */
   @Override
-  public Object getThen() {
+  public List<Object> getThen() {
     return _actionChain;
   }
 }

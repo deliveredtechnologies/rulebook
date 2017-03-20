@@ -67,7 +67,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     //invoke then() action(s) if when() is true or if when() was never specified
     if (getWhen() == null || getWhen().test(_facts)) {
       //iterate through the then() actions specified
-      List<Object> actionList = (List<Object>)getThen();
+      List<Object> actionList = getThen();
       for (int i = 0; i < actionList.size(); i++) {
         Object action = actionList.get(i);
         String[] factNames = _factNameMap.get(i);
@@ -199,14 +199,14 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @Override
   @SuppressWarnings("unchecked")
   public Decision<T, U> using(String... factNames) {
-    if (_factNameMap.containsKey(((List<Object>)getThen()).size())) {
-      String[] existingFactNames = _factNameMap.get(((List<Object>)getThen()).size());
+    if (_factNameMap.containsKey((getThen()).size())) {
+      String[] existingFactNames = _factNameMap.get((getThen()).size());
       String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);
-      _factNameMap.put(((List<Object>)getThen()).size(), allFactNames);
+      _factNameMap.put((getThen()).size(), allFactNames);
       return this;
     }
 
-    _factNameMap.put(((List<Object>)getThen()).size(), factNames);
+    _factNameMap.put((getThen()).size(), factNames);
     return this;
   }
 
@@ -256,12 +256,11 @@ public class StandardDecision<T, U> implements Decision<T, U> {
 
   /**
    * The getThen() method returns a {@link List} of {@link Consumer} objects that combined
-   * together in sequence represent the then() action(s). The Object return type is retained
-   * for backward compatibility.
-   * @return  a List of Consumer objects
+   * together in sequence represent the then() action(s).
+   * @return  a List of Consumer and/or BiConsumer objects
    */
   @Override
-  public Object getThen() {
+  public List<Object> getThen() {
     return _actionChain;
   }
 }

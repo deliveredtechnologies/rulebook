@@ -85,7 +85,7 @@ public interface Rule<T> {
    * the Rule.
    * @return  a functional interface Object
    */
-  Object getThen();
+  List<Object> getThen();
 
   /**
    * The setNextRule method adds the next Rule to the chain.
