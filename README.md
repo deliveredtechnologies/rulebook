@@ -234,7 +234,7 @@ In the above example, the default Result value was initialized to false. So, unl
 
 <sub>[[Top](#contents)]</sub>
 
-## 3 The Java Domain Specific Language Explained
+## 3 The RuleBook Domain Specific Language Explained
 
 The RuleBook Java Domain Specific Language (DSL) uses the Given-When-Then format, popularized by Behavior Driven Development (BDD) and associated testing frameworks (e.g. Cucumber and Spock). Many of the ideas that went into creating the RuleBook Java DSL are also borrowed from BDD, including: _**Sentences should be used to describe rules**_ and _**Rules should be defined using a ubiquitous language that translates into the codebase**_.
 
