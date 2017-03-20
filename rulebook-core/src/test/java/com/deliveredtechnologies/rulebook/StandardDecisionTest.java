@@ -88,7 +88,7 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("unchecked")
   public void thenMethodsCanBeChained() {
-    StandardDecision<String, String> rule =
+    Decision<String, String> rule =
         StandardDecision.create(String.class, String.class).given(new Fact<>("hello", "world"));
     Consumer<FactMap<String>> action1 = (Consumer<FactMap<String>>) mock(Consumer.class);
     BiConsumer<FactMap<String>, Result<String>> action2 = (facts, result) -> result.setValue("New");

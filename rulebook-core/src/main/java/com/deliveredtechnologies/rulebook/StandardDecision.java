@@ -107,7 +107,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return      the current object
    */
   @Override
-  public StandardDecision<T, U> given(String name, T value) {
+  public Decision<T, U> given(String name, T value) {
     _facts.put(name, new Fact<T>(name, value));
     return this;
   }
@@ -118,7 +118,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return      the current object for chaining other methods
    */
   @Override
-  public StandardDecision<T, U> given(Fact<T>... facts) {
+  public Decision<T, U> given(Fact<T>... facts) {
     Arrays.stream(facts).forEach(fact -> _facts.put(fact.getName(), fact));
     return this;
   }
@@ -129,9 +129,8 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return      the current object
    */
   @Override
-  public StandardDecision<T, U> given(List<Fact<T>> facts) {
+  public Decision<T, U> given(List<Fact<T>> facts) {
     facts.forEach(fact -> _facts.put(fact.getName(), fact));
-
     return this;
   }
 
@@ -141,7 +140,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return      the current object
    */
   @Override
-  public StandardDecision<T, U> given(FactMap<T> facts) {
+  public Decision<T, U> given(FactMap<T> facts) {
     _facts = facts;
     return this;
   }
@@ -152,7 +151,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return      true, if the then() statement(s) should be evaluated, otherwise false
    */
   @Override
-  public StandardDecision<T, U> when(Predicate<FactMap<T>> test) {
+  public Decision<T, U> when(Predicate<FactMap<T>> test) {
     _test = test;
     return this;
   }
@@ -164,7 +163,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return        the current object
    */
   @Override
-  public StandardDecision<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
+  public Decision<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
     _actionChain.add(action);
     return this;
   }
@@ -175,7 +174,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return        the current object
    */
   @Override
-  public StandardDecision<T, U> then(Consumer<FactMap<T>> action) {
+  public Decision<T, U> then(Consumer<FactMap<T>> action) {
     _actionChain.add(action);
     return this;
   }
@@ -186,7 +185,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    * @return  the current object
    */
   @Override
-  public StandardDecision stop() {
+  public Decision<T, U> stop() {
     _ruleState = BREAK;
     return this;
   }
@@ -199,7 +198,7 @@ public class StandardDecision<T, U> implements Decision<T, U> {
    */
   @Override
   @SuppressWarnings("unchecked")
-  public StandardDecision<T, U> using(String... factNames) {
+  public Decision<T, U> using(String... factNames) {
     if (_factNameMap.containsKey(((List<Object>)getThen()).size())) {
       String[] existingFactNames = _factNameMap.get(((List<Object>)getThen()).size());
       String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);

@@ -12,6 +12,8 @@ import java.util.function.Predicate;
  */
 public interface Decision<T, U> extends Rule<T> {
 
+  //Overriding these methods for method chaining to work with this interface
+
   @Override
   Decision<T, U> given(String name, T value);
 
