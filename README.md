@@ -413,7 +413,15 @@ The @Result annotation denotes the result of the Rule. Of course, some Rules may
 
 ### 4.3.1 Ordering POJO Rules
 
+The ‘order’ property can optionally by used with the @Rule annoataion to specify the orner in which POJO Rules will execute as seen above. If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same ‘order,’ which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group ordered among other rules, but the execution of the rules within that group doesn’t matter.
+
 ### 4.3.2 Injecting Collections into POJO Rules
+
+If the following conditions are met then the objects contained in all Facts of generic type specified are injected into a collection:
+
+* A List, Set, Map or FactMap is annotated with a @Given annotation
+* The @Given annotation on the collection has no value specified
+* The generic type of the List, Set, Map (the first generic type in a Map is String - representing the name of the Fact injected) or FactMap is the same type of at least one Fact supplied to the RuleBookRunner
 
 ### 4.3.3 POJO Rule Annotation Inheritance
 
