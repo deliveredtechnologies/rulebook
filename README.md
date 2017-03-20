@@ -494,6 +494,12 @@ public class SpringConfig {
   }
 ```
 
+### 5.4 Spring Enabled POJO Beans Explained
+
+In the Spring configuration, a RuleBookBean is used. RuleBookBean is a special type of RuleBook RuleBookRunner made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
+
+_Note: Since Facts hold references to objects, if the same exact Facts are used in two different RuleBooks, DecisionBooks, RuleBookRunners, or RuleBookBeans_
+
 <sub>[[Top](#contents)]</sub>
 
 ## 6 How to Contribute
