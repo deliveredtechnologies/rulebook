@@ -414,7 +414,7 @@ The @Result annotation denotes the result of the Rule. Of course, some Rules may
 
 ### 4.3.1 Ordering POJO Rules
 
-The ‘order’ property can optionally by used with the @Rule annoataion to specify the orner in which POJO Rules will execute as seen above. If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same ‘order,’ which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group ordered among other rules, but the execution of the rules within that group doesn’t matter.
+The ‘order’ property can \[optionally\] be used with the @Rule annoataion to specify the orner in which POJO Rules will execute [as seen above](#42-the-megabank-example-with-pojo-rules). If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same order, which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group is ordered among other rules, but the execution of the rules within that group doesn’t matter.
 
 ### 4.3.2 Injecting Collections into POJO Rules
 
