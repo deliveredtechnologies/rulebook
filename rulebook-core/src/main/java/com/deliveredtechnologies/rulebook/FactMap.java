@@ -1,20 +1,34 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A FactMap is an extension of {@link HashMap}; it stores facts by their name and provides convenience methods for
  * accessing {@link Fact} objects.
  */
-public class FactMap<T> extends HashMap<String, Fact<T>> {
+public class FactMap<T> implements Map<String, Fact<T>> {
+
+  private Map<String, Fact<T>> _facts;
+
+  public FactMap(Map<String, Fact<T>> facts) {
+    _facts = facts;
+  }
+
+  public FactMap() {
+    _facts = new HashMap<String, Fact<T>>();
+  }
+
   /**
    * The method getOne() gets the value of the single Fact in the FactMap.
    * @return the value of a fact stored if only one fact is stored, otherwise null
    */
   public T getOne() {
-    if (this.size() == 1) {
-      return this.values().iterator().next().getValue();
+    if (_facts.size() == 1) {
+      return _facts.values().iterator().next().getValue();
     }
     return null;
   }
@@ -25,7 +39,7 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
    * @return      the value of the Fact
    */
   public T getValue(String name) {
-    return Optional.ofNullable(this.get(name)).map(Fact::getValue).orElse(null);
+    return Optional.ofNullable(_facts.get(name)).map(Fact::getValue).orElse(null);
   }
 
   /**
@@ -35,10 +49,10 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
    * @param value the value object of the Fact
    */
   public void setValue(String name, T value) {
-    Fact<T> fact = this.get(name);
+    Fact<T> fact = _facts.get(name);
     if (fact == null) {
       fact = new Fact<T>(name, value);
-      put(name, fact);
+      _facts.put(name, fact);
       return;
     }
     fact.setValue(value);
@@ -51,7 +65,67 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
    * @return      the Fact that was just added
    */
   public Fact<T> put(Fact<T> fact) {
-    return this.put(fact.getName(), fact);
+    return _facts.put(fact.getName(), fact);
+  }
+
+  @Override
+  public int size() {
+    return _facts.size();
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return _facts.isEmpty();
+  }
+
+  @Override
+  public boolean containsKey(Object key) {
+    return _facts.containsKey(key);
+  }
+
+  @Override
+  public boolean containsValue(Object value) {
+    return _facts.containsValue(value);
+  }
+
+  @Override
+  public Fact<T> get(Object key) {
+    return _facts.get(key);
+  }
+
+  @Override
+  public Fact<T> put(String key, Fact<T> value) {
+    return _facts.put(key, value);
+  }
+
+  @Override
+  public Fact<T> remove(Object key) {
+    return _facts.remove(key);
+  }
+
+  @Override
+  public void putAll(Map<? extends String, ? extends Fact<T>> m) {
+    _facts.putAll(m);
+  }
+
+  @Override
+  public void clear() {
+
+  }
+
+  @Override
+  public Set<String> keySet() {
+    return null;
+  }
+
+  @Override
+  public Collection<Fact<T>> values() {
+    return null;
+  }
+
+  @Override
+  public Set<Entry<String, Fact<T>>> entrySet() {
+    return null;
   }
 
   /**
@@ -62,7 +136,7 @@ public class FactMap<T> extends HashMap<String, Fact<T>> {
    */
   @Override
   public String toString() {
-    return this.size() == 1 ? this.getOne().toString() : super.toString();
+    return _facts.size() == 1 ? this.getOne().toString() : _facts.toString();
   }
 }
 

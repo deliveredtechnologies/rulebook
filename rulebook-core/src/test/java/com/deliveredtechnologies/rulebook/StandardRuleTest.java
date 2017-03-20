@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 public class StandardRuleTest {
   @Test
   public void standardRuleIsCreated() {
-    Rule<String> rule1 = new StandardRule<>();
+    Rule<String> rule1 = new StandardRule<>(String.class);
     Rule<String> rule2 = StandardRule.create(String.class);
     Rule rule3 = StandardRule.create();
 

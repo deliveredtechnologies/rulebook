@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * StandardRule is a standard rule implementation that can be used with a {@link RuleBook}.
@@ -22,14 +24,20 @@ import java.util.function.Predicate;
 public class StandardRule<T> implements Rule<T> {
   private static Logger LOGGER = LoggerFactory.getLogger(StandardRule.class);
 
+  private Class<T> _factType;
   private Optional<Rule<T>> _nextRule = Optional.empty();
-  private FactMap<T> _facts = new FactMap<>();
+  private FactMap _facts = new FactMap();
   private Predicate<FactMap<T>> _test;
   private List<Object> _actionChain = new ArrayList<>();
   private Map<Integer, String[]> _factNameMap = new HashMap<>();
   private RuleState _ruleState = NEXT;
 
-  public StandardRule() {
+  private StandardRule() {
+  }
+
+  public StandardRule(Class<T> clazz) {
+    this();
+    _factType = clazz;
   }
 
   /**
@@ -40,7 +48,7 @@ public class StandardRule<T> implements Rule<T> {
    * @return a new instance of a StandardRule
    */
   public static <T> StandardRule<T> create(Class<T> factType) {
-    return new StandardRule<>();
+    return new StandardRule<>(factType);
   }
 
   /**
@@ -73,11 +81,14 @@ public class StandardRule<T> implements Rule<T> {
           if (factNames != null) {
             usingFacts = new FactMap<T>();
             for (String factName : factNames) {
-              usingFacts.put(factName, _facts.get(factName));
+              usingFacts.put(factName, (Fact<T>)_facts.get(factName));
             }
           } else {
             //if no using() was specified, provide the then() with all available facts
-            usingFacts = _facts;
+            usingFacts = (FactMap<T>)_facts.values().stream()
+              .filter((Object fact) -> _factType.isInstance(((Fact)fact).getValue()))
+              .collect(Collectors
+                .toMap(fact -> ((Fact)fact).getName(), fact -> _factType.cast(((Fact)fact).getValue())));
           }
           //invoke the then() Consumer action
           ((Consumer) action).accept(usingFacts);
@@ -105,7 +116,7 @@ public class StandardRule<T> implements Rule<T> {
    */
   @Override
   public Rule<T> given(String name, T value) {
-    _facts.put(name, new Fact(name, value));
+    _facts.put(name, new Fact<T>(name, value));
     return this;
   }
 
@@ -144,6 +155,12 @@ public class StandardRule<T> implements Rule<T> {
    */
   @Override
   public Rule<T> given(FactMap<T> facts) {
+    _facts = facts;
+    return this;
+  }
+
+  @Override
+  public Rule<T> givenUnTyped(FactMap facts) {
     _facts = facts;
     return this;
   }
@@ -192,6 +209,9 @@ public class StandardRule<T> implements Rule<T> {
   @Override
   @SuppressWarnings("unchecked")
   public StandardRule<T> using(String... factNames) {
+    factNames = (String[])Stream.of(factNames)
+      .filter(name -> _factType.isInstance(_facts.getValue(name)))
+      .collect(Collectors.toList()).toArray();
     if (_factNameMap.containsKey((getThen()).size())) {
       String[] existingFactNames = _factNameMap.get((getThen()).size());
       String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);

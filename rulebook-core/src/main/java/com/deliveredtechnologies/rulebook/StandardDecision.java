@@ -18,6 +18,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * StandardDecision is the standard implementation of {@link Decision}.
@@ -25,8 +27,9 @@ import java.util.function.Predicate;
 public class StandardDecision<T, U> implements Decision<T, U> {
   private static Logger LOGGER = LoggerFactory.getLogger(StandardDecision.class);
 
+  private Class<T> _factType;
   private Optional<Rule<T>> _nextRule = Optional.empty();
-  private FactMap<T> _facts = new FactMap<>();
+  private FactMap _facts = new FactMap();
   private Result<U> _result = new Result<>();
   private Predicate<FactMap<T>> _test;
   private List<Object> _actionChain = new ArrayList<>();
@@ -81,11 +84,14 @@ public class StandardDecision<T, U> implements Decision<T, U> {
           if (factNames != null) {
             usingFacts = new FactMap<T>();
             for (String factName : factNames) {
-              usingFacts.put(factName, _facts.get(factName));
+              usingFacts.put(factName, (Fact<T>)_facts.get(factName));
             }
           } else {
             //if no using() was specified, provide the then() with all available facts
-            usingFacts = _facts;
+            usingFacts = new FactMap((Map<String, T>)_facts.values().stream()
+              .filter(fact -> _factType.isInstance(((Fact)fact).getValue()))
+              .collect(Collectors
+                .toMap(fact -> ((Fact)fact).getName(), fact -> _factType.cast(((Fact)fact).getValue()))));
           }
           if (action instanceof BiConsumer) {
             //invoke the then() BiConsumer action
@@ -155,6 +161,11 @@ public class StandardDecision<T, U> implements Decision<T, U> {
     return this;
   }
 
+  @Override
+  public Decision<T, U> givenUnTyped(FactMap facts) {
+    return null;
+  }
+
   /**
    * The when() method accepts a {@link Predicate} that returns true or false based on Facts.
    * @param test  the condition(s) to be evaluated against the Facts
@@ -209,6 +220,9 @@ public class StandardDecision<T, U> implements Decision<T, U> {
   @Override
   @SuppressWarnings("unchecked")
   public Decision<T, U> using(String... factNames) {
+    factNames = (String[]) Stream.of(factNames)
+      .filter(name -> _factType.isInstance(_facts.getValue(name)))
+      .collect(Collectors.toList()).toArray();
     if (_factNameMap.containsKey((getThen()).size())) {
       String[] existingFactNames = _factNameMap.get((getThen()).size());
       String[] allFactNames = ArrayUtils.combine(existingFactNames, factNames);

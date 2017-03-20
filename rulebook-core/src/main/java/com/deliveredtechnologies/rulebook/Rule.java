@@ -46,6 +46,14 @@ public interface Rule<T> {
   Rule<T> given(FactMap<T> facts);
 
   /**
+   * The givenUnTyped method sets an untyped FactMap.
+   * This is useful if there are Facts of different types chained across Rules.
+   * @param facts   a {@link FactMap}
+   * @return        the current Rule object
+   */
+  Rule<T> givenUnTyped(FactMap facts);
+
+  /**
    * Method getWhen() gets the {@link Predicate} that evaluates the condition of the Rule.
    * @return  a Predicate object
    */
