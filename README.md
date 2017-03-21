@@ -41,8 +41,8 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
-  * [5.1 Adding RuleBook Spring to Your Maven Project](#51-adding-rulebook-spring-to-your-maven-project)
-  * [5.2 Adding RuleBook Spring to Your Gradle Project](#52-adding-rulebook-spring-to-your-gradle-project)
+  * [5.1 Adding RuleBook Spring Support to Your Maven Project](#51-adding-rulebook-spring-support-to-your-maven-project)
+  * [5.2 Adding RuleBook Spring Support to Your Gradle Project](#52-adding-rulebook-spring-support-to-your-gradle-project)
   * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-a-spring-enabled-pojo-rule)
   * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
   * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
@@ -451,7 +451,7 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
 
-### 5.1 Adding RuleBook Spring to Your Maven Project
+### 5.1 Adding RuleBook Spring Support to Your Maven Project
 
 _Add the code below to your pom.xml_
 
@@ -463,7 +463,7 @@ _Add the code below to your pom.xml_
 </dependency>
 ```
 
-### 5.2 Adding RuleBook Spring to Your Gradle Project
+### 5.2 Adding RuleBook Spring Support to Your Gradle Project
 
 _Add the code below to your build.gradle_
 
