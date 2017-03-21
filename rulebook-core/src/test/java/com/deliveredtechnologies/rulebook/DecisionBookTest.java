@@ -45,7 +45,7 @@ public class DecisionBookTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void decisionBooksRunDecisionsAndRules() {
+  public void decisionBooksShouldRunDecisionsAndRules() {
     Decision<String, Boolean> decision1 = (Decision<String, Boolean>) mock(Decision.class);
     Rule<String> rule = (Rule<String>) mock(Rule.class);
     Decision<String, Boolean> decision2 = (Decision<String, Boolean>) spy(Decision.class);
@@ -70,7 +70,7 @@ public class DecisionBookTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void decisionBooksRunDecisionsAndGetResults() {
+  public void decisionBooksShouldRunDecisionsAndGetResults() {
     Fact<String> hello = new Fact<>("hello", "Hello");
     Fact<String> world = new Fact<>("world", "World");
 
@@ -93,5 +93,29 @@ public class DecisionBookTest {
     };
     decisionBook.withDefaultResult(new StringBuffer()).given(hello, world).run();
     Assert.assertEquals(decisionBook.getResult().toString(), "HelloWorld");
+  }
+
+  @Test
+  public void genericDecisionBooksShouldWorkWithDecisionsAndRulesOfDifferentTypes() {
+    DecisionBook decisionBook = new DecisionBook() {
+      @Override
+      protected void defineRules() {
+        addRule(StandardDecision.create(String.class, Integer.class)
+          .when(facts -> facts.getValue("str").equals("String"))
+          .then((facts, result) -> facts.get("str").setValue("NewString")));
+
+        addRule(StandardDecision.create(Integer.class, Integer.class)
+          .when(facts -> facts.getOne() == 1)
+          .then((facts, result) -> result.setValue(result.getValue() + 3)));
+
+        addRule(StandardRule.create(String.class)
+          .when(facts -> facts.getOne().equals("NewString"))
+          .then(facts -> facts.get("str").setValue("OtherString")));
+      }
+    };
+    Fact<String> strFact = new Fact<String>("str", "String");
+    decisionBook.withDefaultResult(0).given(strFact).given("one", Integer.valueOf(1)).run();
+    Assert.assertEquals(decisionBook.getResult(), 3);
+    Assert.assertEquals(strFact.getValue(), "OtherString");
   }
 }

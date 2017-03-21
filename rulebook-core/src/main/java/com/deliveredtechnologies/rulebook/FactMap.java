@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A FactMap is an extension of {@link HashMap}; it stores facts by their name and provides convenience methods for

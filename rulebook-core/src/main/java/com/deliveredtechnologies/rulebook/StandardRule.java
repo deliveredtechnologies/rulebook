@@ -67,26 +67,29 @@ public class StandardRule<T> implements Rule<T> {
   @SuppressWarnings("unchecked")
   public void run() {
     try {
+      //only use facts of the specified type
+      FactMap<T> typeFilteredFacts = new FactMap<T>((Map<String, Fact<T>>)_facts.values().stream()
+        .filter((Object fact) -> _factType.isAssignableFrom(((Fact)fact).getValue().getClass()))
+        .collect(Collectors
+          .toMap(fact -> ((Fact)fact).getName(), fact -> (Fact<T>)fact)));
       //invoke then() action(s) if when() is true or if when() was never specified
-      if (getWhen() == null || getWhen().test(_facts)) {
+      if (getWhen() == null || getWhen().test(typeFilteredFacts)) {
         //iterate through the then() actions specified
         List<Object> actionList = getThen();
         for (int i = 0; i < (getThen()).size(); i++) {
           Object action = actionList.get(i);
           List<String> factNames = _factNameMap.get(i);
-          FactMap<T> usingFacts;
           //if using() was specified for the specific then(), use only those facts specified
+          FactMap<T> usingFacts;
           if (factNames != null) {
             usingFacts = new FactMap<T>();
             for (String factName : factNames) {
-              usingFacts.put(factName, (Fact<T>)_facts.get(factName));
+              if (typeFilteredFacts.containsKey(factName)) {
+                usingFacts.put(factName, (Fact<T>) _facts.get(factName));
+              }
             }
           } else {
-            //if no using() was specified, provide the then() with all available facts
-            usingFacts = new FactMap<T>((Map<String, Fact<T>>)_facts.values().stream()
-              .filter((Object fact) -> _factType.isInstance(((Fact)fact).getValue()))
-              .collect(Collectors
-                .toMap(fact -> ((Fact)fact).getName(), fact -> (Fact<T>)fact)));
+            usingFacts = typeFilteredFacts;
           }
           //invoke the then() Consumer action
           ((Consumer) action).accept(usingFacts);
