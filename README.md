@@ -262,7 +262,7 @@ Much like the Given-When-Then language for defining tests that was popularized b
 
 * **Given** some Fact(s)
 * **When** a condition evaluates to true
-* **Then** a action is triggered
+* **Then** an action is triggered
 
 **Given** methods can accept one or more Facts in various different forms and are used as a collection of information provided to a single Rule/Decision or a chain of Rules/Decisions called a RuleBook/DecisionBook.
 
