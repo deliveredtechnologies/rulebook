@@ -1,18 +1,13 @@
 package com.deliveredtechnologies.rulebook;
 
-import static org.mockito.Matchers.any;
+import org.junit.Assert;
+import org.junit.Test;
+
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Tests for {@link DecisionBook}.
@@ -118,5 +113,17 @@ public class DecisionBookTest {
     decisionBook.withDefaultResult(0).given(strFact).given("one", 1).run();
     Assert.assertEquals(decisionBook.getResult(), 3);
     Assert.assertEquals(strFact.getValue(), "OtherString");
+  }
+
+  @Test
+  public void decisionBooksShouldNotErrorOnNullRule() {
+    DecisionBook decisionBook = new DecisionBook() {
+      @Override
+      protected void defineRules() {
+
+      }
+    };
+
+    decisionBook.addRule(null);
   }
 }

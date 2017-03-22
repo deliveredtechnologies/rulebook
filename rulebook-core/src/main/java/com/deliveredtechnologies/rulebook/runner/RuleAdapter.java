@@ -52,15 +52,29 @@ public class RuleAdapter implements Decision {
   /**
    * RuleAdapter accepts a {@link com.deliveredtechnologies.rulebook.annotation.Rule} annotated POJO
    * and adapts it to a {@link Rule} or {@link com.deliveredtechnologies.rulebook.Decision}.
-   * @param rulePojo an annotated POJO to be adapted to a rule
-   * @throws InvalidClassException  if the POJO does not have the @Rule annotation
+   * @param rulePojo  an annotated POJO to be adapted to a rule
+   * @param rule      the {@link Rule} object delegated to for the adaptation
+   * @throws InvalidClassException
    */
-  public RuleAdapter(Object rulePojo) throws InvalidClassException {
+  @SuppressWarnings("unchecked")
+  public RuleAdapter(Object rulePojo, Rule rule) throws InvalidClassException {
     if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rulePojo.getClass()) == null) {
       throw new InvalidClassException(rulePojo.getClass() + " is not a Rule; missing @Rule annotation");
     }
-    _rule = new StandardRule(Object.class);
+    _rule = rule;
     _rulePojo = rulePojo;
+  }
+
+  /**
+   * RuleAdapter accepts a {@link com.deliveredtechnologies.rulebook.annotation.Rule} annotated POJO
+   * and adapts it to a {@link Rule} or {@link com.deliveredtechnologies.rulebook.Decision}.
+   * This convenience constructor supplies a generic {@link StandardRule} to RuleAdapter(Object, Rule).
+   * @param rulePojo an annotated POJO to be adapted to a rule
+   * @throws InvalidClassException  if the POJO does not have the @Rule annotation
+   */
+  @SuppressWarnings("unchecked")
+  public RuleAdapter(Object rulePojo) throws InvalidClassException {
+    this(rulePojo, new StandardRule(Object.class));
   }
 
   @Override
@@ -91,12 +105,14 @@ public class RuleAdapter implements Decision {
   @SuppressWarnings("unchecked")
   public Decision given(String name, Object value) {
     _rule.given(name, value);
+    mapGivenFactsToProperties();
     return this;
   }
 
   @Override
   public Decision givenUnTyped(FactMap facts) {
     _rule.givenUnTyped(facts);
+    mapGivenFactsToProperties();
     return this;
   }
 
@@ -166,8 +182,7 @@ public class RuleAdapter implements Decision {
 
   @Override
   public Decision using(String... factName) {
-    _rule.using(factName);
-    return this;
+    throw new UnsupportedOperationException();
   }
 
   @Override

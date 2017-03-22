@@ -1,9 +1,11 @@
 package com.deliveredtechnologies.rulebook.runner;
 
+import com.deliveredtechnologies.rulebook.Decision;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.Rule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +74,7 @@ public class RuleAdapterTest {
   public void givenAttributesShouldMapToInheritedFactsParams() throws InvalidClassException {
     SubRuleWithResult subRuleWithResult = new SubRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(subRuleWithResult);
-    ruleAdapter.given(_factMap.get("fact1"), _factMap.get("fact2"), _factMap.get("value1"));
+    ruleAdapter.given(_factMap.get("fact1"), _factMap.get("fact2")).given("value1", _factMap.get("value1").getValue());
 
     Assert.assertEquals("FirstFact", subRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", subRuleWithResult.getFact2());
@@ -216,5 +218,41 @@ public class RuleAdapterTest {
   public void pojoWithNoRuleAnnotationThrowsException() throws InvalidClassException {
     SampleRuleWithoutRuleAnnotation sampleRule = new SampleRuleWithoutRuleAnnotation();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRule);
+  }
+
+  @Test
+  public void stopMethodShouldDelegateToRuleStopMethod() throws InvalidClassException {
+    Rule rule = mock(Rule.class);
+    RuleAdapter ruleAdapter = new RuleAdapter(new SampleRuleWithResult(), rule);
+    Decision retVal = ruleAdapter.stop();
+
+    Assert.assertEquals(retVal, ruleAdapter);
+    verify(rule, times(1)).stop();
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void usingMethodShouldThrowNotImplemented() throws InvalidClassException {
+    RuleAdapter ruleAdapter = new RuleAdapter(new SampleRuleWithResult());
+    ruleAdapter.using();
+  }
+
+  @Test
+  public void givenUnTypedMethodShouldDelegateToRuleGivenUnTypedMethod() throws InvalidClassException {
+    Rule rule = mock(Rule.class);
+    RuleAdapter ruleAdapter = new RuleAdapter(new SampleRuleWithResult(), rule);
+    Decision retVal = ruleAdapter.givenUnTyped(new FactMap());
+
+    Assert.assertEquals(retVal, ruleAdapter);
+    verify(rule, times(1)).givenUnTyped(any(FactMap.class));
+  }
+
+  @Test
+  public void thenMethodShouldDelegateToRuleThenMethod() throws InvalidClassException {
+    Rule rule = mock(Rule.class);
+    RuleAdapter ruleAdapter = new RuleAdapter(new SampleRuleWithResult(), rule);
+    Decision retVal = ruleAdapter.then((result, facts)  -> { });
+
+    Assert.assertEquals(retVal, ruleAdapter);
+    verify(rule, times(1)).getThen();
   }
 }

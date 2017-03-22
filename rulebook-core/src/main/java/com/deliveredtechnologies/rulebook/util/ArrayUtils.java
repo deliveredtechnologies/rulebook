@@ -42,10 +42,10 @@ public final class ArrayUtils {
       return combinedArray;
     }
 
+    maxElements = array1.length + array2.length >= maxElements ? maxElements : array1.length + array2.length;
     T[] combinedArray = (T[])Array.newInstance(array1.getClass().getComponentType(), maxElements);
     System.arraycopy(array1, 0, combinedArray, 0, array1.length);
-    System.arraycopy(array2, 0, combinedArray, array1.length,
-        array1.length + array2.length <= maxElements ? maxElements - array1.length : array2.length);
+    System.arraycopy(array2, 0, combinedArray, array1.length, maxElements - array1.length);
     return combinedArray;
   }
 }
