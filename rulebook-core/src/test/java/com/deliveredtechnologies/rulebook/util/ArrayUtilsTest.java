@@ -6,11 +6,11 @@ import org.junit.Test;
 import static com.deliveredtechnologies.rulebook.util.ArrayUtils.combine;
 
 /**
- * Tests for {@link ArrayUtils}
+ * Tests for {@link ArrayUtils}.
  */
 public class ArrayUtilsTest {
   @Test
-  public void combineMethodShouldCombineTwoArrays () {
+  public void combineMethodShouldCombineTwoArrays() {
     String[] array1 = {"one", "two", "three"};
     String[] array2 = {"four", "five", "six"};
     String[] combinedArray = combine(array1, array2);
