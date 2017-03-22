@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.4-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=master)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.4-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/Clayton7510/RuleBook.svg?branch=master&maxAge=600)](https://travis-ci.org/Clayton7510/RuleBook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=develop)](https://coveralls.io/github/Clayton7510/RuleBook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -16,30 +16,39 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
 
 #### Contents
 
-* [1 Getting RuleBook](#1-getting-rulebook)
+* **[1 Getting RuleBook](#1-getting-rulebook)**
   * [1.1 Building RuleBook](#11-building-rulebook)
   * [1.2 Maven Central Releases](#12-maven-central-releases)
   * [1.3 Latest SNAPSHOT Releases](#13-latest-sonatype-snapshot-development-release)
   * [1.4 Adding RuleBook to Your Maven Project](#14-adding-rulebook-to-your-maven-project)
   * [1.5 Adding RuleBook to Your Gradle Project](#15-adding-rulebook-to-your-gradle-project)
-* [2 Using RuleBook](#2-using-rulebook)
+* **[2 Using RuleBook](#2-using-rulebook)**
   * [2.1 A Hello World Example](#21-a-helloworld-example)
   * [2.2 An Example Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
-* [3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)
+* **[3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)**
   * [3.1 Given-When-Then: The Basis of the RuleBook Language](#31-given-when-then-the-basis-of-the-rulebook-language)
   * [3.2 The Using Method](#32-the-using-method)
   * [3.3 The Stop Method](#33-the-stop-method)
   * [3.4 Working With Facts](#34-working-with-facts)
-* [4 POJO Rules](#3-pojo-rules)
+    * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
+    * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
+* **[4 POJO Rules](#3-pojo-rules)**
   * [4.1 A POJO Rules Example](#31-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
-* [5 Using RuleBook with Spring](#4-using-rulebook-with-spring)
-  * [5.1 Creating a Spring Enabled POJO Rule](#41-creating-a-spring-enabled-pojo-rule)
-  * [5.2 Configuring a RuleBook in Spring](#42-configuring-a-rulebook-in-spring)
-  * [5.3 Using a Spring Enabled RuleBook](#43-using-a-spring-enabled-rulebook)
-* [6 How to Contribute](#5-how-to-contribute)
-  * [6.1 Developer Guidelines](#51-developer-guidelines)
+  * [4.3 POJO Rules Explained](#43-pojo-rules-explained)
+    * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
+    * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
+    * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
+* **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
+  * [5.1 Adding RuleBook Spring Support to Your Maven Project](#51-adding-rulebook-spring-support-to-your-maven-project)
+  * [5.2 Adding RuleBook Spring Support to Your Gradle Project](#52-adding-rulebook-spring-support-to-your-gradle-project)
+  * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-a-spring-enabled-pojo-rule)
+  * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
+  * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
+  * [5.6 Spring Enabled POJO Rules Explained](#56-spring-enabled-pojo-rules-explained)
+* **[6 How to Contribute](#6-how-to-contribute)**
+  * [6.1 Developer Guidelines](#61-developer-guidelines)
   
 ## 1 Getting RuleBook
 
@@ -58,8 +67,8 @@ cd RuleBook
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.3.5-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.3.5-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.4-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.4-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 
@@ -81,7 +90,7 @@ _Add the code below to your build.gradle_
 compile 'com.deliveredtechnologies:rulebook-core:0.3.4'
 ```
 
-<sub>[Top](#contents)</sub>
+<sub>[[Top](#contents)]</sub>
 
 ## 2 Using RuleBook
 ### 2.1 A HelloWorld Example
@@ -159,68 +168,83 @@ public class ExampleMainClass {
 ```
 ### 2.3 A [Slightly] More Complex Scenario
 
-_MegaBank issues home loans. Each home loan can have up to 3 applicants. If any of the applicant's credit scores is less than 700 then all of the applicants' available cash on hand must be at least $50,000.00, otherwise the loan is denied._
+_MegaBank issues home loans. If an applicant's credit score is less than 600 then they must pay 4x the current rate. If an applicant’s credit score is between 600, but less than 700, then they must pay a an additional point on top of their rate. If an applicant’s credit score is at least 700 and they have at least $25,000 cash on hand, then they get a quarter point reduction on their rate. If an applicant is a first time home buyer then they get a 20% reduction on their calculated rate after adjustments are made based on credit score (note: first time home buyer discount is only available for applicants with a 600 credit score or greater)._
 
 This type of problem lends itself well to Decisions. As stated above, Decsisions accept one type of Fact and return a different type of Result. In this case, the Facts are applicant information for each applicant and the Result is whether the loan is approved or denied. The following code example shows how the rules for this scenario can be implemeted.
 
 ```java
 public class ApplicantBean {
   private int creditScore;
-  private BigDecimal cashOnHand;
+  private Float cashOnHand;
+  private boolean firstTimeHomeBuyer;
 
-  public ApplicantBean(int creditScore, BigDecimal cashOnHand) {
+  public ApplicantBean(int creditScore, float cashOnHand, boolean firstTimeHomeBuyer) {
     this.creditScore = creditScore;
     this.cashOnHand = cashOnHand;
+    this.firstTimeHomeBuyer = firstTimeHomeBuyer;
   }
 
   public int getCreditScore() {
     return creditScore;
   }
 
-  public void setCreditScore(int creditScore) {
+  public void setCreditScore(int creditScore) {     
     this.creditScore = creditScore;
   }
 
-  public BigDecimal getCashOnHand() {
+  public Float getCashOnHand() {
     return cashOnHand;
   }
 
-  public void setCashOnHand(BigDecimal cashOnHand) {
+  public void setCashOnHand(Float cashOnHand) {
     this.cashOnHand = cashOnHand;
+  }
+
+  public boolean isFirstTimeHomeBuyer() {
+    return firstTimeHomeBuyer;
+  }
+
+  public void setFirstTimeHomeBuyer(boolean firstTimeHomeBuyer) {
+    this.firstTimeHomeBuyer = firstTimeHomeBuyer;
   }
 }
 ```
 ```java
-public class HomeLoanDecisionBook extends DecisionBook<ApplicantBean, Boolean> {
+public class HomeLoanRateDecisionBook extends DecisionBook<ApplicantBean, Float> {
   @Override
   protected void defineRules() {
-    //if there are more than 3 applicants then the loan is denied
-    addRule(StandardRule.create(ApplicantBean.class).when(factMap -> factMap.size() > 3).stop());
+    //credit score under 600 gets a 4x rate increase
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() < 600)
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop());
 
-    //if everyone has a credit score of 700 or more then the loan is approved
-    addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
-      .when(factMap -> factMap.values().stream()
-        .allMatch(applicantFact -> applicantFact.getValue().getCreditScore() >= 700))
-      .then(f -> result.setValue(true)));
+    //credit score between 600 and 700 pays a 1 point increase
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() < 700)
+      .then((facts, result) -> result.setValue(result.getValue() + 1)));
 
-    //if everyone has cash on hand of greater than or equal to $50,000 then the loan is approved
-    addRule(StandardDecision.create(ApplicantBean.class, Boolean.class)
-      .when(factMap -> factMap.values().stream()
-        .allMatch(applicantFact -> applicantFact.getValue().getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0))
-      .then(f -> result.setValue(true)));
-  }
+    //credit score is 700 and they have at least $25,000 cash on hand
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() >= 700 &&
+            facts.getOne().getCashOnHand() >= 25000)
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+
+    //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().isFirstTimeHomeBuyer())
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+    }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanDecisionBook decisionBook = new HomeLoanDecisionBook();
-    decisionBook.withDefaultResult(false)
-      .given("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))
-      .given("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))
-      .run();
-
-    System.out.println(decisionBook.getResult() ? "Loan Approved!" : "Loan Denied!");
+    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
+    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
+    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    
+    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
   }
 }
 ```
@@ -228,30 +252,30 @@ In the above example, the default Result value was initialized to false. So, unl
 
 <sub>[[Top](#contents)]</sub>
 
-## 3 The Java Domain Specific Language Explained
+## 3 The RuleBook Domain Specific Language Explained
 
-The RuleBook Java Domain Specific Language (DSL) is Given-When-Then, popularized by Behavior Driven Development (BDD) and associated testing frameworks (e.g. Cucumber and Spock). And many of the ideas that went into creating the RuleBook Java DSL are borrowed from BDD, including: _**Sentences should be used to describe rules**_ and _**Rules should be defined using a ubiquitous language that translates into the codebase**_.
+The RuleBook Java Domain Specific Language (DSL) uses the Given-When-Then format, popularized by Behavior Driven Development (BDD) and associated testing frameworks (e.g. Cucumber and Spock). Many of the ideas that went into creating the RuleBook Java DSL are also borrowed from BDD, including: _**Sentences should be used to describe rules**_ and _**Rules should be defined using a ubiquitous language that translates into the codebase**_.
 
 ### 3.1 Given-When-Then: The Basis of the RuleBook Language 
 
-Much like with the Given-When-Then language for defining tests that was popularized by BDD, RuleBook uses methods to create a  Given-When-Then language for defining rules. Similarily, the RuleBook Given-When-Then methods have the following meanings.
+Much like the Given-When-Then language for defining tests that was popularized by BDD, RuleBook uses a Given-When-Then language for defining rules. The RuleBook Given-When-Then methods have the following meanings.
 
 * **Given** some Fact(s)
 * **When** a condition evaluates to true
-* **Then** a action is triggered
+* **Then** an action is triggered
 
 **Given** methods can accept one or more Facts in various different forms and are used as a collection of information provided to a single Rule/Decision or a chain of Rules/Decisions called a RuleBook/DecisionBook.
 
 **When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule/Decision.
 
 **Then** methods accept a Consumer (or BiConsumer for Decisions) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule or Decision that will all be 
-invoked in the order specified if the when() condition evaluates to true.
+invoked in the order they are specified if the when() condition evaluates to true.
 
 ### 3.2 The Using Method
-**Using** methods reduce the set of Facts available to a then() method. Mutiple using methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
+**Using** methods reduce the set of Facts available to a then() method. Mutiple using() methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
 
 ### 3.3 The Stop Method
-**Stop** methods break the rule chain. If a stop method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
+**Stop** methods break the rule chain. If a stop() method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
 
 ### 3.4 Working With Facts
 As stated above, Facts are provided to Rules and Decisions using the given() method. The Facts available to Rules/Decisions and RuleBooks/DecisionBooks are contained in a FactMap, which is a special kind of Map that allows for easy access to the underlying objects contained in Facts. The reason why Facts exist is so that there is always a reference to the objects that Rules and Decisions work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to representative object.
@@ -395,13 +419,59 @@ public static void main(String[] args) {
 }
 ```
 
+### 4.3 POJO Rules Explained
+
+POJO Rules are annotated with @Rule at the class level. This lets the RuleBookRunner know that the class you defined is really a Rule. Facts are injected into POJO Rules using @Given annotations. The value passed into the @Given annotation is the name of the Fact given to the RuleBookRunner. The types annotated by @Given can either be the generic type of the matching Fact or the Fact type as seen above. The big difference between the two is that changes applied to immutable objects are not propigated down the rule chain if the Fact’s generic object is changed (because it would then be a new object). However, if you set the value on a Fact object, those changes will be persisted down the rule chain.
+
+The @When annotation denotes the method that is used as the condition for executing the ‘then’ action. The method annotated with @When should accept no arguments and it should return a boolean result.
+
+The @Then annotation denotes the action(s) of the rule that is executed if the ‘when’ condition evaluates to true. The method(s) annotated with @Then should accept no arugments and it can optionally return a RuleState result. If more than one method in a POJO rule is annotated with @Then, then all rules annotated with @Then are executed if the 'when' condition evaluates to true.
+
+The @Result annotation denotes the result of the Rule. Of course, some Rules may not have a result. In that case, just don’t use the @Result annotation. It’s that simple.
+
+#### 4.3.1 Ordering POJO Rules
+
+The ‘order’ property can \[optionally\] be used with the @Rule annoataion to specify the orner in which POJO Rules will execute [as seen above](#42-the-megabank-example-with-pojo-rules). If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same order, which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group is ordered among other rules, but the execution of the rules within that group doesn’t matter.
+
+#### 4.3.2 Injecting Collections into POJO Rules
+
+If the following conditions are met then the objects contained in all Facts of generic type specified are injected into a collection:
+
+* A List, Set, Map or FactMap is annotated with a @Given annotation
+* The @Given annotation on the collection has no value specified
+* The generic type of the List, Set, Map (the first generic type in a Map is String - representing the name of the Fact injected) or FactMap is the same type of at least one Fact supplied to the RuleBookRunner
+
+#### 4.3.3 POJO Rule Annotation Inheritance
+
+As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That means if you have a subclass, whose parent is annotated with RuleBook annotations (i.e. @Given, @When, @Then, @Result) then the subclass will inherit the parent’s annotations. @Given and @Result attributes injected in the parent, will be available to the subclass. @Then and @When methods defined in the parent will be visible in the subclass.
+
 <sub>[[Top](#contents)]</sub>
 
 ## 5 Using RuleBook with Spring
 
 RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
 
-### 5.1 Creating a Spring Enabled POJO Rule
+### 5.1 Adding RuleBook Spring Support to Your Maven Project
+
+_Add the code below to your pom.xml_
+
+```xml
+<dependency>
+    <groupId>com.deliveredtechnologies</groupId>
+    <artifactId>rulebook-spring</artifactId>
+    <version>0.3.4</version>
+</dependency>
+```
+
+### 5.2 Adding RuleBook Spring Support to Your Gradle Project
+
+_Add the code below to your build.gradle_
+
+```groovy
+compile 'com.deliveredtechnologies:rulebook-spring:0.3.4'
+```
+
+### 5.3 Creating a Spring Enabled POJO Rule
 
 ```java
 @RuleBean
@@ -425,7 +495,7 @@ public class HelloSpringRule {
 }
 ```
 
-### 5.2 Configuring a RuleBook in Spring
+### 5.4 Configuring a RuleBook in Spring
 
 ```java
 @Configuration
@@ -449,7 +519,7 @@ public class SpringConfig {
 }
 ```
 
-### 5.3 Using a Spring Enabled RuleBook
+### 5.5 Using a Spring Enabled RuleBook
 
 ```java
   @Autowired
@@ -461,6 +531,16 @@ public class SpringConfig {
     System.out.println(ruleBook.getResult()); //prints "Hello World"
   }
 ```
+
+### 5.6 Spring Enabled POJO Rules Explained
+
+In the Spring configuration, a RuleBookBean is used. RuleBookBean is like a RuleBookRunner that's made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice that RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
+
+_Note: Since Facts hold references to objects, if the same exact Facts are used in two different RuleBooks, DecisionBooks, RuleBookRunners, or RuleBookBeans_
+
+#### 5.6.1 Ordering Spring Enabled POJO Rules
+
+Unlike regular POJO Rules, Spring Enabled POJO Rules don't have an order property in RuleBean. That's because the order of Spring Enabled POJO Rules is determined by the order they are configured. Simple, right?
 
 <sub>[[Top](#contents)]</sub>
 
