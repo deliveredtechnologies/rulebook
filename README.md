@@ -248,6 +248,47 @@ public class ExampleSolution {
   }
 }
 ```
+**...or nix the ApplicantBean and just use independent Facts
+```java
+public class HomeLoanRateDecisionBook extends DecisionBook {
+  @Override
+  protected void defineRules() {
+    //credit score under 600 gets a 4x rate increase
+    addRule(StandardDecision.create(Integer.class, Float.class)
+      .when(facts -> facts.getValue("Credit Score" < 600)
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop());
+
+    //credit score between 600 and 700 pays a 1 point increase
+    addRule(StandardDecision.create(Integer.class, Float.class)
+      .when(facts -> facts.getValue("Credit Score") < 700)
+      .then((facts, result) -> result.setValue(result.getValue() + 1)));
+
+    //credit score is 700 and they have at least $25,000 cash on hand
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().getCreditScore() >= 700 &&
+            facts.getOne().getCashOnHand() >= 25000)
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+
+    //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
+    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+      .when(facts -> facts.getOne().isFirstTimeHomeBuyer())
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+    }
+}
+```
+```java
+public class ExampleSolution {
+  public static void main(String[] args) {
+    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
+    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
+    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    
+    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+  }
+}
+```
+
 In the above example, the default Result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
 
 <sub>[[Top](#contents)]</sub>
