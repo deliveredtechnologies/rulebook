@@ -267,7 +267,7 @@ public class HomeLoanRateDecisionBook extends DecisionBook {
     //credit score is 700 and they have at least $25,000 cash on hand
     addRule(StandardDecision.create(Object.class, Float.class)
       .when(facts -> ((Integer)facts.getValue("Credit Score")) >= 700 &&
-            ((Float)facts.getValue("Cash on Hand)) >= 25000f
+            ((Float)facts.getValue("Cash on Hand")) >= 25000f
       .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
