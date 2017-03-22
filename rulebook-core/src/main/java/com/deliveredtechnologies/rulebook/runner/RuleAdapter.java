@@ -54,7 +54,7 @@ public class RuleAdapter implements Decision {
    * and adapts it to a {@link Rule} or {@link com.deliveredtechnologies.rulebook.Decision}.
    * @param rulePojo  an annotated POJO to be adapted to a rule
    * @param rule      the {@link Rule} object delegated to for the adaptation
-   * @throws InvalidClassException
+   * @throws InvalidClassException  if the POJO does not have the @Rule annotation
    */
   @SuppressWarnings("unchecked")
   public RuleAdapter(Object rulePojo, Rule rule) throws InvalidClassException {
