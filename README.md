@@ -216,18 +216,18 @@ public class HomeLoanRateDecisionBook extends DecisionBook<ApplicantBean, Float>
     //credit score under 600 gets a 4x rate increase
     addRule(StandardDecision.create(ApplicantBean.class, Float.class)
       .when(facts -> facts.getOne().getCreditScore() < 600)
-      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .then((facts, result) -> result.setValue(result.getValue() * 4f))
       .stop());
 
     //credit score between 600 and 700 pays a 1 point increase
     addRule(StandardDecision.create(ApplicantBean.class, Float.class)
       .when(facts -> facts.getOne().getCreditScore() < 700)
-      .then((facts, result) -> result.setValue(result.getValue() + 1)));
+      .then((facts, result) -> result.setValue(result.getValue() + 1f)));
 
     //credit score is 700 and they have at least $25,000 cash on hand
     addRule(StandardDecision.create(ApplicantBean.class, Float.class)
       .when(facts -> facts.getOne().getCreditScore() >= 700 &&
-            facts.getOne().getCashOnHand() >= 25000)
+            facts.getOne().getCashOnHand() >= 25000f)
       .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
@@ -248,7 +248,7 @@ public class ExampleSolution {
   }
 }
 ```
-**...or nix the ApplicantBean and just use independent Facts
+**...or nix the ApplicantBean and just use independent Facts**
 ```java
 public class HomeLoanRateDecisionBook extends DecisionBook {
   @Override
@@ -256,23 +256,23 @@ public class HomeLoanRateDecisionBook extends DecisionBook {
     //credit score under 600 gets a 4x rate increase
     addRule(StandardDecision.create(Integer.class, Float.class)
       .when(facts -> facts.getValue("Credit Score" < 600)
-      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .then((facts, result) -> result.setValue(result.getValue() * 4f))
       .stop());
 
     //credit score between 600 and 700 pays a 1 point increase
     addRule(StandardDecision.create(Integer.class, Float.class)
       .when(facts -> facts.getValue("Credit Score") < 700)
-      .then((facts, result) -> result.setValue(result.getValue() + 1)));
+      .then((facts, result) -> result.setValue(result.getValue() + 1f)));
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
-      .when(facts -> facts.getOne().getCreditScore() >= 700 &&
-            facts.getOne().getCashOnHand() >= 25000)
+    addRule(StandardDecision.create(Object.class, Float.class)
+      .when(facts -> ((Integer)facts.getValue("Credit Score")) >= 700 &&
+            ((Float)facts.getValue("Cash on Hand)) >= 25000f
       .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
-      .when(facts -> facts.getOne().isFirstTimeHomeBuyer())
+    addRule(StandardDecision.create(Boolean.class, Float.class)
+      .when(facts -> facts.getOne())
       .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
     }
 }
@@ -281,8 +281,10 @@ public class HomeLoanRateDecisionBook extends DecisionBook {
 public class ExampleSolution {
   public static void main(String[] args) {
     HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
-    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    homeLoanRateDecisionBook.withDefaultResult(4.5f)
+      .given("Credit Score", 650)
+      .given("Cash on Hand", 20000)
+      .given("First Time Homebuyer", true).run();
     
     System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
   }
