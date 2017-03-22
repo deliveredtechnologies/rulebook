@@ -70,6 +70,11 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   }
 
   @Override
+  public Fact<T> put(String key, Fact<T> value) {
+    return _facts.put(key, value);
+  }
+
+  @Override
   public int size() {
     return _facts.size();
   }
@@ -95,18 +100,13 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   }
 
   @Override
-  public Fact<T> put(String key, Fact<T> value) {
-    return _facts.put(key, value);
-  }
-
-  @Override
   public Fact<T> remove(Object key) {
     return _facts.remove(key);
   }
 
   @Override
-  public void putAll(Map<? extends String, ? extends Fact<T>> m) {
-    _facts.putAll(m);
+  public void putAll(Map<? extends String, ? extends Fact<T>> map) {
+    _facts.putAll(map);
   }
 
   @Override

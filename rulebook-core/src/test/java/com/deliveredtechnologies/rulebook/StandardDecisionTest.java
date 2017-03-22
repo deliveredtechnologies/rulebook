@@ -27,11 +27,9 @@ public class StandardDecisionTest {
   @Test
   @SuppressWarnings("checked")
   public void standardDecisionIsCreated() {
-    Decision<String, Boolean> decision1 = new StandardDecision<>();
     Decision<String, Boolean> decision2 = StandardDecision.create(String.class, Boolean.class);
     Decision decision3 = StandardDecision.create();
 
-    Assert.assertNotNull(decision1);
     Assert.assertNotNull(decision2);
     Assert.assertNotNull(decision3);
   }

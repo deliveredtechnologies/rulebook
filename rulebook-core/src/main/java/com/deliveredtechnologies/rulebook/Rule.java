@@ -10,10 +10,20 @@ import java.util.function.Predicate;
  * rule.given(facts).when(some condition given facts).then(do something)
  */
 public interface Rule<T> {
+
+  /**
+   * This run() method allows for arguments in addition to the FactMap to be passed to the action(s).
+   * @param otherArgs additional arguments to be passed to the Rule action(s)
+   */
+  void run(Object... otherArgs);
+
   /**
    * The run() method evaluates the Rule.
+   * This method typically calls the run(Object[]) method.
    */
-  void run();
+  default void run() {
+    run(new Object[] { });
+  }
 
   /**
    * The given() method sets the Facts to be used by the Rule.
@@ -52,6 +62,12 @@ public interface Rule<T> {
    * @return        the current Rule object
    */
   Rule<T> givenUnTyped(FactMap facts);
+
+  /**
+   * The getFactMap() method gets the FactMap used for the current Rule.
+   * @return  the FactMap used for the current Rule
+   */
+  FactMap getFactMap();
 
   /**
    * Method getWhen() gets the {@link Predicate} that evaluates the condition of the Rule.

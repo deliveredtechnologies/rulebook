@@ -82,7 +82,7 @@ public class RuleAdapterTest {
     Assert.assertEquals(_factMap.size(), subRuleWithResult.getFactMap().size());
     for (Map.Entry kvpair : _factMap.entrySet()) {
       Assert.assertEquals(((Fact)kvpair.getValue()).getValue(),
-        subRuleWithResult.getFactMap().getValue((String)kvpair.getKey()));
+          subRuleWithResult.getFactMap().getValue((String)kvpair.getKey()));
     }
     Assert.assertEquals(1, subRuleWithResult.getValue1());
     Assert.assertEquals(1, subRuleWithResult.getValueSet().size());

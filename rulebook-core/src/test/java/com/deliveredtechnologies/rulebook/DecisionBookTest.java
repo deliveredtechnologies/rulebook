@@ -96,25 +96,26 @@ public class DecisionBookTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void genericDecisionBooksShouldWorkWithDecisionsAndRulesOfDifferentTypes() {
     DecisionBook decisionBook = new DecisionBook() {
       @Override
       protected void defineRules() {
         addRule(StandardDecision.create(String.class, Integer.class)
-          .when(facts -> facts.getValue("str").equals("String"))
-          .then((facts, result) -> facts.get("str").setValue("NewString")));
+            .when(facts -> facts.getValue("str").equals("String"))
+            .then((facts, result) -> facts.get("str").setValue("NewString")));
 
         addRule(StandardDecision.create(Integer.class, Integer.class)
-          .when(facts -> facts.getOne() == 1)
-          .then((facts, result) -> result.setValue(result.getValue() + 3)));
+            .when(facts -> facts.getOne() == 1)
+            .then((facts, result) -> result.setValue(result.getValue() + 3)));
 
         addRule(StandardRule.create(String.class)
-          .when(facts -> facts.getOne().equals("NewString"))
-          .then(facts -> facts.get("str").setValue("OtherString")));
+            .when(facts -> facts.getOne().equals("NewString"))
+            .then(facts -> facts.get("str").setValue("OtherString")));
       }
     };
     Fact<String> strFact = new Fact<String>("str", "String");
-    decisionBook.withDefaultResult(0).given(strFact).given("one", Integer.valueOf(1)).run();
+    decisionBook.withDefaultResult(0).given(strFact).given("one", 1).run();
     Assert.assertEquals(decisionBook.getResult(), 3);
     Assert.assertEquals(strFact.getValue(), "OtherString");
   }
