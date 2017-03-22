@@ -7,6 +7,7 @@ import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutRuleAnnotation;
 import com.deliveredtechnologies.rulebook.runner.SubRuleAnnotation;
 import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
 import org.junit.Assert;
@@ -77,6 +78,12 @@ public class AnnotationUtilsTest {
   public void getAnnotatedMethodShouldFindFirstMethod() {
     Optional<Method> whenMethod = getAnnotatedMethod(When.class, SubRuleWithResult.class);
     Assert.assertEquals(whenMethod.get().getName(), "condition");
+  }
+
+  @Test
+  public void getAnnotatedMethodShouldReturnEmptyOptionalWhenAnnotationNotFound() {
+    Optional<Method> whenMethod = getAnnotatedMethod(When.class, SampleRuleWithoutRuleAnnotation.class);
+    Assert.assertFalse(whenMethod.isPresent());
   }
 
   @Test

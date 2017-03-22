@@ -27,6 +27,9 @@ public interface Decision<T, U> extends Rule<T> {
   Decision<T, U> given(FactMap<T> facts);
 
   @Override
+  Decision<T, U> givenUnTyped(FactMap facts);
+
+  @Override
   Decision<T, U> when(Predicate<FactMap<T>> test);
 
   @Override
