@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.io.InvalidClassException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -53,7 +54,7 @@ public class RuleAdapterTest {
   public void givenAttributesShouldMapToFactsParams() throws InvalidClassException {
     SampleRuleWithResult sampleRuleWithResult = new SampleRuleWithResult();
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRuleWithResult);
-    ruleAdapter.given(_factMap.get("fact1"), _factMap.get("fact2"), _factMap.get("value1"));
+    ruleAdapter.given(_factMap);
 
     Assert.assertEquals("FirstFact", sampleRuleWithResult.getFact1());
     Assert.assertEquals("SecondFact", sampleRuleWithResult.getFact2());
@@ -78,7 +79,11 @@ public class RuleAdapterTest {
     Assert.assertEquals(2, subRuleWithResult.getStrList().size());
     Assert.assertEquals(2, subRuleWithResult.getStrSet().size());
     Assert.assertEquals(2, subRuleWithResult.getStrMap().size());
-    Assert.assertEquals(_factMap, subRuleWithResult.getFactMap());
+    Assert.assertEquals(_factMap.size(), subRuleWithResult.getFactMap().size());
+    for (Map.Entry kvpair : _factMap.entrySet()) {
+      Assert.assertEquals(((Fact)kvpair.getValue()).getValue(),
+          subRuleWithResult.getFactMap().getValue((String)kvpair.getKey()));
+    }
     Assert.assertEquals(1, subRuleWithResult.getValue1());
     Assert.assertEquals(1, subRuleWithResult.getValueSet().size());
     Assert.assertEquals(1, subRuleWithResult.getValueList().size());
