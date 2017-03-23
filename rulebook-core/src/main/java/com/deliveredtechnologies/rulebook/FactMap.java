@@ -44,6 +44,63 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   }
 
   /**
+   * Method getStrVal() gets the String value of a Fact in the FactMap.
+   * @param name  the name of the Fact in the FactMap
+   * @return      the String value of the Fact specified
+   */
+  public String getStrVal(String name) {
+    if (getValue(name) instanceof String) {
+      return (String)getValue(name);
+    }
+    return String.valueOf(getValue(name));
+  }
+
+  /**
+   * Method getIntVal() gets the Integer value of a Fact in the FactMap.
+   * @param name  the name of the Fact in the FactMap
+   * @return      the Integer value of the Fact specified
+   */
+  public Integer getIntVal(String name) {
+    Object value = getValue(name);
+    if (value != null) {
+      if (Integer.class == value.getClass()) {
+        return (Integer)value;
+      }
+      if (value.getClass() == String.class) {
+        return Integer.valueOf((String) value);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Method getDblVal() gets the Double value of a Fact in the FactMap.
+   * @param name  the name of the Fact in the FactMap
+   * @return      the Double value of the Fact specified
+   */
+  public Double getDblVal(String name) {
+    Object value = getValue(name);
+    if (value != null) {
+      if (Float.class == value.getClass()) {
+        return Double.valueOf((Float) value);
+      }
+      if (Double.class == value.getClass()) {
+        return (Double)value;
+      }
+      if (Integer.class == value.getClass()) {
+        return Double.valueOf((Integer) value);
+      }
+      if (Long.class == value.getClass()) {
+        return Double.valueOf((Long) value);
+      }
+      if (String.class == value.getClass()) {
+        return Double.parseDouble((String)value);
+      }
+    }
+    return null;
+  }
+
+  /**
    * The method setValue sets the value of the Fact but its name.<br/>
    * If no Fact exists with the associated name, a new fact is created with the specified name and value.<br/>
    * @param name  the name of the Fact
@@ -128,7 +185,6 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   public Set<Entry<String, Fact<T>>> entrySet() {
     return _facts.entrySet();
   }
-
 
   /**
    * The toString() method gets the FactMap converted a string.<br/>
