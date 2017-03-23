@@ -21,7 +21,7 @@ public abstract class DecisionBook<T, U> extends RuleBook<T> {
   }
 
   /**
-   * The addRule() method allows a rule to be added to the DecisionBook in the abstract <code>defineRules</code>
+   * The addRule() method allows a rule to be added to the DecisionBook in the abstract defineRules
    * method.
    * @param rule  the Decision rule to be added to the DecisionBook
    */

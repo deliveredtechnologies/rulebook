@@ -20,7 +20,6 @@ public class Fact<T> {
 
   /**
    * The method getName() gets the name of the Fact.
-   *
    * @return the name of the Fact
    */
   public String getName() {
@@ -29,7 +28,6 @@ public class Fact<T> {
 
   /**
    * The method setName() sets the name of the Fact.
-   *
    * @param name the name of the Fact
    */
   public void setName(String name) {
@@ -46,10 +44,18 @@ public class Fact<T> {
 
   /**
    * The method setValue() sets the value of the Fact.
-   *
    * @param value the value of the Fact
    */
   public void setValue(T value) {
     this._value = value;
+  }
+
+  /**
+   * The toString() method returns the toString of the object contained in the Fact.
+   * @return  the toString() of the object contained in the Fact
+   */
+  @Override
+  public String toString() {
+    return _value.toString();
   }
 }

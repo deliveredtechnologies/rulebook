@@ -1,10 +1,12 @@
 package com.deliveredtechnologies.rulebook.runner;
 
+import com.deliveredtechnologies.rulebook.Decision;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.Rule;
 import com.deliveredtechnologies.rulebook.RuleState;
-import com.deliveredtechnologies.rulebook.StandardDecision;
+import com.deliveredtechnologies.rulebook.StandardRule;
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
@@ -16,65 +18,100 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethod;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedFields;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedMethods;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
 /**
  * RuleAdapter accepts a POJO annotated Rule class and adapts it to an actual Rule class.
  */
-public class RuleAdapter extends StandardDecision {
+public class RuleAdapter implements Decision {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleAdapter.class);
 
-  private Object _ruleObj;
+  private Object _rulePojo;
+  private Rule _rule;
+  private Result _result = new Result();
 
   /**
    * RuleAdapter accepts a {@link com.deliveredtechnologies.rulebook.annotation.Rule} annotated POJO
    * and adapts it to a {@link Rule} or {@link com.deliveredtechnologies.rulebook.Decision}.
-   * @param ruleObj an annotated POJO to be adapted to a rule
+   * @param rulePojo  an annotated POJO to be adapted to a rule
+   * @param rule      the {@link Rule} object delegated to for the adaptation
    * @throws InvalidClassException  if the POJO does not have the @Rule annotation
    */
-  public RuleAdapter(Object ruleObj) throws InvalidClassException {
-    if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleObj.getClass()) == null) {
-      throw new InvalidClassException(ruleObj.getClass() + " is not a Rule; missing @Rule annotation");
+  @SuppressWarnings("unchecked")
+  public RuleAdapter(Object rulePojo, Rule rule) throws InvalidClassException {
+    if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rulePojo.getClass()) == null) {
+      throw new InvalidClassException(rulePojo.getClass() + " is not a Rule; missing @Rule annotation");
     }
-    _ruleObj = ruleObj;
+    _rule = rule;
+    _rulePojo = rulePojo;
+  }
+
+  /**
+   * RuleAdapter accepts a {@link com.deliveredtechnologies.rulebook.annotation.Rule} annotated POJO
+   * and adapts it to a {@link Rule} or {@link com.deliveredtechnologies.rulebook.Decision}.
+   * This convenience constructor supplies a generic {@link StandardRule} to RuleAdapter(Object, Rule).
+   * @param rulePojo an annotated POJO to be adapted to a rule
+   * @throws InvalidClassException  if the POJO does not have the @Rule annotation
+   */
+  @SuppressWarnings("unchecked")
+  public RuleAdapter(Object rulePojo) throws InvalidClassException {
+    this(rulePojo, new StandardRule(Object.class));
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public RuleAdapter given(Fact... facts) {
-    super.given(facts);
+  public Decision given(Fact... facts) {
+    _rule.given(facts);
     mapGivenFactsToProperties();
     return this;
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public RuleAdapter given(List list) {
-    super.given(list);
+  public Decision given(List list) {
+    _rule.given(list);
     mapGivenFactsToProperties();
     return this;
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public RuleAdapter given(FactMap facts) {
-    super.given(facts);
+  public Decision given(FactMap facts) {
+    _rule.given(facts);
+    mapGivenFactsToProperties();
+    return this;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public Decision given(String name, Object value) {
+    _rule.given(name, value);
+    mapGivenFactsToProperties();
+    return this;
+  }
+
+  @Override
+  public Decision givenUnTyped(FactMap facts) {
+    _rule.givenUnTyped(facts);
     mapGivenFactsToProperties();
     return this;
   }
@@ -82,18 +119,18 @@ public class RuleAdapter extends StandardDecision {
   @Override
   public Predicate getWhen() {
     //Use what was set by then() first, if it's there
-    if (super.getWhen() != null) {
-      return super.getWhen();
+    if (_rule.getWhen() != null) {
+      return _rule.getWhen();
     }
 
     //If nothing was explicitly set, then convert the method in the class
-    return Arrays.stream(_ruleObj.getClass().getMethods())
+    return Arrays.stream(_rulePojo.getClass().getMethods())
           .filter(method -> method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)
           .filter(method -> Arrays.stream(method.getDeclaredAnnotations()).anyMatch(When.class::isInstance))
           .findFirst()
           .<Predicate>map(method -> object -> {
               try {
-                return (Boolean) method.invoke(_ruleObj);
+                return (Boolean) method.invoke(_rulePojo);
               } catch (InvocationTargetException | IllegalAccessException ex) {
                 return false;
               }
@@ -102,22 +139,76 @@ public class RuleAdapter extends StandardDecision {
          .orElse(o -> false);
   }
 
-  /**
-   * Method getThen() returns the 'then' action to be used; either a {@link Function} object or a
-   * {@link BiFunction} object. If no action was specified then a default Function object that returns
-   * {@link RuleState} NEXT is used.
-   * @return  either a Function object or a BiFunction object
-   */
-  public Object getThen() {
-    //Use what was explicitly set by then() first
-    if (super.getThen() != null) {
-      return super.getThen();
+  @Override
+  public List<Object> getThen() {
+    if ((_rule.getThen()).size() < 1) {
+      List<Object> thenList = new ArrayList<>();
+      for (Method thenMethod : getAnnotatedMethods(Then.class, _rulePojo.getClass())) {
+        thenMethod.setAccessible(true);
+        Object then = getThenMethodAsBiConsumer(thenMethod).map(Object.class::cast)
+            .orElse(getThenMethodAsConsumer(thenMethod).orElse(factMap -> { }));
+        thenList.add(then);
+      }
+      (_rule.getThen()).addAll(thenList);
     }
+    return _rule.getThen();
+  }
 
-    //If nothing was explicitly set, convert what's in the class to a BiFunction or a Function
-    //If the action still can't be determined then just give back a Function that moves down the chain
-    return getThenMethodAsBiFunction().map(Object.class::cast)
-        .orElse(getThenMethodAsFunction().orElse(factMap -> RuleState.NEXT));
+
+
+  @Override
+  public void run(Object... otherArgs) {
+    getThen();
+    _rule.run(_result);
+  }
+
+  @Override
+  public Decision when(Predicate test) {
+    _rule.when(test);
+    return this;
+  }
+
+  @Override
+  public Decision then(Consumer action) {
+    _rule.then(action);
+    return this;
+  }
+
+  @Override
+  public Decision then(BiConsumer action) {
+    _rule.getThen().add(action);
+    return this;
+  }
+
+  @Override
+  public Decision using(String... factName) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Decision stop() {
+    _rule.stop();
+    return this;
+  }
+
+  @Override
+  public Object getResult() {
+    return _result.getValue();
+  }
+
+  @Override
+  public void setResult(Result result) {
+    _result = result;
+  }
+
+  @Override
+  public FactMap getFactMap() {
+    return _rule.getFactMap();
+  }
+
+  @Override
+  public void setNextRule(Rule rule) {
+    _rule.setNextRule(rule);
   }
 
   /**
@@ -127,20 +218,20 @@ public class RuleAdapter extends StandardDecision {
    */
   @SuppressWarnings("unchecked")
   private void mapGivenFactsToProperties() {
-    for (Field field : getAnnotatedFields(Given.class, _ruleObj.getClass())) {
+    for (Field field : getAnnotatedFields(Given.class, _rulePojo.getClass())) {
       Given given = field.getAnnotation(Given.class);
       try {
         field.setAccessible(true);
         if (field.getType() == Fact.class) {
-          field.set(_ruleObj, getFactMap().get(given.value()));
+          field.set(_rulePojo, getFactMap().get(given.value()));
         } else {
           Object value = getFactMap().getValue(given.value());
           if (value != null) {
             //set the field to the Fact that has the name of the @Given value
-            field.set(_ruleObj, value);
+            field.set(_rulePojo, value);
           } else if (FactMap.class == field.getType()) {
             //if the field is a FactMap then give it the FactMap
-            field.set(_ruleObj, getFactMap());
+            field.set(_rulePojo, getFactMap());
           } else if (Collection.class.isAssignableFrom(field.getType())) {
             //set a Collection of Fact object values
             Stream stream = getFactMap().values().stream()
@@ -156,10 +247,10 @@ public class RuleAdapter extends StandardDecision {
                   });
             if (List.class == field.getType()) {
               //map List of Fact values to field
-              field.set(_ruleObj, stream.collect(Collectors.toList()));
+              field.set(_rulePojo, stream.collect(Collectors.toList()));
             } else if (Set.class == field.getType()) {
               //map Set of Fact values to field
-              field.set(_ruleObj, stream.collect(Collectors.toSet()));
+              field.set(_rulePojo, stream.collect(Collectors.toSet()));
             }
           } else if (Map.class == field.getType()) {
             //map Map of Fact values to field
@@ -170,62 +261,52 @@ public class RuleAdapter extends StandardDecision {
                     return genericType.equals(getFactMap().getValue((String)key).getClass());
                   })
                 .collect(Collectors.toMap(key -> key, key -> getFactMap().getValue((String)key)));
-            field.set(_ruleObj, map);
+            field.set(_rulePojo, map);
           }
         }
       } catch (Exception ex) {
         LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
-            + _ruleObj.getClass() + "'");
+            + _rulePojo.getClass() + "'");
       }
     }
-  }
-
-  /**
-   * Method getThenMethodAsBiFunction returns a BiFunction using the annotated object, when a
-   * Result annotated property and a Then annotated method exists.
-   * @return  A {@link BiFunction} for classes that have a @Then method and a @Result
-   */
-  private Optional<BiFunction> getThenMethodAsBiFunction() {
-    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
-        .flatMap(resultField -> getAnnotatedMethod(Then.class, _ruleObj.getClass())
-        .map(method -> toBiFunction(method, resultField)));
   }
 
   @SuppressWarnings("unchecked")
-  private BiFunction toBiFunction(Method method, Field resultField) {
-    return (factMap, resultObj) -> {
-      try {
-        Object retVal = method.invoke(_ruleObj);
-        resultField.setAccessible(true);
-        Object resultVal = resultField.get(_ruleObj);
-        if (resultVal != null) {
-          ((com.deliveredtechnologies.rulebook.Result) resultObj).setValue(resultVal);
-        }
-        return retVal;
-      } catch (IllegalAccessException | InvocationTargetException ex) {
-        return RuleState.BREAK;
-      }
-    };
-  }
-
-  /**
-   * Method getThenMethodAsFunction returns a Function when a @Then annotated method exists without a @Result annotated
-   * property.
-   * @return  a {@link Function} from the @Then annotated method of the obejct
-   */
-  private Optional<Function> getThenMethodAsFunction() {
-    if (getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _ruleObj.getClass())
-        .isPresent()) {
-      return Optional.empty();
-    }
-
-    return getAnnotatedMethod(Then.class, _ruleObj.getClass())
-      .map(method -> (Function) obj -> {
+  private Optional<BiConsumer> getThenMethodAsBiConsumer(Method method) {
+    return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _rulePojo.getClass())
+      .map(resultField -> (BiConsumer) (facts, result) -> {
           try {
-            return method.invoke(_ruleObj);
+            Object retVal = method.invoke(_rulePojo);
+            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+              stop();
+            }
+            resultField.setAccessible(true);
+            Object resultVal = resultField.get(_rulePojo);
+            ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
           } catch (IllegalAccessException | InvocationTargetException ex) {
-            return RuleState.BREAK;
+            LOGGER.error("Unable to access "
+                + _rulePojo.getClass().getName()
+                + " when converting then to BiConsumer", ex);
           }
         });
+  }
+
+  private Optional<Consumer> getThenMethodAsConsumer(Method method) {
+    if (!getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class,
+        _rulePojo.getClass()).isPresent()) {
+      return Optional.of((Consumer) obj -> {
+          try {
+            Object retVal = method.invoke(_rulePojo);
+            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+              stop();
+            }
+          } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.error("Unable to access "
+                + _rulePojo.getClass().getName()
+                + " when converting then to Consumer", ex);
+          }
+        });
+    }
+    return Optional.empty();
   }
 }

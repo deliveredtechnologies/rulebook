@@ -13,13 +13,11 @@ branches:
   - develop
 cache:
   directories:
-    - $HOME/.m2/repository
     - $HOME/.gradle
 jdk:
   - oraclejdk8
 script:
   - ./gradlew check
   - ./gradlew jacocoRootReport
+  - ./gradlew copySource
   - ./gradlew coveralls
-after_success:
-  - ./travis/deploy.sh
