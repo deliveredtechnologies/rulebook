@@ -33,9 +33,9 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [3.4 Working With Facts](#34-working-with-facts)
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
-* **[4 POJO Rules](#3-pojo-rules)**
-  * [4.1 A POJO Rules Example](#31-a-hello-world-example)
-  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#32-the-megabank-example-with-pojo-rules)
+* **[4 POJO Rules](#4-pojo-rules)**
+  * [4.1 A POJO Rules Example](#41-a-hello-world-example)
+  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-the-megabank-example-with-pojo-rules)
   * [4.3 POJO Rules Explained](#43-pojo-rules-explained)
     * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
@@ -175,7 +175,7 @@ This type of problem lends itself well to Decisions. As stated above, Decsisions
 ```java
 public class ApplicantBean {
   private int creditScore;
-  private Float cashOnHand;
+  private float cashOnHand;
   private boolean firstTimeHomeBuyer;
 
   public ApplicantBean(int creditScore, float cashOnHand, boolean firstTimeHomeBuyer) {
@@ -192,11 +192,11 @@ public class ApplicantBean {
     this.creditScore = creditScore;
   }
 
-  public Float getCashOnHand() {
+  public float getCashOnHand() {
     return cashOnHand;
   }
 
-  public void setCashOnHand(Float cashOnHand) {
+  public void setCashOnHand(float cashOnHand) {
     this.cashOnHand = cashOnHand;
   }
 
@@ -226,7 +226,8 @@ public class HomeLoanRateDecisionBook extends DecisionBook<ApplicantBean, Float>
 
     //credit score is 700 and they have at least $25,000 cash on hand
     addRule(StandardDecision.create(ApplicantBean.class, Float.class)
-      .when(facts -> facts.getOne().getCreditScore() >= 700 &&
+      .when(facts -> 
+            facts.getOne().getCreditScore() >= 700 &&
             facts.getOne().getCashOnHand() >= 25000f)
       .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
 
@@ -266,8 +267,9 @@ public class HomeLoanRateDecisionBook extends DecisionBook {
 
     //credit score is 700 and they have at least $25,000 cash on hand
     addRule(StandardDecision.create(Object.class, Float.class)
-      .when(facts -> ((Integer)facts.getValue("Credit Score")) >= 700 &&
-            ((Float)facts.getValue("Cash on Hand")) >= 25000f
+      .when(facts -> 
+            facts.getIntValue("Credit Score") >= 700 &&
+            facts.getDblVal("Cash on Hand") >= 25000
       .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
@@ -333,6 +335,12 @@ Although the reason for FactMaps is important, that doesn't mean anyone wants to
 
 **getValue(String name)** gets the value of the Fact by the name of the Fact
 
+**getStrVal(String name)** gets the value of the Fact by name as a String
+
+**getDblVal(String)** gets the value of the Fact by name as a Double
+
+**getIntVal(String)** gets the value of the Fact by name as an Integer
+
 **setValue(String name, T value)** sets the Fact with the name specified to the new value 
 
 **put(Fact fact)** adds a Fact to the FactMap, using the Fact's name as the key for the Map
@@ -386,8 +394,10 @@ public static void main(String args[]) {
 }
 ```
 
-### 4.2 The MegaBank Example With POJO Rules
+### 4.2 A New MegaBank Example With POJO Rules
+_MegaBank changed their rate adjustment policy. They also now accept loan applications that include up to 3 applicants. If all of the applicants' credit scores are below 600, then they must pay 4x the current rate. However, if all of the applicants have a credit score of less than 700, but at least one applicant has a credit score greater than 600, then they must pay an additional point on top the rate. Also, if any of the applicants have a credit score of 700 or more and the sum of the cash on hand available from all applicants is greater than or equal to $50,000, then they get a quarter point reduction in their rate. And if at least one applicant is a first time home buyer and at least one applicant has a credit score of over 600, then they get a 20% reduction in their calculated rate after all other adjustments are made.
 
+**...using the ApplicantBean defined above**
 ```java
 @Rule(order = 1) //order specifies the order the rule should execute in; if not specified, any order may be used
 public class ApplicantNumberRule {
@@ -407,58 +417,101 @@ public class ApplicantNumberRule {
 ```
 ```java
 @Rule(order = 2)
-public class CreditScoreRule {
+public class LowCreditScoreRule {
   @Given
   private List<ApplicantBean> applicants;
 
   @Result
-  private boolean approved;
+  private float rate;
     
   @When
   public boolean when() {
     return applicants.stream()
-      .allMatch(applicant -> applicant.getCreditScore() >= 700);
+      .allMatch(applicant -> applicant.getCreditScore() < 600);
   }
 
   @Then
   public RuleState then() {
-    approved = true;
-    return RuleState.NEXT;
+    rate *= 4f;
+    return BREAK;
   }
 }
 ```
 ```java
 @Rule(order = 3)
-public class CashOnHandRule {
+public class QuarterPointReductionRule {
   @Given
   List<ApplicantBean> applicants; 
 
   @Result
-  private boolean approved;
+  private float rate;
 
   @When
   public boolean when() {
-    return applicants.stream()
-      .allMatch(applicant -> applicant.getCashOnHand().compareTo(BigDecimal.valueOf(50000)) >= 0);
+    return 
+      applicants.stream().anyMatch(applicant -> applicant.getCreditScore() >= 700) &&
+      applicants.stream().map(applicant -> applicant.getCashOnHand()).reduce(0.0, Float::sum) >= 50000;
   }
 
   @Then
-  public RuleState then() {
+  public void then() {
     approved = true;
-    return RuleState.BREAK;
+    return rate = rate - (rate * 0.25f);
   }
 }
 ```
 ```java
-public static void main(String[] args) {
-  RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook");
-  ruleBook.withDefaultResult(false)
-    .given(
-      new Fact("applicant1", new ApplicantBean(699, BigDecimal.valueOf(199))),
-      new Fact("applicant2", new ApplicantBean(701, BigDecimal.valueOf(51000))))
-    .run();
-  boolean approval = (boolean)ruleBook.getResult();
-  System.out.println("Application is " + (approval ? "approved!" : "not approved!"));
+@Rule(order = 3)
+public class ExtraPointRule {
+  @Given
+  List<ApplicantBean> applicants; 
+
+  @Result
+  private float rate;
+
+  @When
+  public boolean when() {
+    return 
+      applicants.stream().anyMatch(applicant -> applicant.getCreditScore() < 700 && applicant.getCreditScore() >= 600);
+  }
+
+  @Then
+  public void then() {
+    rate += 1f;
+  }
+}
+```
+```java
+@Rule(order = 4)
+public class FirstTimeHomeBuyerRule {
+  @Given
+  List<ApplicantBean> applicants; 
+
+  @Result
+  private float rate;
+
+  @When
+  public boolean when() {
+    return 
+      applicants.stream().anyMatch(applicant -> applicant.isFirstTimeHomeBuyer());
+  }
+
+  @Then
+  public void then() {
+    rate = rate - (rate * 0.20f);
+  }
+}
+```
+```java
+public class ExampleSolution {
+  public static void main(String[] args) {
+    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
+    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
+    ApplicantBean applicant = new ApplicantBean(620, 30000, true);
+    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    
+    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+  }
 }
 ```
 
