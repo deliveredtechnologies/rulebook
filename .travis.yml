@@ -11,6 +11,9 @@ branches:
   only:
   - master
   - develop
+cache:
+  directories:
+    - $HOME/.gradle
 jdk:
   - oraclejdk8
 script:
