@@ -44,6 +44,11 @@ public class FactMap<T> implements Map<String, Fact<T>> {
     return Optional.ofNullable(_facts.get(name)).map(Fact::getValue).orElse(null);
   }
 
+  /**
+   * Method getStrVal() gets the String value of a Fact in the FactMap.
+   * @param name  the name of the Fact in the FactMap
+   * @return      the String value of the Fact specified
+   */
   public String getStrVal(String name) {
     if (getValue(name) instanceof String) {
       return (String)getValue(name);
@@ -51,6 +56,11 @@ public class FactMap<T> implements Map<String, Fact<T>> {
     return String.valueOf(getValue(name));
   }
 
+  /**
+   * Method getIntVal() gets the Integer value of a Fact in the FactMap.
+   * @param name  the name of the Fact in the FactMap
+   * @return      the Integer value of the Fact specified
+   */
   public Integer getIntVal(String name) {
     Object value = getValue(name);
     if (value != null) {
@@ -64,6 +74,11 @@ public class FactMap<T> implements Map<String, Fact<T>> {
     return null;
   }
 
+  /**
+   * Method getDblVal() gets the Double value of a Fact in the FactMap.
+   * @param name  the name of the Fact in the FactMap
+   * @return      the Double value of the Fact specified
+   */
   public Double getDblVal(String name) {
     Object value = getValue(name);
     if (value != null) {
@@ -79,14 +94,9 @@ public class FactMap<T> implements Map<String, Fact<T>> {
       if (Long.class == value.getClass()) {
         return Double.valueOf((Long) value);
       }
-    }
-    return null;
-  }
-
-  public <R> R getTypedVal(String name, Class<R> type) {
-    Object value = getValue(name);
-    if (value != null && type.isAssignableFrom(value.getClass())) {
-      return type.cast(value);
+      if (String.class == value.getClass()) {
+        return Double.parseDouble((String)value);
+      }
     }
     return null;
   }
