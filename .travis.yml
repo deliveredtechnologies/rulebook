@@ -11,10 +11,6 @@ branches:
   only:
   - master
   - develop
-cache:
-  directories:
-    - $HOME/.m2/repository
-    - $HOME/.gradle
 jdk:
   - oraclejdk8
 script:
