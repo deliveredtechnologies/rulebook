@@ -1,6 +1,5 @@
 package com.deliveredtechnologies.rulebook;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,6 +139,41 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   @Override
   public boolean isEmpty() {
     return _facts.isEmpty();
+  }
+
+  @Override
+  public boolean containsKey(Object key) {
+    return _facts.containsKey(key);
+  }
+
+  @Override
+  public boolean containsValue(Object value) {
+    return _facts.containsValue(value);
+  }
+
+  @Override
+  public Fact<T> get(Object key) {
+    return _facts.get(key);
+  }
+
+  @Override
+  public Fact<T> remove(Object key) {
+    return _facts.remove(key);
+  }
+
+  @Override
+  public void putAll(Map<? extends String, ? extends Fact<T>> map) {
+    _facts.putAll(map);
+  }
+
+  @Override
+  public void clear() {
+    _facts.clear();
+  }
+
+  @Override
+  public Set<String> keySet() {
+    return _facts.keySet();
   }
 
   @Override
