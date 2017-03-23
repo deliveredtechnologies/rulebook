@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +42,53 @@ public class FactMap<T> implements Map<String, Fact<T>> {
    */
   public T getValue(String name) {
     return Optional.ofNullable(_facts.get(name)).map(Fact::getValue).orElse(null);
+  }
+
+  public String getStrVal(String name) {
+    if (getValue(name) instanceof String) {
+      return (String)getValue(name);
+    }
+    return String.valueOf(getValue(name));
+  }
+
+  public Integer getIntVal(String name) {
+    Object value = getValue(name);
+    if (value != null) {
+      if (Integer.class == value.getClass()) {
+        return (Integer)value;
+      }
+      if (value.getClass() == String.class) {
+        return Integer.valueOf((String) value);
+      }
+    }
+    return null;
+  }
+
+  public Double getDblVal(String name) {
+    Object value = getValue(name);
+    if (value != null) {
+      if (Float.class == value.getClass()) {
+        return Double.valueOf((Float) value);
+      }
+      if (Double.class == value.getClass()) {
+        return (Double)value;
+      }
+      if (Integer.class == value.getClass()) {
+        return Double.valueOf((Integer) value);
+      }
+      if (Long.class == value.getClass()) {
+        return Double.valueOf((Long) value);
+      }
+    }
+    return null;
+  }
+
+  public <R> R getTypedVal(String name, Class<R> type) {
+    Object value = getValue(name);
+    if (value != null && type.isAssignableFrom(value.getClass())) {
+      return type.cast(value);
+    }
+    return null;
   }
 
   /**
