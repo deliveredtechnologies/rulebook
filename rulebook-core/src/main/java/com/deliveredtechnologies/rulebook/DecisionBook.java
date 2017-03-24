@@ -5,6 +5,7 @@ import java.util.Optional;
 /**
  * DecisionBook is a type of {@link RuleBook} that stores a return type linked to all the rules in the DecisionBook.
  */
+@Deprecated
 public abstract class DecisionBook<T, U> extends RuleBook<T> {
   private Result<U> _result = new Result<U>();
 

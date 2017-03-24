@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 /**
  * StandardRule is a standard rule implementation that can be used with a {@link RuleBook}.
  */
+@Deprecated
 public class StandardRule<T> implements Rule<T> {
   private static Logger LOGGER = LoggerFactory.getLogger(StandardRule.class);
 

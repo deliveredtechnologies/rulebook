@@ -24,6 +24,8 @@ def projectLicenseUrl = properties['project.license.url']
 def projectLicenseDistro = properties['project.license.distribution']
 def projectIssueMgmtSystem = properties['project.issuemgmt.system']
 def projectIssueMgmtUrl = properties['project.issuemgmt.url']
+def projectDistMgmtId = properties['project.distributionmgmt.site.id']
+def projectDistMgmtUrl = properties['project.distributionmgmt.site.url']
 
 allprojects {
     apply plugin: 'java'
@@ -119,6 +121,13 @@ project('rulebook-core') {
                 developerConnection "${projectScmConnection}"
             }
 
+            distributionManagement {
+                site {
+                    id "${projectDistMgmtId}"
+                    url "${projectDistMgmtUrl}"
+                }
+            }
+
             issueManagement {
                 system "${projectIssueMgmtSystem}"
                 url "${projectIssueMgmtUrl}"
@@ -175,6 +184,13 @@ project('rulebook-spring') {
                 url "${projectScmUrl}"
                 connection "${projectScmConnection}"
                 developerConnection "${projectScmConnection}"
+            }
+
+            distributionManagement {
+                site {
+                    id "${projectDistMgmtId}"
+                    url "${projectDistMgmtUrl}"
+                }
             }
 
             issueManagement {

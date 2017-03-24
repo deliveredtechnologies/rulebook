@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 /**
  * A special type of rule that has a return type, which may be different from the type of input (Facts).
  */
+@Deprecated
 public interface Decision<T, U> extends Rule<T> {
 
   //Overriding these methods for method chaining to work with this interface
