@@ -2,7 +2,7 @@
 [RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.4|
 [Apache 2.0 License]:https://opensource.org/licenses/Apache-2.0
 
-# RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
+# RuleBook <img src="LambdaBook.png" alt="RuleBook" height="100" align="left"/>
 **&raquo; A Simple &amp; Intuitive Rules Abstraction for Java** <br/><sub> _100% Java_ &middot; _Lambda Enabled_ &middot; _Simple, Intuitive DSL_ &middot; _Lightweight_ </sub>
 
 ---
