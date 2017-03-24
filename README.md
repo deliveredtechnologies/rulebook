@@ -35,7 +35,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
-  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-the-megabank-example-with-pojo-rules)
+  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
   * [4.3 POJO Rules Explained](#43-pojo-rules-explained)
     * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
