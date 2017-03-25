@@ -147,7 +147,7 @@ public class ExampleRuleBook extends RuleBook<String> {
 public class ExampleRuleBook extends RuleBook<String> {
   @Override
   public void defineRules() {
-    //first rule prints "Hello" value from helloFact
+    //rule prints "HelloWorld"
     addRule(StandardRule.create().when(f -> f.containsKey("hello") && f.containsKey)
       .using("hello").then(System.out::print)
       .using("world").then(System.out::println));
