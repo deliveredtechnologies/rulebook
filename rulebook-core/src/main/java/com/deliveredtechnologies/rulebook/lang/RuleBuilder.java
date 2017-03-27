@@ -3,20 +3,18 @@ package com.deliveredtechnologies.rulebook.lang;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-/**
- * Created by clong on 3/24/17.
- */
 public class RuleBuilder<T, U> {
-  Rule<T, U> _rule;
+  private Rule<T, U> _rule;
 
   public static <T, U> RuleBuilder<T, U> create(Class<T> factType, Class<T> resultType) {
-    return new RuleBuilder<T, U>();
+    return new RuleBuilder<T, U>(new GoldenRule<T, U>(factType));
   }
 
   public static RuleBuilder create() {
@@ -27,12 +25,13 @@ public class RuleBuilder<T, U> {
     _rule = rule;
   }
 
+  @SuppressWarnings("unchecked")
   public RuleBuilder() {
-
+    this(new GoldenRule(Object.class));
   }
   
   public GivenRuleBuilder<T, U> withDefaultResult(U resultVal) {
-    _rule.setResult(resultVal);
+    _rule.setResult(new Result<U>(resultVal));
     return new GivenRuleBuilder<T, U>(_rule);
   }
 
@@ -40,7 +39,8 @@ public class RuleBuilder<T, U> {
     return new GivenRuleBuilder<T, U>(_rule, new Fact<T>(name, value));
   }
 
-  public GivenRuleBuilder<T, U> given(Fact<T>... facts) {
+  @SafeVarargs
+  public final GivenRuleBuilder<T, U> given(Fact<T>... facts) {
     return new GivenRuleBuilder<T, U>(_rule, facts);
   }
 
