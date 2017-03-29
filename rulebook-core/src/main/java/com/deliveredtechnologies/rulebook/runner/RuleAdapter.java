@@ -41,6 +41,7 @@ import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotat
 /**
  * RuleAdapter accepts a POJO annotated Rule class and adapts it to an actual Rule class.
  */
+@Deprecated
 public class RuleAdapter implements Decision {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleAdapter.class);
