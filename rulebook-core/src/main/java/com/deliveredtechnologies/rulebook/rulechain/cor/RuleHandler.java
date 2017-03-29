@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook.rulechain.cor;
 
+import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.model.Rule;
 
@@ -16,10 +17,14 @@ public class RuleHandler implements Handler<Rule> {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void handleRequest() {
     boolean actionResult = _rule.invokeAction();
     if (!actionResult || _rule.getRuleState() == RuleState.NEXT) {
-      getSuccessor().ifPresent(handler -> handler.getDelegate().addFacts(_rule.getFacts()));
+      getSuccessor().ifPresent(handler -> {
+        handler.getDelegate().addFacts(_rule.getFacts());
+        _rule.getResult().ifPresent(result -> handler.getDelegate().setResult((Result)result));
+      });
       getSuccessor().ifPresent(Handler::handleRequest);
     }
   }
@@ -35,9 +40,9 @@ public class RuleHandler implements Handler<Rule> {
   }
 
   @Override
-  public Rule setSuccessor(Rule successor) {
+  public Handler<Rule> setSuccessor(Handler<Rule> successor) {
     if (successor != null) {
-      _successor = new RuleHandler(successor);
+      _successor = successor;
     }
     return successor;
   }

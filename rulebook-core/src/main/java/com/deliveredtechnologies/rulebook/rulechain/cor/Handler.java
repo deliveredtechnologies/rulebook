@@ -9,5 +9,5 @@ public interface Handler<T> {
   void handleRequest();
   T getDelegate();
   Optional<Handler<T>> getSuccessor();
-  T setSuccessor(T successor);
+  Handler<T> setSuccessor(Handler<T> successor);
 }
