@@ -22,7 +22,7 @@ public class RuleHandler implements Handler<Rule> {
     boolean actionResult = _rule.invokeAction();
     if (!actionResult || _rule.getRuleState() == RuleState.NEXT) {
       getSuccessor().ifPresent(handler -> {
-        handler.getDelegate().addFacts(_rule.getFacts());
+        handler.getDelegate().setFacts(_rule.getFacts());
         _rule.getResult().ifPresent(result -> handler.getDelegate().setResult((Result)result));
       });
       getSuccessor().ifPresent(Handler::handleRequest);

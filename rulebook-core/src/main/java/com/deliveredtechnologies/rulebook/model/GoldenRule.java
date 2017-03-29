@@ -54,6 +54,11 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   }
 
   @Override
+  public void setFacts(FactMap facts) {
+    _facts = facts;
+  }
+
+  @Override
   public void setCondition(Predicate<FactMap<T>> condition) throws IllegalStateException {
     _condition = condition;
   }
@@ -144,13 +149,15 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                       method.invoke(action,
                               ArrayUtils.combine(
                                       new Object[]{usingFacts},
-                                      new Object[]{getResult().orElseGet(null)},
+                                      new Object[]{getResult().orElseGet(() -> null)},
                                       method.getParameterCount()));
                     } catch (IllegalAccessException | InvocationTargetException err) {
                       LOGGER.error("Error invoking action on " + action.getClass(), err);
                     }
                   });
+          _facts.putAll(usingFacts);
         }
+
         return true;
       }
     } catch (Exception ex) {

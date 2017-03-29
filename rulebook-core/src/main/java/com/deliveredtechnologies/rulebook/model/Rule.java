@@ -18,6 +18,7 @@ public interface Rule<T, U> {
   void addFact(Fact fact);
   void addFacts(List<Fact> facts);
   void addFacts(FactMap facts);
+  void setFacts(FactMap facts);
   void setCondition(Predicate<FactMap<T>> condition) throws IllegalStateException;
   void setRuleState(RuleState ruleState);
   void addAction(Consumer<FactMap<T>> action);

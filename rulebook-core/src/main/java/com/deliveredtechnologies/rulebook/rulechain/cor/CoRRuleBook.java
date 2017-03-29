@@ -19,7 +19,8 @@ public class CoRRuleBook<T> implements RuleBook<T> {
     }
 
     Handler<Rule> ruleHandler = new RuleHandler(rule);
-    if (_headRule != null) {
+    if (_headRule == null) {
+      getResult().ifPresent(result -> rule.setResult(result));
       _headRule = ruleHandler; // this rule is the head if there was no head
       _tailRule = ruleHandler;
     } else {
@@ -35,7 +36,7 @@ public class CoRRuleBook<T> implements RuleBook<T> {
       defineRules();
     }
     headRule.ifPresent(ruleHandler -> {
-      ruleHandler.getDelegate().addFacts(facts);
+      ruleHandler.getDelegate().setFacts(facts);
       getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
     });
     headRule.ifPresent(Handler::handleRequest);

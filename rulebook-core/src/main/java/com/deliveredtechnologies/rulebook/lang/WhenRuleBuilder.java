@@ -20,6 +20,10 @@ public class WhenRuleBuilder<T, U> {
     _rule.setCondition(condition);
   }
 
+  public UsingRuleBuilder<T, U> using(String... factNames) {
+    return new UsingRuleBuilder<T, U>(_rule, factNames);
+  }
+
   public ThenRuleBuilder<T, U> then(Consumer<FactMap<T>> action) {
     return new ThenRuleBuilder<T, U>(_rule, action);
   }

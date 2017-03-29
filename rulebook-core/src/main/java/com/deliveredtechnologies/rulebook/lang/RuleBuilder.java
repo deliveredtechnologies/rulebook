@@ -14,7 +14,11 @@ public class RuleBuilder<T, U> {
   private Rule<T, U> _rule;
 
   public static <T, U> RuleBuilder<T, U> create(Class<T> factType, Class<T> resultType) {
-    return new RuleBuilder<T, U>(new GoldenRule<T, U>(factType));
+    return new RuleBuilder<T, U>(new GoldenRule<>(factType));
+  }
+
+  public static <T> RuleBuilder<T, Object> create(Class<T> factType) {
+    return new RuleBuilder<T, Object>(new GoldenRule<>(factType));
   }
 
   public static RuleBuilder create() {
@@ -28,11 +32,6 @@ public class RuleBuilder<T, U> {
   @SuppressWarnings("unchecked")
   public RuleBuilder() {
     this(new GoldenRule(Object.class));
-  }
-  
-  public GivenRuleBuilder<T, U> withDefaultResult(U resultVal) {
-    _rule.setResult(new Result<U>(resultVal));
-    return new GivenRuleBuilder<T, U>(_rule);
   }
 
   public GivenRuleBuilder<T, U> given(String name, T value) {

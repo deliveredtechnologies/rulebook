@@ -36,6 +36,11 @@ public class RuleAdapter implements Rule {
   }
 
   @Override
+  public void setFacts(FactMap facts) {
+
+  }
+
+  @Override
   public void setCondition(Predicate condition) throws IllegalStateException {
 
   }

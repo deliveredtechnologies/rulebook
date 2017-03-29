@@ -14,7 +14,7 @@ public class UsingRuleBuilder<T, U> {
   private Rule<T, U> _rule;
 
   UsingRuleBuilder(Rule<T, U> rule, String... factNames) {
-    _rule.addFactNameFilter(factNames);
+    rule.addFactNameFilter(factNames);
     _rule = rule;
   }
 
