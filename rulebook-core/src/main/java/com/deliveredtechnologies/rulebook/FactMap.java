@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A FactMap is an extension of {@link HashMap}; it stores facts by their name and provides convenience methods for
+ * A FactMap decorates {@link Map}; it stores facts by their name and provides convenience methods for
  * accessing {@link Fact} objects.
  */
 public class FactMap<T> implements Map<String, Fact<T>> {

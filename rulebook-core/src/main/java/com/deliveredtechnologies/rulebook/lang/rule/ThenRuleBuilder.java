@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.lang;
+package com.deliveredtechnologies.rulebook.lang.rule;
 
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;

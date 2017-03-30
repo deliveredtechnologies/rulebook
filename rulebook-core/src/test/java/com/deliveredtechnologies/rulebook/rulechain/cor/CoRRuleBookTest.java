@@ -3,7 +3,7 @@ package com.deliveredtechnologies.rulebook.rulechain.cor;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.RuleState;
-import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
+import com.deliveredtechnologies.rulebook.lang.rule.RuleBuilder;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import org.junit.Assert;

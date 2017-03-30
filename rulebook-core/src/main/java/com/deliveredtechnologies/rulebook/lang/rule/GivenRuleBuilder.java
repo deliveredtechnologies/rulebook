@@ -1,46 +1,40 @@
-package com.deliveredtechnologies.rulebook.lang;
+package com.deliveredtechnologies.rulebook.lang.rule;
+
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class RuleBuilder<T, U> {
-  private Rule<T, U> _rule;
+/**
+ * Created by clong on 3/24/17.
+ */
+public class GivenRuleBuilder<T, U> {
+  Rule<T, U> _rule;
 
-  public static <T, U> RuleBuilder<T, U> create(Class<T> factType, Class<T> resultType) {
-    return new RuleBuilder<T, U>(new GoldenRule<>(factType));
-  }
-
-  public static <T> RuleBuilder<T, Object> create(Class<T> factType) {
-    return new RuleBuilder<T, Object>(new GoldenRule<>(factType));
-  }
-
-  public static RuleBuilder create() {
-    return new RuleBuilder();
-  }
-
-  public RuleBuilder(Rule<T, U> rule) {
+  GivenRuleBuilder(Rule<T, U> rule) {
     _rule = rule;
   }
 
-  @SuppressWarnings("unchecked")
-  public RuleBuilder() {
-    this(new GoldenRule(Object.class));
+  @SafeVarargs
+  GivenRuleBuilder(Rule<T, U> rule, Fact<T>... facts) {
+    _rule = rule;
+    given(facts);
   }
 
-  public GivenRuleBuilder<T, U> given(String name, T value) {
-    return new GivenRuleBuilder<T, U>(_rule, new Fact<T>(name, value));
+  GivenRuleBuilder<T, U> given(String name, T value) {
+    return given(new Fact<T>(name, value));
   }
 
   @SafeVarargs
   public final GivenRuleBuilder<T, U> given(Fact<T>... facts) {
-    return new GivenRuleBuilder<T, U>(_rule, facts);
+    _rule.addFacts(Arrays.asList(facts));
+    return this;
   }
 
   public WhenRuleBuilder<T, U> when(Predicate<FactMap<T>> condition) {
