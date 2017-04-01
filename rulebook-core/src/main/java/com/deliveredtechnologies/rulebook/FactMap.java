@@ -126,6 +126,10 @@ public class FactMap<T> implements Map<String, Fact<T>> {
     return _facts.put(fact.getName(), fact);
   }
 
+  public Fact<T> put(String key, T value) {
+    return _facts.put(key, new Fact<T>(key, value));
+  }
+
   @Override
   public Fact<T> put(String key, Fact<T> value) {
     return _facts.put(key, value);

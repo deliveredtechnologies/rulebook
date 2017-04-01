@@ -10,59 +10,69 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Created by clong on 3/29/17.
  */
-public class RuleBookBuilder<T> {
+public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookBuilder.class);
 
-  RuleBook<T> _ruleBook;
+  private RuleBook<T> _ruleBook;
+  private Class<T> _resultType;
 
-  public static <T> RuleBookBuilder<T> create(Class<T> factType) {
-    return new RuleBookBuilder<T>(new CoRRuleBook<T>());
+  public static <T> RuleBookBuilder<T> create(Class<T> resultType) {
+    return new RuleBookBuilder<T>(new CoRRuleBook<T>(), resultType);
   }
 
-  public static <T> RuleBookBuilder<T> create(Class<T> factType, Class<? extends RuleBook> ruleBookClass) {
-
+  @SuppressWarnings("unchecked")
+  public static <T> RuleBookBuilder<T> create(Class<T> resultType, Class<? extends RuleBook> ruleBookClass) {
     try {
       Method method = ruleBookClass.getMethod("create");
-      return new RuleBookBuilder((RuleBook<T>)method.invoke(new Object[] {factType}));
+      return new RuleBookBuilder((RuleBook<T>)method.invoke(new Object[] {resultType}), resultType);
     } catch (IllegalAccessException | InvocationTargetException| NoSuchMethodException ex) {
       try {
-        return new RuleBookBuilder<T>(ruleBookClass.newInstance());
+        return new RuleBookBuilder<T>(ruleBookClass.newInstance(), resultType);
       } catch (InstantiationException | IllegalAccessException e) {
         LOGGER.error("Unable to create RuleBook " + ruleBookClass, e);
-        return create(factType);
+        return create(resultType);
       }
     }
   }
 
-  public static RuleBuilder create() {
-    return new RuleBuilder();
+  public static RuleBookBuilder create() {
+    return new RuleBookBuilder();
   }
 
-  public RuleBookBuilder(RuleBook<T> ruleBook) {
+  private RuleBookBuilder() { }
+
+  private RuleBookBuilder(RuleBook<T> ruleBook, Class<T> resultType) {
+    _resultType = resultType;
     _ruleBook = ruleBook;
   }
 
   public DefaultResultRuleBookBuilder<T> withDefaultResult(T result) {
-    return new DefaultResultRuleBookBuilder<T>(_ruleBook, result);
+    return new DefaultResultRuleBookBuilder<T>(_ruleBook, _resultType, result);
+  }
+
+  public AddRuleBookBuilder<T> addRule(TerminatingRuleBuilder rule) {
+    return new AddRuleBookBuilder<T>(_ruleBook, rule);
   }
 
   @SuppressWarnings("unchecked")
-  public AddRuleBookBuilder<T, Object> addRule(Class<T> factType, Function<RuleBuilder<T, Object>, TerminatingRuleBuilder> ruleFunction) {
-    return new AddRuleBookBuilder<T, Object>((RuleBook<Object>)_ruleBook, factType, Object.class, ruleFunction);
+  public <U, V extends T> AddRuleBookBuilder<V> addRule(
+          Class<U> factType, Function<RuleBuilder<U, V>, TerminatingRuleBuilder<U, V>> function) {
+    Class<V> resultType = (Class<V>)(_resultType == null ? Object.class : _resultType);
+    return new AddRuleBookBuilder<V>(
+            (RuleBook<V>)_ruleBook,
+            resultType,
+            function.apply(RuleBuilder.create(factType, resultType)));
   }
 
-  @SuppressWarnings("unchecked")
-  public <U, V extends T> AddRuleBookBuilder<U, V> addRule(Class<U> factType, Class<V> resultType, Function<RuleBuilder<U, V>, TerminatingRuleBuilder> ruleFunction) {
-    return new AddRuleBookBuilder<U, V>((RuleBook<V>)_ruleBook, factType, resultType, ruleFunction);
-  }
-
-  public <U, V extends T> AddRuleBookBuilder<U, V> addRule(Rule<U, V> rule) {
-    return new AddRuleBookBuilder<U, V>((RuleBook<V>)_ruleBook, rule);
+  @Override
+  public RuleBook build() {
+    return _ruleBook;
   }
 }

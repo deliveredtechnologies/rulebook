@@ -33,4 +33,12 @@ public class Result<T> {
   public void setValue(T value) {
     this._value = value;
   }
+
+  @Override
+  public String toString() {
+    if (_value == null) {
+      return "";
+    }
+    return _value.toString();
+  }
 }

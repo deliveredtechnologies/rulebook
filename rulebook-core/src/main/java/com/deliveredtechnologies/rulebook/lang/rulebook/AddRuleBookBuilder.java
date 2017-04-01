@@ -10,36 +10,36 @@ import java.util.function.Function;
 /**
  * Created by clong on 3/29/17.
  */
-public class AddRuleBookBuilder<T, U> {
+public class AddRuleBookBuilder<U> implements TerminatingRuleBookBuilder {
   private RuleBook<U> _ruleBook;
+  private Class<U> _resultType;
 
-  AddRuleBookBuilder(RuleBook<U> ruleBook, Class<T> factType, Class<U> resultType,
-                     Function<RuleBuilder<T, U>, TerminatingRuleBuilder> ruleFunction) {
+  AddRuleBookBuilder(RuleBook<U> ruleBook, TerminatingRuleBuilder rule) {
     _ruleBook = ruleBook;
-    addRule(factType, resultType, ruleFunction);
-  }
-
-  AddRuleBookBuilder(RuleBook<U> rulebook, Rule<T, U> rule) {
-    _ruleBook = rulebook;
     addRule(rule);
   }
 
-  @SuppressWarnings("unchecked")
-  public AddRuleBookBuilder<T, U> addRule(Class<T> factType, Function<RuleBuilder<T, Object>, TerminatingRuleBuilder> ruleFunction) {
-    RuleBuilder<T, Object> ruleBuilder = RuleBuilder.create(factType);
-    TerminatingRuleBuilder terminatingRuleBuilder = ruleFunction.apply(ruleBuilder);
-    return addRule(terminatingRuleBuilder.build());
+  AddRuleBookBuilder(RuleBook<U> ruleBook, Class<U> resultType, TerminatingRuleBuilder rule) {
+    _ruleBook = ruleBook;
+    _resultType = resultType;
+    addRule(rule);
   }
 
-  @SuppressWarnings("unchecked")
-  public AddRuleBookBuilder<T, U> addRule(Class<T> factType, Class<U> resultType, Function<RuleBuilder<T, U>, TerminatingRuleBuilder> ruleFunction) {
-    RuleBuilder ruleBuilder = RuleBuilder.create(factType, resultType);
-    TerminatingRuleBuilder terminatingRuleBuilder = ruleFunction.apply(ruleBuilder);
-    return addRule(terminatingRuleBuilder.build());
-  }
-
-  public AddRuleBookBuilder<T, U> addRule(Rule<T, U> rule) {
-    _ruleBook.addRule(rule);
+  public AddRuleBookBuilder<U> addRule(TerminatingRuleBuilder rule) {
+    _ruleBook.addRule(rule.build());
     return this;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <V, T extends U> AddRuleBookBuilder<T> addRule(
+          Class<V> factType, Function<RuleBuilder<V, T>, TerminatingRuleBuilder<V, T>> function) {
+    Class<T> resultType = (Class<T>)(_resultType == null ? Object.class : _resultType);
+    _ruleBook.addRule(function.apply(RuleBuilder.create(factType, resultType)).build());
+    return (AddRuleBookBuilder<T>)this;
+  }
+
+  @Override
+  public RuleBook<U> build() {
+    return _ruleBook;
   }
 }

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 public class RuleBuilderTest {
   @Test
   @SuppressWarnings("unchecked")
-  public void ruleBuilderCreatesGWTRules() {
+  public void ruleBuilderShouldCreateGWTRules() {
     Consumer<FactMap<String>> consumer = (Consumer<FactMap<String>>)Mockito.mock(Consumer.class);
     Rule rule = RuleBuilder.create(String.class)
             .given("fact1", "First Fact")
@@ -33,7 +33,7 @@ public class RuleBuilderTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void ruleBuilderUsingMethod() {
+  public void ruleBuilderUsingMethodShouldRestrictThenFacts() {
     FactMap<String> factMap = new FactMap<>();
     Rule rule = RuleBuilder.create(String.class)
             .given("fact1", "First Fact")

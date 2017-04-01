@@ -12,23 +12,25 @@ import java.util.function.Function;
  */
 public class DefaultResultRuleBookBuilder<T> {
   private RuleBook<T> _ruleBook;
+  private Class<T> _resultType;
 
-  DefaultResultRuleBookBuilder(RuleBook<T> ruleBook, T result) {
+  DefaultResultRuleBookBuilder(RuleBook<T> ruleBook, Class<T> resultType, T result) {
     ruleBook.setDefaultResult(result);
     _ruleBook = ruleBook;
+    _resultType = resultType;
   }
 
   @SuppressWarnings("unchecked")
-  public AddRuleBookBuilder<T, Object> addRule(Class<T> factType, Function<RuleBuilder<T, Object>, TerminatingRuleBuilder> ruleFunction) {
-    return new AddRuleBookBuilder<T, Object>((RuleBook<Object>)_ruleBook, factType, Object.class, ruleFunction);
+  public <V, U extends T> AddRuleBookBuilder<U> addRule(
+          Class<V> factType, Function<RuleBuilder<V, U>, TerminatingRuleBuilder<V, U>> function) {
+    Class<U> resultType = (Class<U>)(_resultType == null ? Object.class : _resultType);
+    return new AddRuleBookBuilder<U>(
+            (RuleBook<U>)_ruleBook,
+            resultType,
+            function.apply(RuleBuilder.create(factType, resultType)));
   }
 
-  @SuppressWarnings("unchecked")
-  public <U, V extends T> AddRuleBookBuilder<U, V> addRule(Class<U> factType, Class<V> resultType, Function<RuleBuilder<U, V>, TerminatingRuleBuilder> ruleFunction) {
-    return new AddRuleBookBuilder<U, V>((RuleBook<V>)_ruleBook, factType, resultType, ruleFunction);
-  }
-
-  public <U, V extends T> AddRuleBookBuilder<U, V> addRule(Rule<U, V> rule) {
-    return new AddRuleBookBuilder<U, V>((RuleBook<V>)_ruleBook, rule);
+  public AddRuleBookBuilder<T> addRule(TerminatingRuleBuilder rule) {
+    return new AddRuleBookBuilder<T>(_ruleBook, rule);
   }
 }
