@@ -2,15 +2,13 @@ package com.deliveredtechnologies.rulebook.lang.rulebook;
 
 import com.deliveredtechnologies.rulebook.lang.rule.RuleBuilder;
 import com.deliveredtechnologies.rulebook.lang.rule.TerminatingRuleBuilder;
-import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
-import com.deliveredtechnologies.rulebook.rulechain.cor.CoRRuleBook;
+import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**

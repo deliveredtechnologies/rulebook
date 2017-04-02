@@ -106,6 +106,7 @@ public class FactMap<T> implements Map<String, Fact<T>> {
    * @param name  the name of the Fact
    * @param value the value object of the Fact
    */
+  @Deprecated
   public void setValue(String name, T value) {
     Fact<T> fact = _facts.get(name);
     if (fact == null) {

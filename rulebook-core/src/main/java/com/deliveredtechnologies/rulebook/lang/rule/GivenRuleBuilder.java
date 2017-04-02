@@ -33,7 +33,7 @@ public class GivenRuleBuilder<T, U> {
 
   @SafeVarargs
   public final GivenRuleBuilder<T, U> given(Fact<T>... facts) {
-    _rule.addFacts(Arrays.asList(facts));
+    _rule.addFacts(facts);
     return this;
   }
 

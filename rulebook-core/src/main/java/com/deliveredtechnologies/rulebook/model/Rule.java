@@ -15,8 +15,7 @@ import java.util.function.Predicate;
  * Created by clong on 3/24/17.
  */
 public interface Rule<T, U> {
-  void addFact(Fact fact);
-  void addFacts(List<Fact> facts);
+  void addFacts(Fact... fact);
   void addFacts(FactMap facts);
   void setFacts(FactMap facts);
   void setCondition(Predicate<FactMap<T>> condition) throws IllegalStateException;

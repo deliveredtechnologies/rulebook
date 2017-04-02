@@ -11,4 +11,5 @@ public interface RuleBook<T> {
   void setDefaultResult(T result);
   Optional<Result<T>> getResult();
   default void defineRules() { };
+  boolean hasRules();
 }

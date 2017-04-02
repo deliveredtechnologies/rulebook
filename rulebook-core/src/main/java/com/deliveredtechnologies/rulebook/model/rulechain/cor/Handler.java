@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.rulechain.cor;
+package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
 import java.util.Optional;
 

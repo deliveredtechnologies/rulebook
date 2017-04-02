@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.rulechain.cor;
+package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.RuleState;

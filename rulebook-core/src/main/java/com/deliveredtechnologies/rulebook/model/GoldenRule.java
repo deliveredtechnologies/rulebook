@@ -37,14 +37,8 @@ public class GoldenRule<T, U> implements Rule<T, U> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void addFact(Fact fact) {
-    _facts.put(fact.getName(), fact);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public void addFacts(List<Fact> facts) {
-    facts.forEach(fact -> getFacts().put(fact.getName(), fact));
+  public void addFacts(Fact... facts) {
+    Arrays.stream(facts).forEach(fact -> _facts.put(fact.getName(), fact));
   }
 
   @Override
@@ -70,12 +64,16 @@ public class GoldenRule<T, U> implements Rule<T, U> {
 
   @Override
   public void addAction(Consumer<FactMap<T>> action) {
-    _actionChain.add(action);
+    if (!_actionChain.contains(action)) {
+      _actionChain.add(action);
+    }
   }
 
   @Override
   public void addAction(BiConsumer<FactMap<T>, Result<U>> action) {
-    _actionChain.add(action);
+    if (!_actionChain.contains(action)) {
+      _actionChain.add(action);
+    }
   }
 
   @Override

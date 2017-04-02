@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.rulechain.cor;
+package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
@@ -50,5 +50,10 @@ public class CoRRuleBook<T> implements RuleBook<T> {
   @Override
   public Optional<Result<T>> getResult() {
     return Optional.ofNullable(_result);
+  }
+
+  @Override
+  public boolean hasRules() {
+    return _headRule != null;
   }
 }
