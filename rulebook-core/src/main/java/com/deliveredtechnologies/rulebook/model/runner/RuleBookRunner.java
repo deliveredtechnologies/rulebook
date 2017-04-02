@@ -52,11 +52,13 @@ public class RuleBookRunner implements RuleBook {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void setDefaultResult(Object result) {
     _ruleBook.setDefaultResult(result);
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public Optional<Result> getResult() {
     return _ruleBook.getResult();
   }

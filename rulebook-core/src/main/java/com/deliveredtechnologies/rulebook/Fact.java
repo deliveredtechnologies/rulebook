@@ -4,7 +4,7 @@ package com.deliveredtechnologies.rulebook;
  * A Fact is a single piece of data that can be supplied to a {@link Rule}.
  * Facts are not immutable; they may be changed by rules and used to derive a result state.
  */
-public class Fact<T> {
+public class Fact<T> implements NameValueReferable<T> {
   private String _name;
   private T _value;
 
@@ -18,10 +18,16 @@ public class Fact<T> {
     _value = obj;
   }
 
+  public Fact(NameValueReferable<T> fact) {
+    _name = fact.getName();
+    _value = fact.getValue();
+  }
+
   /**
    * The method getName() gets the name of the Fact.
    * @return the name of the Fact
    */
+  @Override
   public String getName() {
     return _name;
   }
@@ -30,6 +36,7 @@ public class Fact<T> {
    * The method setName() sets the name of the Fact.
    * @param name the name of the Fact
    */
+  @Override
   public void setName(String name) {
     this._name = name;
   }
@@ -38,6 +45,7 @@ public class Fact<T> {
    * The method getValue() gets the value of the Fact.
    * @return the value of the Fact
    */
+  @Override
   public T getValue() {
     return _value;
   }
@@ -46,6 +54,7 @@ public class Fact<T> {
    * The method setValue() sets the value of the Fact.
    * @param value the value of the Fact
    */
+  @Override
   public void setValue(T value) {
     this._value = value;
   }

@@ -72,7 +72,7 @@ public class StandardRule<T> implements Rule<T> {
   public void run(Object... otherArgs) {
     try {
       //only use facts of the specified type
-      FactMap<T> typeFilteredFacts = new FactMap<T>((Map<String, Fact<T>>)_facts.values().stream()
+      FactMap<T> typeFilteredFacts = new FactMap<T>((Map<String, NameValueReferable<T>>)_facts.values().stream()
           .filter((Object fact) -> _factType.isAssignableFrom(((Fact)fact).getValue().getClass()))
           .collect(Collectors.toMap(fact -> ((Fact)fact).getName(), fact -> (Fact<T>)fact)));
       //invoke then() action(s) if when() is true or if when() was never specified

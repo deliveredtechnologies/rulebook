@@ -1,9 +1,6 @@
 package com.deliveredtechnologies.rulebook.model;
 
-import com.deliveredtechnologies.rulebook.Fact;
-import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.*;
 import com.deliveredtechnologies.rulebook.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +111,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   public boolean invokeAction() {
     try {
       //only use facts of the specified type
-      FactMap<T> typeFilteredFacts = new FactMap<T>((Map<String, Fact<T>>) _facts.values().stream()
+      FactMap<T> typeFilteredFacts = new FactMap<T>((Map<String, NameValueReferable<T>>) _facts.values().stream()
               .filter((Object fact) -> _factType.isAssignableFrom(((Fact) fact).getValue().getClass()))
               .collect(Collectors.toMap(fact -> ((Fact) fact).getName(), fact -> (Fact<T>) fact)));
 
