@@ -101,7 +101,6 @@ public class FactMap<T> implements NameValueReferableMap<T> {
    * @param name  the name of the Fact
    * @param value the value object of the Fact
    */
-  @Deprecated
   public void setValue(String name, T value) {
     NameValueReferable<T> fact = _facts.get(name);
     if (fact == null) {
@@ -121,11 +120,6 @@ public class FactMap<T> implements NameValueReferableMap<T> {
   @Override
   public Fact<T> put(NameValueReferable<T> fact) {
     return put(fact.getName(), fact);
-  }
-
-  @Override
-  public Fact<T> put(String key, T value) {
-    return put(new Fact<>(key, value));
   }
 
   @Override

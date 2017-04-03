@@ -1,7 +1,7 @@
-package com.deliveredtechnologies.rulebook.lang.rule;
+package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.lang.rule.RuleBuilder;
+import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import org.junit.Assert;
 import org.junit.Test;

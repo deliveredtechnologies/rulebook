@@ -12,6 +12,10 @@ public class CoRRuleBook<T> implements RuleBook<T> {
   private Handler<Rule> _tailRule = null;
   private Result<T> _result = null;
 
+  public static <T> RuleBook<T> create(Class<T> resultType) {
+    return new CoRRuleBook<T>();
+  }
+
   @Override
   public void addRule(Rule rule) {
     if (rule == null) {

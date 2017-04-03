@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.lang.rule;
+package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
@@ -13,6 +13,10 @@ import java.util.function.Predicate;
 public class RuleBuilder<T, U> {
   private Rule<T, U> _rule;
 
+  public static <T, U> RuleBuilder<T, U> create(Rule<T, U> rule) {
+    return new RuleBuilder<T, U>(rule);
+  }
+
   public static <T, U> RuleBuilder<T, U> create(Class<T> factType, Class<U> resultType) {
     return new RuleBuilder<T, U>(new GoldenRule<>(factType));
   }
@@ -25,12 +29,12 @@ public class RuleBuilder<T, U> {
     return new RuleBuilder();
   }
 
-  public RuleBuilder(Rule<T, U> rule) {
+  private RuleBuilder(Rule<T, U> rule) {
     _rule = rule;
   }
 
   @SuppressWarnings("unchecked")
-  public RuleBuilder() {
+  private RuleBuilder() {
     this(new GoldenRule(Object.class));
   }
 

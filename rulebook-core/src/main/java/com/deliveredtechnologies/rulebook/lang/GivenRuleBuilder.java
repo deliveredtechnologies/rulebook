@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.lang.rule;
+package com.deliveredtechnologies.rulebook.lang;
 
 
 import com.deliveredtechnologies.rulebook.Fact;
@@ -6,7 +6,6 @@ import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 
-import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;

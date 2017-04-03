@@ -10,5 +10,4 @@ public interface NameValueReferableMap<T> extends Map<String, NameValueReferable
   T getValue(String name);
   void setValue(String name, T obj);
   NameValueReferable<T> put(NameValueReferable<T> ref);
-  NameValueReferable<T> put(String name, T value);
 }

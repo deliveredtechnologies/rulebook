@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.lang.rule;
+package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.model.Rule;
 
