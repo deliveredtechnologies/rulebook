@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
@@ -34,7 +35,7 @@ public class CoRRuleBook<T> implements RuleBook<T> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void run(FactMap facts) {
+  public void run(NameValueReferableMap facts) {
     Optional<Handler<Rule>> headRule = Optional.ofNullable(_headRule);
     if (!headRule.isPresent()) {
       defineRules();

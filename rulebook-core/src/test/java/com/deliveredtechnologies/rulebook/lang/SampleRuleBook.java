@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
@@ -17,7 +18,7 @@ public class SampleRuleBook<T> implements RuleBook<T> {
   }
 
   @Override
-  public void run(FactMap facts) {
+  public void run(NameValueReferableMap facts) {
 
   }
 

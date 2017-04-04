@@ -1,9 +1,7 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
-import com.deliveredtechnologies.rulebook.Fact;
-import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
@@ -51,19 +49,19 @@ public class RuleAdapter implements Rule {
   }
 
   @Override
-  public void addFacts(Fact... facts) {
+  public void addFacts(NameValueReferable... facts) {
     _rule.addFacts(facts);
     mapGivenFactsToProperties();
   }
 
   @Override
-  public void addFacts(FactMap facts) {
+  public void addFacts(NameValueReferableMap facts) {
     _rule.addFacts(facts);
     mapGivenFactsToProperties();
   }
 
   @Override
-  public void setFacts(FactMap facts) {
+  public void setFacts(NameValueReferableMap facts) {
     _rule.setFacts(facts);
     mapGivenFactsToProperties();
   }
@@ -97,13 +95,13 @@ public class RuleAdapter implements Rule {
   }
 
   @Override
-  public FactMap getFacts() {
+  public NameValueReferableMap getFacts() {
     return _rule.getFacts();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public Predicate<FactMap> getCondition() {
+  public Predicate<NameValueReferableMap> getCondition() {
     //Use what was set by then() first, if it's there
     if (_rule.getCondition() != null) {
       return _rule.getCondition();

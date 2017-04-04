@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import org.junit.Assert;
@@ -20,7 +21,7 @@ public class RuleBuilderTest {
   @Test
   @SuppressWarnings("unchecked")
   public void ruleBuilderShouldCreateGWTRules() {
-    Consumer<FactMap<String>> consumer = (Consumer<FactMap<String>>)Mockito.mock(Consumer.class);
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
     Rule rule = RuleBuilder.create(String.class)
             .given("fact1", "First Fact")
             .when(facts -> facts.getValue("fact1").equals("First Fact"))
@@ -28,7 +29,7 @@ public class RuleBuilderTest {
             .build();
     rule.invokeAction();
 
-    verify(consumer, times(1)).accept(any(FactMap.class));
+    verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
 
   @Test

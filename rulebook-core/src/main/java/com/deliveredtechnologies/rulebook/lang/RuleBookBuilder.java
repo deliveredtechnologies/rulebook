@@ -51,8 +51,9 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder {
     _ruleBook = ruleBook;
   }
 
-  public DefaultResultRuleBookBuilder<T> withDefaultResult(T result) {
-    return new DefaultResultRuleBookBuilder<T>(_ruleBook, _resultType, result);
+  public RuleBookBuilder<T> withDefaultResult(T result) {
+    _ruleBook.setDefaultResult(result);
+    return this;
   }
 
   public TerminatingRuleBookBuilder<T> addRule(TerminatingRuleBuilder rule) {
@@ -60,8 +61,8 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder {
     return () -> _ruleBook;
   }
 
-  public <T> AddRuleBookRuleWithFactTypeBuilder<T> addRule() {
-    return new AddRuleBookRuleWithFactTypeBuilder<T>(_ruleBook);
+  public AddRuleBookRuleBuilder<T> addRule() {
+    return new AddRuleBookRuleBuilder<T>(_ruleBook);
   }
 
   @Override

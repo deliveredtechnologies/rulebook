@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.model.Rule;
@@ -14,12 +15,12 @@ import java.util.function.Consumer;
 public class ThenRuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   Rule<T, U> _rule;
 
-  ThenRuleBuilder(Rule<T, U> rule, Consumer<FactMap<T>> action) {
+  ThenRuleBuilder(Rule<T, U> rule, Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
     _rule = rule;
     _rule.addAction(action);
   }
 
-  ThenRuleBuilder(Rule<T, U> rule, BiConsumer<FactMap<T>, Result<U>> action) {
+  ThenRuleBuilder(Rule<T, U> rule, BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
     _rule = rule;
     _rule.addAction(action);
   }
@@ -28,12 +29,12 @@ public class ThenRuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     return new UsingRuleBuilder<T, U>(_rule, factNames);
   }
 
-  public ThenRuleBuilder<T, U> then(Consumer<FactMap<T>> action) {
+  public ThenRuleBuilder<T, U> then(Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
     _rule.addAction(action);
     return this;
   }
 
-  public ThenRuleBuilder<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
+  public ThenRuleBuilder<T, U> then(BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
     _rule.addAction(action);
     return this;
   }

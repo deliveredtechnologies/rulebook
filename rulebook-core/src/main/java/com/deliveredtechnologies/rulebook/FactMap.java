@@ -22,6 +22,7 @@ public class FactMap<T> implements NameValueReferableMap<T> {
    * The method getOne() gets the value of the single Fact in the FactMap.
    * @return the value of a fact stored if only one fact is stored, otherwise null
    */
+  @Override
   public T getOne() {
     if (_facts.size() == 1) {
       return _facts.values().iterator().next().getValue();
@@ -34,6 +35,7 @@ public class FactMap<T> implements NameValueReferableMap<T> {
    * @param name  the name of the Fact
    * @return      the value of the Fact
    */
+  @Override
   public T getValue(String name) {
     return Optional.ofNullable(_facts.get(name)).map(NameValueReferable::getValue).orElse(null);
   }
@@ -151,21 +153,25 @@ public class FactMap<T> implements NameValueReferableMap<T> {
   @Override
   public Fact<T> get(Object key) {
     NameValueReferable<T> obj = _facts.get(key);
+    if (obj == null) {
+      return null;
+    }
     if (obj instanceof Fact) {
       return (Fact<T>)obj;
-    } else {
-      return new Fact<>(obj);
     }
+    return new Fact<>(obj);
   }
 
   @Override
   public Fact<T> remove(Object key) {
     NameValueReferable<T> obj = _facts.remove(key);
+    if (obj == null) {
+      return null;
+    }
     if (obj instanceof Fact) {
       return (Fact<T>)obj;
-    } else {
-      return new Fact<>(obj);
     }
+    return new Fact<>(obj);
   }
 
   @Override

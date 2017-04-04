@@ -1,8 +1,6 @@
 package com.deliveredtechnologies.rulebook.lang;
 
-import com.deliveredtechnologies.rulebook.Fact;
-import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.*;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 
@@ -25,8 +23,8 @@ public class RuleBuilder<T, U> {
     return new RuleBuilder<T, Object>(new GoldenRule<>(factType));
   }
 
-  public static RuleBuilder create() {
-    return new RuleBuilder();
+  public static RuleBuilder<Object, Object> create() {
+    return new RuleBuilder<Object, Object>();
   }
 
   private RuleBuilder(Rule<T, U> rule) {
@@ -43,11 +41,15 @@ public class RuleBuilder<T, U> {
   }
 
   @SafeVarargs
-  public final GivenRuleBuilder<T, U> given(Fact<T>... facts) {
+  public final GivenRuleBuilder<T, U> given(NameValueReferable... facts) {
     return new GivenRuleBuilder<T, U>(_rule, facts);
   }
 
-  public WhenRuleBuilder<T, U> when(Predicate<FactMap<T>> condition) {
+  public final GivenRuleBuilder<T, U> given(NameValueReferableMap facts) {
+    return new GivenRuleBuilder<T, U>(_rule, facts);
+  }
+
+  public WhenRuleBuilder<T, U> when(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) {
     return new WhenRuleBuilder<T, U>(_rule, condition);
   }
 
@@ -55,11 +57,11 @@ public class RuleBuilder<T, U> {
     return new UsingRuleBuilder<T, U>(_rule, factNames);
   }
 
-  public ThenRuleBuilder<T, U> then(Consumer<FactMap<T>> action) {
+  public ThenRuleBuilder<T, U> then(Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
     return new ThenRuleBuilder<T, U>(_rule, action);
   }
 
-  public ThenRuleBuilder<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
+  public ThenRuleBuilder<T, U> then(BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
     return new ThenRuleBuilder<T, U>(_rule, action);
   }
 }

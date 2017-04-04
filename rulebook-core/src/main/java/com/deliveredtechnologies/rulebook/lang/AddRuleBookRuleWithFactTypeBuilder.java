@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
@@ -19,7 +20,7 @@ public class AddRuleBookRuleWithFactTypeBuilder<T, U> {
     _rule = rule;
   }
 
-  public WhenRuleBuilder<T, U> when(Predicate<FactMap<T>> condition) {
+  public WhenRuleBuilder<T, U> when(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) {
     return new WhenRuleBuilder<>(_rule, condition);
   }
 
@@ -27,11 +28,11 @@ public class AddRuleBookRuleWithFactTypeBuilder<T, U> {
     return new UsingRuleBuilder<>(_rule, factNames);
   }
 
-  public ThenRuleBuilder<T, U> then(Consumer<FactMap<T>> action) {
+  public ThenRuleBuilder<T, U> then(Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
     return new ThenRuleBuilder<>(_rule, action);
   }
 
-  public ThenRuleBuilder<T, U> then(BiConsumer<FactMap<T>, Result<U>> action) {
+  public ThenRuleBuilder<T, U> then(BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
     return new ThenRuleBuilder<>(_rule, action);
   }
 }

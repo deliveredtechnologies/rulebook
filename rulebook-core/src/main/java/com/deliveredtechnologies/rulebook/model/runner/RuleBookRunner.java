@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
@@ -44,7 +45,7 @@ public class RuleBookRunner implements RuleBook {
   }
 
   @Override
-  public void run(FactMap facts) {
+  public void run(NameValueReferableMap facts) {
     if (!hasRules()) {
       defineRules();
     }
