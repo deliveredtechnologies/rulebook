@@ -75,9 +75,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
 
   @Override
   public void addFactNameFilter(String... factNames) {
-    List<String> factNameList = Stream.of(factNames)
-            .filter(name -> _factType.isInstance(_facts.getValue(name)))
-            .collect(Collectors.toList());
+    List<String> factNameList = Stream.of(factNames).collect(Collectors.toList());
     if (_factNames.containsKey((getActions()).size())) {
       List<String> existingFactNames = _factNames.get((getActions()).size());
       existingFactNames.addAll(factNameList);

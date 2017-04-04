@@ -18,15 +18,15 @@ public class RuleBookBuilderTest {
     ruleBookBuilder.addRule().withFactType(String.class)
             .when(facts -> facts.getValue("fact1").equals("First Fact"))
             .then(facts -> facts.setValue("fact2", "Second Fact"));
-    ruleBookBuilder.addRule().withFactType(String.class)
+    ruleBookBuilder.addRule().withNoSpecifiedFactType()
             .when(facts -> facts.getValue("fact2").equals("Second Fact"))
-            .then((facts, result) -> result.setValue("something"));
+            .using("fact2")
+            .then((facts, result) -> result.setValue(facts.getStrVal("fact2")));
     RuleBook<String> ruleBook = ruleBookBuilder.build();
 
     factMap.setValue("fact1", "First Fact");
     ruleBook.run(factMap);
-
-    Assert.assertEquals("something", ruleBook.getResult().get().getValue());
+    Assert.assertEquals("Second Fact", ruleBook.getResult().get().getValue());
     Assert.assertEquals(2, factMap.size());
     Assert.assertTrue(factMap.containsKey("fact2"));
   }
