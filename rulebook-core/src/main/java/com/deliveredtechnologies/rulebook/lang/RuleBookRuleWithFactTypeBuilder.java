@@ -13,10 +13,10 @@ import java.util.function.Predicate;
 /**
  * Created by clong on 4/3/17.
  */
-public class AddRuleBookRuleWithFactTypeBuilder<T, U> {
+public class RuleBookRuleWithFactTypeBuilder<T, U> {
   private  Rule<T, U> _rule;
 
-  AddRuleBookRuleWithFactTypeBuilder(Rule<T, U> rule) {
+  RuleBookRuleWithFactTypeBuilder(Rule<T, U> rule) {
     _rule = rule;
   }
 

@@ -5,68 +5,92 @@ import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
  * Created by clong on 3/29/17.
  */
-public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder {
+public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookBuilder.class);
 
-  private RuleBook<T> _ruleBook;
-  private Class<T> _resultType;
+  RuleBook<T> _ruleBook;
+  Class<? extends RuleBook> _ruleBookClass;
+  Class<?> _resultType = Object.class;
 
-  public static <T> RuleBookBuilder<T> create(Class<T> resultType) {
-    return new RuleBookBuilder<T>(resultType);
+  public static RuleBookBuilder<Object> create() {
+    return new RuleBookBuilder<Object>(CoRRuleBook.class);
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T> RuleBookBuilder<T> create(Class<T> resultType, Class<? extends RuleBook> ruleBookClass) {
-    try {
-      Method method = ruleBookClass.getMethod("create", Class.class);
-      return new RuleBookBuilder((RuleBook<T>)method.invoke(ruleBookClass, new Object[] {resultType}), resultType);
-    } catch (IllegalAccessException | InvocationTargetException| NoSuchMethodException ex) {
+  public static RuleBookBuilder<Object> create(Class<? extends RuleBook> ruleBookClass) {
+    return new RuleBookBuilder<Object>(ruleBookClass);
+  }
+
+  private RuleBookBuilder(Class<? extends RuleBook> ruleBookClass) {
+    _ruleBookClass = ruleBookClass;
+  }
+
+  private RuleBookBuilder(RuleBookBuilder ruleBookBuilder) {
+    _resultType = ruleBookBuilder._resultType;
+    _ruleBookClass = ruleBookBuilder._ruleBookClass;
+    newRuleBook();
+  }
+
+  private void newRuleBook() {
+    if (_ruleBookClass != null && _ruleBook == null) {
       try {
-        return new RuleBookBuilder<T>(ruleBookClass.newInstance(), resultType);
-      } catch (InstantiationException | IllegalAccessException e) {
-        LOGGER.error("Unable to create RuleBook " + ruleBookClass, e);
-        return create(resultType);
+        Method method = _ruleBookClass.getMethod("create", Class.class);
+        if (method.getParameterCount() == 0) {
+          _ruleBook = (RuleBook<T>) method.invoke(_ruleBookClass, new Object[]{});
+        } else {
+          _ruleBook = (RuleBook<T>) method.invoke(_ruleBookClass, new Object[]{_resultType});
+        }
+      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+        try {
+          _ruleBook = _ruleBookClass.newInstance();
+        } catch (IllegalAccessException | InstantiationException ex) {
+          try {
+            Constructor<?> constructor = _ruleBookClass.getConstructor(Class.class);
+            _ruleBook = (RuleBook<T>) constructor.newInstance(_resultType);
+
+          } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+            LOGGER.error("Unable to create RuleBook '" + _ruleBookClass + "'", e);
+          }
+        }
       }
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public static RuleBookBuilder create() {
-    return new RuleBookBuilder(Object.class);
-  }
-
-  private RuleBookBuilder(Class<T> resultType) {
-    this(new CoRRuleBook<T>(), resultType);
-  }
-
-  private RuleBookBuilder(RuleBook<T> ruleBook, Class<T> resultType) {
+  public <U> RuleBookBuilder<U> withResultType(Class<U> resultType) {
     _resultType = resultType;
-    _ruleBook = ruleBook;
+    return new RuleBookBuilder<>(this);
   }
 
   public RuleBookBuilder<T> withDefaultResult(T result) {
+    if (_resultType == null) {
+      throw new IllegalStateException("No result type has been specified!");
+    }
     _ruleBook.setDefaultResult(result);
     return this;
   }
 
-  public TerminatingRuleBookBuilder<T> addRule(TerminatingRuleBuilder rule) {
-    _ruleBook.addRule(rule.build());
-    return () -> _ruleBook;
+  public RuleBookRuleBuilder<T> addRule() {
+    newRuleBook();
+    return new RuleBookRuleBuilder<T>(_ruleBook);
   }
 
-  public AddRuleBookRuleBuilder<T> addRule() {
-    return new AddRuleBookRuleBuilder<T>(_ruleBook);
+  public <U> void addRule(TerminatingRuleBuilder<U, T> rule) {
+    newRuleBook();
+    _ruleBook.addRule(rule.build());
   }
 
   @Override
-  public RuleBook build() {
+  public RuleBook<T> build() {
+    if (_ruleBook == null) {
+      throw new IllegalStateException("RuleBookBuilder has completed building a RuleBook!");
+    }
     return _ruleBook;
   }
 }
