@@ -43,24 +43,24 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
   }
 
   private void newRuleBook() {
-    if (_ruleBookClass != null && _ruleBook == null) {
+    if (_ruleBook == null || !_ruleBookClass.isInstance(_ruleBook)) {
       try {
         Method method = _ruleBookClass.getMethod("create", Class.class);
-        if (method.getParameterCount() == 0) {
-          _ruleBook = (RuleBook<T>) method.invoke(_ruleBookClass, new Object[]{});
-        } else {
-          _ruleBook = (RuleBook<T>) method.invoke(_ruleBookClass, new Object[]{_resultType});
-        }
-      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+        _ruleBook = (RuleBook<T>) method.invoke(_ruleBookClass, new Object[]{_resultType});
+      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
         try {
-          _ruleBook = _ruleBookClass.newInstance();
-        } catch (IllegalAccessException | InstantiationException ex) {
+          Method method = _ruleBookClass.getMethod("create", new Class[] {});
+          _ruleBook = (RuleBook<T>) method.invoke(_ruleBookClass, new Object[]{});
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
           try {
-            Constructor<?> constructor = _ruleBookClass.getConstructor(Class.class);
-            _ruleBook = (RuleBook<T>) constructor.newInstance(_resultType);
-
-          } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            LOGGER.error("Unable to create RuleBook '" + _ruleBookClass + "'", e);
+            _ruleBook = _ruleBookClass.newInstance();
+          } catch (IllegalAccessException | InstantiationException exc) {
+            try {
+              Constructor<?> constructor = _ruleBookClass.getConstructor(Class.class);
+              _ruleBook = (RuleBook<T>) constructor.newInstance(_resultType);
+            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException exce) {
+              LOGGER.error("Unable to create RuleBook '" + _ruleBookClass + "'", exce);
+            }
           }
         }
       }
@@ -73,9 +73,7 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
   }
 
   public RuleBookBuilder<T> withDefaultResult(T result) {
-    if (_resultType == null) {
-      throw new IllegalStateException("No result type has been specified!");
-    }
+    newRuleBook();
     _ruleBook.setDefaultResult(result);
     return this;
   }
@@ -100,9 +98,7 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
 
   @Override
   public RuleBook<T> build() {
-    if (_ruleBook == null) {
-      throw new IllegalStateException("RuleBookBuilder has completed building a RuleBook!");
-    }
+    newRuleBook();
     return _ruleBook;
   }
 
