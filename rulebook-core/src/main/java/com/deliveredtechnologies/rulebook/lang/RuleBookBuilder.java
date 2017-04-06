@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook.lang;
 
+import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.slf4j.Logger;
@@ -16,9 +17,9 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookBuilder.class);
 
-  RuleBook<T> _ruleBook;
-  Class<? extends RuleBook> _ruleBookClass;
-  Class<?> _resultType = Object.class;
+  private RuleBook<T> _ruleBook;
+  private Class<? extends RuleBook> _ruleBookClass;
+  private Class<?> _resultType = Object.class;
 
   public static RuleBookBuilder<Object> create() {
     return new RuleBookBuilder<Object>(CoRRuleBook.class);
@@ -33,8 +34,8 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
   }
 
   private RuleBookBuilder(RuleBookBuilder ruleBookBuilder) {
-    _resultType = ruleBookBuilder._resultType;
-    _ruleBookClass = ruleBookBuilder._ruleBookClass;
+    _resultType = ruleBookBuilder.getResultType();
+    _ruleBookClass = ruleBookBuilder.getRuleBookClass();
     newRuleBook();
   }
 
@@ -86,11 +87,24 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     _ruleBook.addRule(rule.build());
   }
 
+  public <U> void addRule(Rule<T, U> rule) {
+    newRuleBook();
+    _ruleBook.addRule(rule);
+  }
+
   @Override
   public RuleBook<T> build() {
     if (_ruleBook == null) {
       throw new IllegalStateException("RuleBookBuilder has completed building a RuleBook!");
     }
     return _ruleBook;
+  }
+
+  Class<? extends RuleBook> getRuleBookClass() {
+    return _ruleBookClass;
+  }
+
+  Class<?> getResultType() {
+    return _resultType;
   }
 }

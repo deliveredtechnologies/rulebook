@@ -26,7 +26,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   }
 
   public static RuleBuilder<Object, Object> create() {
-    return new RuleBuilder<Object, Object>(GoldenRule.class);
+    RuleBuilder<Object, Object> rule = new RuleBuilder<>(GoldenRule.class);
+    rule.setFactType(Object.class);
+    return rule;
   }
 
   private RuleBuilder(Class<? extends Rule> ruleClass) {
