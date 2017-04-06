@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook.lang;
 
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
@@ -9,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by clong on 3/29/17.
@@ -34,8 +37,8 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
   }
 
   private RuleBookBuilder(RuleBookBuilder ruleBookBuilder) {
-    _resultType = ruleBookBuilder.getResultType();
-    _ruleBookClass = ruleBookBuilder.getRuleBookClass();
+    _resultType = ruleBookBuilder._resultType;
+    _ruleBookClass = ruleBookBuilder._ruleBookClass;
     newRuleBook();
   }
 
@@ -77,19 +80,22 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     return this;
   }
 
-  public RuleBookRuleBuilder<T> addRule() {
+  public RuleBookBuilder<T> addRule(Consumer<RuleBookRuleBuilder<T>> consumer) {
     newRuleBook();
-    return new RuleBookRuleBuilder<T>(_ruleBook);
+    consumer.accept(new RuleBookRuleBuilder<>(_ruleBook));
+    return this;
   }
 
-  public <U> void addRule(TerminatingRuleBuilder<U, T> rule) {
+  public <U> RuleBookBuilder<T> addRule(TerminatingRuleBuilder<U, T> rule) {
     newRuleBook();
     _ruleBook.addRule(rule.build());
+    return this;
   }
 
-  public <U> void addRule(Rule<T, U> rule) {
+  public <U> RuleBookBuilder<T> addRule(Rule<U, T> rule) {
     newRuleBook();
     _ruleBook.addRule(rule);
+    return this;
   }
 
   @Override
@@ -100,11 +106,4 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     return _ruleBook;
   }
 
-  Class<? extends RuleBook> getRuleBookClass() {
-    return _ruleBookClass;
-  }
-
-  Class<?> getResultType() {
-    return _resultType;
-  }
 }
