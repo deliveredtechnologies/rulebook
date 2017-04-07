@@ -8,7 +8,7 @@ import com.deliveredtechnologies.rulebook.model.RuleBook;
 import java.util.Optional;
 
 /**
- * Created by clong on 4/6/17.
+ * A sample RuleBook with a private constructor.
  */
 public class SampleRuleBookWithPrivateConstructor<T> implements RuleBook<T> {
 

@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 4/6/17.
+ * A sample rule with a 2 argument constructor.
  */
 public class SampleRuleWithFactAndResultTypes<T, U> implements Rule<T, U> {
 

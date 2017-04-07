@@ -16,7 +16,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Created by clong on 3/28/17.
+ * Tests for {@link RuleBuilder}.
  */
 public class RuleBuilderTest {
   @Test

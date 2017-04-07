@@ -9,7 +9,7 @@ import com.deliveredtechnologies.rulebook.model.RuleBook;
 import java.util.Optional;
 
 /**
- * Created by clong on 4/2/17.
+ * A sample RuleBook with a single argument constructor.
  */
 public class SampleRuleBookWithOneArgConstructor<T> implements RuleBook<T> {
 

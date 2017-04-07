@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 4/6/17.
+ * A sample Rule with a default no-arg constructor.
  */
 public class SampleRuleDefaultConstructor<T, U> implements Rule<T, U> {
   @Override
