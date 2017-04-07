@@ -132,6 +132,9 @@ public class GoldenRule<T, U> implements Rule<T, U> {
             usingFacts = typeFilteredFacts;
           }
 
+          //setup a dummy Result just in case a Result is used
+          Result result = new Result();
+
           //invoke the action
           Stream.of(action.getClass().getMethods())
                   .filter(method -> method.getName().equals("accept"))
@@ -142,8 +145,11 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                       method.invoke(action,
                               ArrayUtils.combine(
                                       new Object[]{new TypeConvertibleFactMap<>(usingFacts)},
-                                      new Object[]{getResult().orElseGet(() -> null)},
+                                      new Object[]{getResult().orElseGet(() -> result)},
                                       method.getParameterCount()));
+                      if (result.getValue() != null) {
+                        _result = result;
+                      }
                     } catch (IllegalAccessException | InvocationTargetException err) {
                       LOGGER.error("Error invoking action on " + action.getClass(), err);
                     }

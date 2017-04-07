@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.*;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
+import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,14 +40,34 @@ public class RuleBuilderTest {
             .withFactType(String.class)
             .given("fact1", "First Fact")
             .given("fact2", "Second Fact")
+            .given("fact3", "Third Fact")
             .when(facts -> facts.getValue("fact1").equals("First Fact"))
             .using("fact1")
+            .using("fact3")
             .then(factMap::putAll)
             .build();
     rule.invokeAction();
 
-    Assert.assertEquals(1, factMap.size());
-    Assert.assertEquals("First Fact", factMap.getOne());
+    Assert.assertEquals(2, factMap.size());
+    Assert.assertEquals("First Fact", factMap.getValue("fact1"));
+    Assert.assertEquals("Third Fact", factMap.getValue("fact3"));
+  }
+
+  @Test
+  public void ruleBuilderThenWithResultAfterUsingMethodShouldRestrictThenFacts() {
+    Rule<String, String> rule = RuleBuilder.create()
+            .withFactType(String.class)
+            .withResultType(String.class)
+            .given("fact1", "First Fact")
+            .given("fact2", "Second Fact")
+            .given("fact3", "Third Fact")
+            .when(facts -> facts.getValue("fact1").equals("First Fact"))
+            .using("fact1")
+            .then((facts, result) -> result.setValue(facts.getOne()))
+            .build();
+    rule.invokeAction();
+
+    Assert.assertEquals("First Fact", rule.getResult().get().getValue());
   }
 
   @Test
@@ -100,4 +121,58 @@ public class RuleBuilderTest {
 
     verify(consumer, times(3)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
+
+  @Test
+  public void ruleBuilderShouldBuildRulesWithConstructorsHavingTwoOrFewerArgs() {
+    Rule rule1 = RuleBuilder.create(SampleRuleDefaultConstructor.class).build();
+    Rule rule2 = RuleBuilder.create(SampleRuleWithFactAndResultTypes.class).build();
+    Rule rule3 = RuleBuilder.create(SampleRuleWithThreeArgConstructor.class).build();
+    Rule rule4 = RuleBuilder.create(GoldenRule.class).build();
+
+    Assert.assertNotNull(rule1);
+    Assert.assertNotNull(rule2);
+    Assert.assertNull(rule3);
+    Assert.assertNotNull(rule4);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBuilderShouldThrowAnExceptionWhenGivenNameValueIsCalledOnInvalidRule() {
+    RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
+            .withFactType(String.class)
+            .given("fact", "Fact");
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBuilderShouldThrowAnExceptionWhenGivenFactIsCalledOnInvalidRule() {
+    RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
+            .withFactType(String.class)
+            .given(new Fact<String>("fact", "Fact"));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBuilderShouldThrowAnExceptionWhenGivenFactMapIsCalledOnInvalidRule() {
+    RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
+            .withFactType(String.class)
+            .given(new FactMap());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBuilderShouldThrowAnExceptionOnWhenMethodCallWithInvalidRule() {
+    RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
+            .when(facts -> true);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBuilderShouldThrowAnExceptionOnThenMethodCallWithInvalidRule() {
+    RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
+            .then(facts -> facts.setValue("fact", "Fact"));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBuilderShouldThrowAnExceptionOnThenMethodCallWithResultWithInvalidRule() {
+    RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
+            .then((facts, result) -> facts.setValue("fact", "Fact"));
+  }
+
+
 }

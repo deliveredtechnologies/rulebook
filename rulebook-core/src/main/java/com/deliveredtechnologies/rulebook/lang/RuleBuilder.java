@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -20,6 +20,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   private Class<? extends Rule> _ruleClass;
   private Class<T> _factType;
   private Class<U> _resultType;
+  private Optional<Result<U>> _result = Optional.empty();
 
   public static RuleBuilder<Object, Object> create(Class<? extends Rule> ruleClass) {
     return new RuleBuilder<Object, Object>(ruleClass);
@@ -51,33 +52,47 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
 
   public GivenRuleBuilder<T, U> given(String name, T value) {
     Rule<T, U> rule = newRule();
-    return rule != null ? new GivenRuleBuilder<T, U>(rule, new Fact<T>(name, value)) : null;
+    if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new GivenRuleBuilder<T, U>(rule, new Fact<T>(name, value));
   }
 
   @SafeVarargs
   public final GivenRuleBuilder<T, U> given(NameValueReferable... facts) {
     Rule<T, U> rule = newRule();
-    return rule != null ? new GivenRuleBuilder<T, U>(rule, facts) : null;
+    if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new GivenRuleBuilder<T, U>(rule, facts);
   }
 
   public final GivenRuleBuilder<T, U> given(NameValueReferableMap facts) {
-    Rule<T, U> rule = newRule();
-    return rule != null ? new GivenRuleBuilder<T, U>(rule, facts) : null;
+    Rule<T, U> rule = newRule();if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new GivenRuleBuilder<T, U>(rule, facts);
   }
 
   public WhenRuleBuilder<T, U> when(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) {
-    Rule<T, U> rule = newRule();
-    return rule != null ? new WhenRuleBuilder<T, U>(rule, condition) : null;
+    Rule<T, U> rule = newRule();if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new WhenRuleBuilder<T, U>(rule, condition);
   }
 
   public ThenRuleBuilder<T, U> then(Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
-    Rule<T, U> rule = newRule();
-    return rule != null ? new ThenRuleBuilder<T, U>(rule, action) : null;
+    Rule<T, U> rule = newRule();if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new ThenRuleBuilder<T, U>(rule, action);
   }
 
   public ThenRuleBuilder<T, U> then(BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
-    Rule<T, U> rule = newRule();
-    return rule != null ? new ThenRuleBuilder<T, U>(rule, action) : null;
+    Rule<T, U> rule = newRule();if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new ThenRuleBuilder<T, U>(rule, action);
   }
 
   @Override
@@ -87,34 +102,22 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
 
   private Rule<T, U> newRule() {
     try {
-      Method method = _ruleClass.getMethod("create", Class.class);
-      switch (method.getParameterCount()) {
-        case 0:
-          return (Rule<T, U>) method.invoke(_ruleClass, new Object[] {});
-        case 1:
-          return (Rule<T, U>) method.invoke(_ruleClass, new Object[] {_factType});
-        case 2:
-          return (Rule<T, U>) method.invoke(_ruleClass, new Object[] {_factType, _resultType});
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      try {
-        Constructor<?> constructor = _ruleClass.getConstructor(new Class[] {});
-        return (Rule<T, U>)constructor.newInstance(new Object[]{});
-      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
-        //intentionally left blank
-      }
-      try {
-        Constructor<?> constructor = _ruleClass.getConstructor(Class.class);
-        return (Rule<T, U>)constructor.newInstance(new Object[] {_factType});
-      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
-        //intentionally left blank
-      }
-      try {
-        Constructor<?> constructor = _ruleClass.getConstructor(Class.class, Class.class);
-        return (Rule<T, U>)constructor.newInstance(new Object[]{_factType, _resultType});
-      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
-        LOGGER.error("Unable to create an instance of the specified Rule class '" + _ruleClass + "'");
-      }
+      Constructor<?> constructor = _ruleClass.getConstructor(new Class[] {});
+      return (Rule<T, U>)constructor.newInstance(new Object[]{});
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
+      LOGGER.debug("Attempt to use the default constructor faile for " + _ruleClass, ex);
+    }
+    try {
+      Constructor<?> constructor = _ruleClass.getConstructor(Class.class);
+      return (Rule<T, U>)constructor.newInstance(new Object[] {_factType});
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
+      LOGGER.debug("Attempt to use a single argument constrcutor for specifying the Fact type failed", ex);
+    }
+    try {
+      Constructor<?> constructor = _ruleClass.getConstructor(Class.class, Class.class);
+      return (Rule<T, U>)constructor.newInstance(new Object[]{_factType, _resultType});
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
+      LOGGER.error("Unable to create an instance of the specified Rule class '" + _ruleClass + "'");
     }
     return null;
   }
