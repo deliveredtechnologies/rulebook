@@ -62,6 +62,9 @@ public class RuleBookBuilderTest {
                     .withFactType(String.class)
                     .using("fact2")
                     .then(facts -> facts.setValue("fact22", "Second " + facts.getOne())))
+            .addRule(rule -> rule.withFactType(Integer.class)
+                    .when(facts -> facts.getOne() == 10)
+                    .then((facts, result) -> result.setValue("Erin")))
             .build();
 
     factMap.setValue("fact2", "Second Fact!");
