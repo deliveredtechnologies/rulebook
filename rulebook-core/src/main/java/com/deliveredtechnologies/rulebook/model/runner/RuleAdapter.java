@@ -1,7 +1,6 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.*;
-import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
@@ -15,7 +14,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Collection;
+import java.util.Set;
+import java.util.Map;
+import java.util.ArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -23,7 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.*;
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 
 /**
  * Created by clong on 3/28/17.
