@@ -123,6 +123,51 @@ public class RuleBuilderTest {
   }
 
   @Test
+  public void ruleBuilderShouldAllowForChainedThenMethods() {
+    Rule<String, String> rule = RuleBuilder.create()
+            .withFactType(String.class)
+            .withResultType(String.class)
+            .given("fact1", "Fact1")
+            .then(facts -> facts.setValue("fact2", "Fact2"))
+            .then(facts -> facts.setValue("fact3", "Fact3"))
+            .then((facts, result) -> result.setValue(facts.getValue("fact2") + facts.getValue("fact3")))
+            .using("fact1")
+            .then((facts, result) -> result.setValue(result.getValue() + facts.getOne()))
+            .build();
+    rule.invokeAction();
+
+    Assert.assertEquals(rule.getResult().get().getValue(), "Fact2Fact3Fact1");
+  }
+
+  @Test
+  public void ruleBuilderShouldAllowThenWithResultsToFollowGiven() {
+    Rule<String, String> rule = RuleBuilder.create()
+            .withFactType(String.class)
+            .withResultType(String.class)
+            .given("fact1", "Fact1")
+            .then((facts, result) -> result.setValue(facts.getOne()))
+            .build();
+    rule.invokeAction();
+
+    Assert.assertEquals("Fact1", rule.getResult().get().getValue());
+  }
+
+  @Test
+  public void ruleBuilderShouldAllowUsingToFollowGiven() {
+    FactMap<String> factMap = new FactMap<>();
+    Rule rule = RuleBuilder.create()
+            .withFactType(String.class)
+            .given("fact1", "Fact1")
+            .given("fact2", "Fact2")
+            .using("fact1")
+            .then(factMap::putAll)
+            .build();
+    rule.invokeAction();
+
+    Assert.assertEquals(factMap.getOne(), "Fact1");
+  }
+
+  @Test
   public void ruleBuilderShouldBuildRulesWithConstructorsHavingTwoOrFewerArgs() {
     Rule rule1 = RuleBuilder.create(SampleRuleDefaultConstructor.class).build();
     Rule rule2 = RuleBuilder.create(SampleRuleWithFactAndResultTypes.class).build();
@@ -173,6 +218,4 @@ public class RuleBuilderTest {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .then((facts, result) -> facts.setValue("fact", "Fact"));
   }
-
-
 }

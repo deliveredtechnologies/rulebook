@@ -14,10 +14,6 @@ import java.util.function.Predicate;
 public class GivenRuleBuilder<T, U> {
   Rule<T, U> _rule;
 
-  GivenRuleBuilder(Rule<T, U> rule) {
-    _rule = rule;
-  }
-
   GivenRuleBuilder(Rule<T, U> rule, NameValueReferableMap facts) {
     _rule = rule;
     given(facts);
