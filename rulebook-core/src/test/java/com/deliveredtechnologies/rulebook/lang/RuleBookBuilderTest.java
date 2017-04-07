@@ -1,7 +1,6 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
@@ -76,7 +75,12 @@ public class RuleBookBuilderTest {
   @Test
   public void ruleBookBuilderShouldCreateSpecifiedType() {
     Assert.assertNotNull(RuleBookBuilder.create(CoRRuleBook.class).build());
-    Assert.assertNotNull(RuleBookBuilder.create(SampleRuleBook.class).build());
+    Assert.assertNotNull(RuleBookBuilder.create(SampleRuleBookWithOneArgConstructor.class).build());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void ruleBookBuilderShouldThrowExceptionOnRuleBookThatCantBeCreated() {
+    RuleBookBuilder.create(SampleRuleBookWithPrivateConstructor.class).build();
   }
 
   @Test

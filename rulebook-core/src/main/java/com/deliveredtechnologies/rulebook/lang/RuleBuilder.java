@@ -68,28 +68,32 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   }
 
   public final GivenRuleBuilder<T, U> given(NameValueReferableMap facts) {
-    Rule<T, U> rule = newRule();if (rule == null) {
+    Rule<T, U> rule = newRule();
+    if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
     return new GivenRuleBuilder<T, U>(rule, facts);
   }
 
   public WhenRuleBuilder<T, U> when(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) {
-    Rule<T, U> rule = newRule();if (rule == null) {
+    Rule<T, U> rule = newRule();
+    if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
     return new WhenRuleBuilder<T, U>(rule, condition);
   }
 
   public ThenRuleBuilder<T, U> then(Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
-    Rule<T, U> rule = newRule();if (rule == null) {
+    Rule<T, U> rule = newRule();
+    if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
     return new ThenRuleBuilder<T, U>(rule, action);
   }
 
   public ThenRuleBuilder<T, U> then(BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
-    Rule<T, U> rule = newRule();if (rule == null) {
+    Rule<T, U> rule = newRule();
+    if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
     return new ThenRuleBuilder<T, U>(rule, action);

@@ -1,6 +1,5 @@
 package com.deliveredtechnologies.rulebook.lang;
 
-import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
@@ -9,9 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Created by clong on 3/29/17.
@@ -46,12 +43,12 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     if (_ruleBook == null) {
       try {
         _ruleBook = _ruleBookClass.newInstance();
-      } catch (IllegalAccessException | InstantiationException exc) {
+      } catch (IllegalAccessException | InstantiationException e) {
         try {
           Constructor<?> constructor = _ruleBookClass.getConstructor(Class.class);
           _ruleBook = (RuleBook<T>) constructor.newInstance(_resultType);
-        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException exce) {
-          LOGGER.error("Unable to create RuleBook '" + _ruleBookClass + "'", exce);
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ex) {
+          throw new IllegalStateException("RuleBook of class " + _ruleBookClass + " can not be instantiated", ex);
         }
       }
     }
