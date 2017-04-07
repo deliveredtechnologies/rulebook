@@ -12,6 +12,11 @@ import java.util.Optional;
  * Created by clong on 4/2/17.
  */
 public class SampleRuleBook<T> implements RuleBook<T> {
+
+  public SampleRuleBook(Class<T> resultType) {
+
+  }
+
   @Override
   public void addRule(Rule rule) {
 

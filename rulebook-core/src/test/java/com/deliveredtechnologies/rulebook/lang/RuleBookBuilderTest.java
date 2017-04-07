@@ -1,7 +1,10 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferable;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.junit.Assert;
@@ -45,11 +48,63 @@ public class RuleBookBuilderTest {
   }
 
   @Test
+  public void ruleBookBuilderShouldChainMultipleRulesWithResult() {
+    NameValueReferableMap factMap = new FactMap();
+    RuleBook<String> ruleBook = RuleBookBuilder.create().withResultType(String.class).withDefaultResult("initial value")
+            .addRule(rule -> rule
+                    .withFactType(String.class)
+                    .then(facts -> facts.setValue("fact", "FACT")))
+            .addRule(rule -> rule
+                    .withRuleType(GoldenRule.class)
+                    .withNoSpecifiedFactType()
+                    .when(facts -> true)
+                    .then((facts, result) -> result.setValue("RESULT")))
+            .addRule(rule -> rule
+                    .withFactType(String.class)
+                    .using("fact2")
+                    .then(facts -> facts.setValue("fact22", "Second " + facts.getOne())))
+            .build();
+
+    factMap.setValue("fact2", "Second Fact!");
+    ruleBook.run(factMap);
+    Assert.assertTrue(ruleBook.getResult().isPresent());
+    Assert.assertEquals("RESULT", ruleBook.getResult().get().getValue());
+    Assert.assertEquals("FACT", factMap.getValue("fact"));
+    Assert.assertEquals("Second Second Fact!", factMap.getValue("fact22"));
+  }
+
+  @Test
   public void ruleBookBuilderShouldCreateSpecifiedType() {
     Assert.assertNotNull(RuleBookBuilder.create(CoRRuleBook.class).build());
     Assert.assertNotNull(RuleBookBuilder.create(SampleRuleBook.class).build());
-    Assert.assertNotNull(RuleBookBuilder.create(SampleRuleBook1.class).build());
-    Assert.assertNull(RuleBookBuilder.create(SampleRuleBook2.class).build());
-    Assert.assertNotNull(RuleBookBuilder.create(SampleRuleBook3.class).build());
+  }
+
+  @Test
+  public void ruleBookBuilderShouldAddRules() {
+    NameValueReferableMap<String> factMap = new FactMap<>();
+    RuleBook ruleBook = RuleBookBuilder.create().addRule(
+        RuleBuilder.create().withFactType(String.class)
+            .then(facts -> facts.setValue("fact1", "Fact One"))
+            .build())
+        .build();
+
+    ruleBook.run(factMap);
+
+    Assert.assertEquals(1, factMap.size());
+    Assert.assertTrue(factMap.containsKey("fact1"));
+  }
+
+  @Test
+  public void ruleBookBuilderShouldAddRuleBuilderRules() {
+    NameValueReferableMap<String> factMap = new FactMap<>();
+    RuleBook ruleBook = RuleBookBuilder.create().addRule(
+            RuleBuilder.create().withFactType(String.class)
+                    .then(facts -> facts.setValue("fact1", "Fact One")))
+            .build();
+
+    ruleBook.run(factMap);
+
+    Assert.assertEquals(1, factMap.size());
+    Assert.assertTrue(factMap.containsKey("fact1"));
   }
 }

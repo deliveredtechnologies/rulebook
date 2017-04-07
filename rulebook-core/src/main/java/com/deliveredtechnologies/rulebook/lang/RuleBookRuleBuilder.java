@@ -3,8 +3,6 @@ package com.deliveredtechnologies.rulebook.lang;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
-import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
-
 
 public class RuleBookRuleBuilder<U> {
   private RuleBook<U> _ruleBook;
@@ -12,11 +10,6 @@ public class RuleBookRuleBuilder<U> {
 
   RuleBookRuleBuilder(RuleBook<U> ruleBook) {
     _ruleBook = ruleBook;
-  }
-
-  public <T> RuleBookRuleWithFactTypeBuilder<T, U> withRule(Rule<T, U> rule) {
-    _ruleBook.addRule(rule);
-    return new RuleBookRuleWithFactTypeBuilder<>(rule);
   }
 
   public RuleBookRuleBuilder<U> withRuleType(Class<? extends Rule> ruleType) {
@@ -31,8 +24,6 @@ public class RuleBookRuleBuilder<U> {
   }
 
   public RuleBookRuleWithFactTypeBuilder<Object, U> withNoSpecifiedFactType() {
-    Rule<Object, U> rule = (Rule<Object, U>)RuleBuilder.create(_ruleClass).build();
-    _ruleBook.addRule(rule);
-    return new RuleBookRuleWithFactTypeBuilder<>(rule);
+    return withFactType(Object.class);
   }
 }
