@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import static org.mockito.Matchers.any;
 
 /**
- * Created by clong on 4/5/17.
+ * Tests for {@link RuleBookBuilder}.
  */
 public class RuleBookBuilderTest {
   @Test
@@ -62,9 +62,6 @@ public class RuleBookBuilderTest {
                     .withFactType(String.class)
                     .using("fact2")
                     .then(facts -> facts.setValue("fact22", "Second " + facts.getOne())))
-            .addRule(rule -> rule.withFactType(Integer.class)
-                    .when(facts -> facts.getOne() == 10)
-                    .then((facts, result) -> result.setValue("Erin")))
             .build();
 
     factMap.setValue("fact2", "Second Fact!");
@@ -94,20 +91,6 @@ public class RuleBookBuilderTest {
             .then(facts -> facts.setValue("fact1", "Fact One"))
             .build())
         .build();
-
-    ruleBook.run(factMap);
-
-    Assert.assertEquals(1, factMap.size());
-    Assert.assertTrue(factMap.containsKey("fact1"));
-  }
-
-  @Test
-  public void ruleBookBuilderShouldAddRuleBuilderRules() {
-    NameValueReferableMap<String> factMap = new FactMap<>();
-    RuleBook ruleBook = RuleBookBuilder.create().addRule(
-            RuleBuilder.create().withFactType(String.class)
-                    .then(facts -> facts.setValue("fact1", "Fact One")))
-            .build();
 
     ruleBook.run(factMap);
 

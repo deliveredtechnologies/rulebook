@@ -71,12 +71,6 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     return this;
   }
 
-  public <U> RuleBookBuilder<T> addRule(TerminatingRuleBuilder<U, T> rule) {
-    newRuleBook();
-    _ruleBook.addRule(rule.build());
-    return this;
-  }
-
   public <U> RuleBookBuilder<T> addRule(Rule<U, T> rule) {
     newRuleBook();
     _ruleBook.addRule(rule);
