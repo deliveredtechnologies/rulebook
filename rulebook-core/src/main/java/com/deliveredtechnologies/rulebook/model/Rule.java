@@ -24,7 +24,7 @@ public interface Rule<T, U> {
   Predicate<NameValueReferableTypeConvertibleMap<T>> getCondition();
   RuleState getRuleState();
   List<Object> getActions();
-  boolean invokeAction();
+  boolean invoke();
   void setResult(Result<U> result);
   Optional<Result<U>> getResult();
 }

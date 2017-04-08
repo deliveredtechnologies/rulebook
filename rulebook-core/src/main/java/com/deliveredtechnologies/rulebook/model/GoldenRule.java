@@ -106,7 +106,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public boolean invokeAction() {
+  public boolean invoke() {
     try {
       //only use facts of the specified type
       NameValueReferableMap<T> typeFilteredFacts = new FactMap<T>((Map<String, NameValueReferable<T>>) _facts.values().stream()

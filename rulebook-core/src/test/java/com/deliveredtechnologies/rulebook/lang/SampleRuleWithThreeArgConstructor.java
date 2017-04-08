@@ -79,7 +79,7 @@ public class SampleRuleWithThreeArgConstructor<T, U> implements Rule<T, U> {
   }
 
   @Override
-  public boolean invokeAction() {
+  public boolean invoke() {
     return false;
   }
 

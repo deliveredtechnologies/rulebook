@@ -1,7 +1,6 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.*;
-import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import org.junit.Assert;
@@ -28,7 +27,7 @@ public class RuleBuilderTest {
             .when(facts -> facts.getValue("fact1").equals("First Fact"))
             .then(consumer)
             .build();
-    rule.invokeAction();
+    rule.invoke();
 
     verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
@@ -46,7 +45,7 @@ public class RuleBuilderTest {
             .using("fact3")
             .then(factMap::putAll)
             .build();
-    rule.invokeAction();
+    rule.invoke();
 
     Assert.assertEquals(2, factMap.size());
     Assert.assertEquals("First Fact", factMap.getValue("fact1"));
@@ -65,7 +64,7 @@ public class RuleBuilderTest {
             .using("fact1")
             .then((facts, result) -> result.setValue(facts.getOne()))
             .build();
-    rule.invokeAction();
+    rule.invoke();
 
     Assert.assertEquals("First Fact", rule.getResult().get().getValue());
   }
@@ -77,8 +76,8 @@ public class RuleBuilderTest {
 
     Rule rule1 = RuleBuilder.create().then(consumer).build();
     Rule rule2 = RuleBuilder.create().then(biConsumer).build();
-    rule1.invokeAction();
-    rule2.invokeAction();
+    rule1.invoke();
+    rule2.invoke();
 
     verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
     verify(biConsumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class), any(Result.class));
@@ -91,7 +90,7 @@ public class RuleBuilderTest {
     when(condition.test(any(NameValueReferableTypeConvertibleMap.class))).thenReturn(true);
 
     Rule rule = RuleBuilder.create().when(condition).then(consumer).build();
-    rule.invokeAction();
+    rule.invoke();
 
     verify(condition, times(1)).test(any(NameValueReferableTypeConvertibleMap.class));
     verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
@@ -115,9 +114,9 @@ public class RuleBuilderTest {
             .when(facts -> facts.containsKey("fact1"))
             .then(consumer).build();
 
-    rule1.invokeAction();
-    rule2.invokeAction();
-    rule3.invokeAction();
+    rule1.invoke();
+    rule2.invoke();
+    rule3.invoke();
 
     verify(consumer, times(3)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
@@ -134,7 +133,7 @@ public class RuleBuilderTest {
             .using("fact1")
             .then((facts, result) -> result.setValue(result.getValue() + facts.getOne()))
             .build();
-    rule.invokeAction();
+    rule.invoke();
 
     Assert.assertEquals(rule.getResult().get().getValue(), "Fact2Fact3Fact1");
   }
@@ -147,7 +146,7 @@ public class RuleBuilderTest {
             .given("fact1", "Fact1")
             .then((facts, result) -> result.setValue(facts.getOne()))
             .build();
-    rule.invokeAction();
+    rule.invoke();
 
     Assert.assertEquals("Fact1", rule.getResult().get().getValue());
   }
@@ -162,7 +161,7 @@ public class RuleBuilderTest {
             .using("fact1")
             .then(factMap::putAll)
             .build();
-    rule.invokeAction();
+    rule.invoke();
 
     Assert.assertEquals(factMap.getOne(), "Fact1");
   }

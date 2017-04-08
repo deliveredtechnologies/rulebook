@@ -7,6 +7,7 @@ import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import com.deliveredtechnologies.rulebook.runner.*;
+import com.deliveredtechnologies.rulebook.util.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
 public class RuleBookRunner implements RuleBook {
@@ -70,9 +72,14 @@ public class RuleBookRunner implements RuleBook {
       List<Class<?>> classes = findRuleClassesInPackage(_package);
       for (Class<?> rule : classes) {
         try {
-          _ruleBook.addRule(new RuleAdapter(rule.newInstance()));
+          getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field -> {
+              if (!getResult().isPresent()) {
+                setDefaultResult(new Object());
+              }
+          });
+          addRule(new RuleAdapter(rule.newInstance()));
         } catch (IllegalAccessException | InstantiationException ex) {
-          LOGGER.error("Unable to create instance of rule using '" + rule + "'", ex);
+          LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
         }
       }
     } catch (IOException | InvalidPathException ex) {
@@ -114,7 +121,9 @@ public class RuleBookRunner implements RuleBook {
                 }
               });
       classes.sort(
-              (class1, class2) -> getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class1).order() - getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class2).order());
+              (class1, class2) ->
+                      getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class1).order() -
+                      getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class2).order());
 
       return classes;
     } catch (URISyntaxException ex) {

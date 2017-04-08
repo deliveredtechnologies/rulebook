@@ -135,14 +135,25 @@ public class RuleAdapter implements Rule {
   @Override
   @SuppressWarnings("unchecked")
   public List<Object> getActions() {
+    if (_rule.getActions().size() < 1) {
+      List<Object> actionList = new ArrayList<>();
+      for (Method actionMethod : getAnnotatedMethods(Then.class, _pojoRule.getClass())) {
+        actionMethod.setAccessible(true);
+        Object then = getThenMethodAsBiConsumer(actionMethod).map(Object.class::cast)
+                .orElse(getThenMethodAsConsumer(actionMethod).orElse(factMap -> {
+                }));
+        actionList.add(then);
+      }
+      _rule.getActions().addAll(actionList);
+    }
     return _rule.getActions();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public boolean invokeAction() {
-    addActions();
-    return _rule.invokeAction();
+  public boolean invoke() {
+    getActions();
+    return _rule.invoke();
   }
 
   @Override
@@ -153,7 +164,7 @@ public class RuleAdapter implements Rule {
 
   @Override
   public Optional<Result> getResult() {
-    return null;
+    return _rule.getResult();
   }
 
   /**
@@ -212,26 +223,6 @@ public class RuleAdapter implements Rule {
       } catch (Exception ex) {
         LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
                 + _pojoRule.getClass() + "'");
-      }
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private void addActions() {
-    if ((_rule.getActions()).size() < 1) {
-      List<Object> actionList = new ArrayList<>();
-      for (Method actionMethod : getAnnotatedMethods(Then.class, _pojoRule.getClass())) {
-        actionMethod.setAccessible(true);
-        Object then = getThenMethodAsBiConsumer(actionMethod).map(Object.class::cast)
-                .orElse(getThenMethodAsConsumer(actionMethod).orElse(factMap -> { }));
-        actionList.add(then);
-      }
-      for (Object action : actionList) {
-        if (action instanceof Consumer) {
-          _rule.addAction((Consumer<FactMap>) action);
-        } else {
-          _rule.addAction((BiConsumer<FactMap, Result>) action);
-        }
       }
     }
   }

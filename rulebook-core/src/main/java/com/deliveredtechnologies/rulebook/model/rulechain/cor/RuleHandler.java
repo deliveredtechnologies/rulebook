@@ -19,7 +19,7 @@ public class RuleHandler implements Handler<Rule> {
   @Override
   @SuppressWarnings("unchecked")
   public void handleRequest() {
-    boolean actionResult = _rule.invokeAction();
+    boolean actionResult = _rule.invoke();
     if (!actionResult || _rule.getRuleState() == RuleState.NEXT) {
       getSuccessor().ifPresent(handler -> {
         handler.getDelegate().setFacts(_rule.getFacts());
