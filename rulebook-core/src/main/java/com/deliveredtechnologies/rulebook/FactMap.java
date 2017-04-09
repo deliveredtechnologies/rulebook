@@ -1,6 +1,10 @@
 package com.deliveredtechnologies.rulebook;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Collection;
 
 /**
  * A FactMap decorates {@link Map}; it stores facts by their name and provides convenience methods for

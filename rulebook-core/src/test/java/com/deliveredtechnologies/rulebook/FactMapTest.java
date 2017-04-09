@@ -2,8 +2,11 @@ package com.deliveredtechnologies.rulebook;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests for {@link FactMap}.
@@ -149,5 +152,58 @@ public class FactMapTest {
     Assert.assertEquals(20.0, fact4dbl, 0);
     Assert.assertEquals(50.0, fact5dbl, 0);
     Assert.assertNull(factMap.getDblVal("doesNotExist"));
+  }
+
+  @Test
+  public void isEmptyShouldDelegateToMap() {
+    Map<String, Object> map = Mockito.mock(Map.class);
+    FactMap factMap = new FactMap(map);
+    Mockito.when(map.isEmpty()).thenReturn(true);
+
+    Assert.assertTrue(factMap.isEmpty());
+    Mockito.verify(map, Mockito.times(1)).isEmpty();
+  }
+
+  @Test
+  public void containsValueShouldDelegateToMap() {
+    Map<String, Object> map = Mockito.mock(Map.class);
+    FactMap factMap = new FactMap(map);
+    Mockito.when(map.containsValue("value1")).thenReturn(true);
+    Mockito.when(map.containsValue("value2")).thenReturn(false);
+
+    Assert.assertTrue(factMap.containsValue("value1"));
+    Assert.assertFalse(factMap.containsValue("value2"));
+    Mockito.verify(map, Mockito.times(1)).containsValue("value1");
+    Mockito.verify(map, Mockito.times(1)).containsValue("value2");
+  }
+
+  @Test
+  public void removeShouldDelegateToMapAndReturnFact() {
+    Map<String, Object> map = Mockito.mock(Map.class);
+    NameValueReferable fact = new Fact("key", "value");
+    FactMap factMap = new FactMap(map);
+    Mockito.when(map.remove("key")).thenReturn(fact);
+
+    Assert.assertEquals(factMap.remove("key"), fact);
+    Mockito.verify(map, Mockito.times(1)).remove("key");
+  }
+
+  @Test
+  public void removeShouldDelegateToMapAndReturnNullIfMapReturnsNull() {
+    Map<String, Object> map = Mockito.mock(Map.class);
+    FactMap factMap = new FactMap(map);
+    Mockito.when(map.remove("key")).thenReturn(null);
+
+    Assert.assertNull(factMap.remove("key"));
+    Mockito.verify(map, Mockito.times(1)).remove("key");
+  }
+
+  @Test
+  public void clearShouldDelegateToMap() {
+    Map<String, Object> map = Mockito.mock(Map.class);
+    FactMap factMap = new FactMap(map);
+
+    factMap.clear();
+    Mockito.verify(map, Mockito.times(1)).clear();
   }
 }

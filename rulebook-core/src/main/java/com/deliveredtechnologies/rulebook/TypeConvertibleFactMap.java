@@ -4,6 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A decorator for NameValueReferableMap that adds common type conversions.
+ * @param <T> the type of objects contained in the NameValueReferable objects
+ */
 public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConvertibleMap<T> {
 
   NameValueReferableMap<T> _map;

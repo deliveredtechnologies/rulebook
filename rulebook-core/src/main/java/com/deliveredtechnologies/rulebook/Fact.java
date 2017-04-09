@@ -67,4 +67,18 @@ public class Fact<T> implements NameValueReferable<T> {
   public String toString() {
     return _value.toString();
   }
+
+  @Override
+  public int hashCode() {
+    return (_name.hashCode() + _value.hashCode()) % Integer.MAX_VALUE;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Fact) {
+      Fact fact = (Fact)obj;
+      return fact.getName().equals(_name) && fact.getValue().equals(_value);
+    }
+    return false;
+  }
 }

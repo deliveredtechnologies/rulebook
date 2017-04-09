@@ -53,6 +53,6 @@ public class RuleBookRunnerTest {
 
     Assert.assertEquals("So Factual Too!", fact1.getValue());
     Assert.assertEquals("So Factual!", fact2.getValue());
-    Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().getValue());
+    Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
   }
 }
