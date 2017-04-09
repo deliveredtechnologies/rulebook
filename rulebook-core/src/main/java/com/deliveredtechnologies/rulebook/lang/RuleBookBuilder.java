@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
 /**
- * Created by clong on 3/29/17.
+ * The initial builder used to build a RuleBook
  */
 public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
 
@@ -21,10 +21,19 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
   private Class<? extends RuleBook> _ruleBookClass;
   private Class<?> _resultType = Object.class;
 
+  /**
+   * Creates a new RuleBookBuilder for the default RuleBook type.
+   * @return  a new RuleBookBuilder
+   */
   public static RuleBookBuilder<Object> create() {
     return new RuleBookBuilder<Object>(CoRRuleBook.class);
   }
 
+  /**
+   * Creates a new RuleBookBuilder using the supplied RuleBook class.
+   * @param ruleBookClass a RuleBook class to be used in the builder
+   * @return              a new RuleBookBuilder
+   */
   public static RuleBookBuilder<Object> create(Class<? extends RuleBook> ruleBookClass) {
     return new RuleBookBuilder<Object>(ruleBookClass);
   }
