@@ -77,11 +77,6 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
   }
 
   @Override
-  public NameValueReferable<T> put(NameValueReferable<T> ref) {
-    return _map.put(ref);
-  }
-
-  @Override
   public int size() {
     return _map.size();
   }
@@ -107,6 +102,11 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
   }
 
   @Override
+  public NameValueReferable<T> put(NameValueReferable<T> ref) {
+    return _map.put(ref);
+  }
+
+  @Override
   public NameValueReferable<T> put(String key, NameValueReferable<T> value) {
     return _map.put(key, value);
   }
@@ -117,8 +117,8 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
   }
 
   @Override
-  public void putAll(Map<? extends String, ? extends NameValueReferable<T>> m) {
-    _map.putAll(m);
+  public void putAll(Map<? extends String, ? extends NameValueReferable<T>> map) {
+    _map.putAll(map);
   }
 
   @Override
