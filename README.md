@@ -14,7 +14,7 @@ RuleBook rules are built in the way that Java developers think: Java code. And t
 
 Tired of classes filled with if/then/else statements? Need a nice abstraction that allows rules to be easily specified in way that decouples them from each other? Want to write rules the same way that you write the rest of your code [in Java]? RuleBook just might be the rules abstraction you've been waiting for!
 
-#### _Some errata was noticed below in some of the examples. This is being corrected in the next release of RuleBook along with a lot of great new stuff in the RuleBook Domain Specific Language._
+#### _The next release of RuleBook comes with a lot of great new stuff in the RuleBook Domain Specific Language._
 
 #### Contents
 
@@ -149,8 +149,8 @@ public class ExampleRuleBook extends RuleBook<String> {
 public class ExampleRuleBook extends RuleBook<String> {
   @Override
   public void defineRules() {
-    //rule prints "HelloWorld"
-    addRule(StandardRule.create().when(f -> f.containsKey("hello") && f.containsKey)
+    //rule prints "Hello World"
+    addRule(StandardRule.create().when(f -> f.containsKey("hello") && f.containsKey("world")
       .using("hello").then(System.out::print)
       .using("world").then(System.out::println));
   }
@@ -163,7 +163,7 @@ public class ExampleMainClass {
     RuleBook exampleRuleBook = new ExampleRuleBook();
     exampleRuleBook
       .given("hello", "Hello")
-      .given("world", "World")
+      .given("world", " World")
       .run();
   }
 }
@@ -172,7 +172,7 @@ public class ExampleMainClass {
 
 _MegaBank issues home loans. If an applicant's credit score is less than 600 then they must pay 4x the current rate. If an applicant’s credit score is between 600, but less than 700, then they must pay a an additional point on top of their rate. If an applicant’s credit score is at least 700 and they have at least $25,000 cash on hand, then they get a quarter point reduction on their rate. If an applicant is a first time home buyer then they get a 20% reduction on their calculated rate after adjustments are made based on credit score (note: first time home buyer discount is only available for applicants with a 600 credit score or greater)._
 
-This type of problem lends itself well to Decisions. As stated above, Decsisions accept one type of Fact and return a different type of Result. In this case, the Facts are applicant information for each applicant and the Result is whether the loan is approved or denied. The following code example shows how the rules for this scenario can be implemeted.
+This type of problem lends itself well to Decisions. Decsisions accept one type of Fact and return a different type of Result. In this case, the Fact is applicant information and the Result is the rate for the loan. The following code example shows how the rules for this scenario can be implemeted.
 
 ```java
 public class ApplicantBean {
@@ -258,7 +258,7 @@ public class HomeLoanRateDecisionBook extends DecisionBook {
   protected void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(StandardDecision.create(Integer.class, Float.class)
-      .when(facts -> facts.getValue("Credit Score" < 600)
+      .when(facts -> facts.getValue("Credit Score") < 600)
       .then((facts, result) -> result.setValue(result.getValue() * 4f))
       .stop());
 
@@ -295,8 +295,6 @@ public class ExampleSolution {
 }
 ```
 
-In the above example, the default Result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
-
 <sub>[[Top](#contents)]</sub>
 
 ## 3 The RuleBook Domain Specific Language Explained
@@ -328,7 +326,7 @@ invoked in the order they are specified if the when() condition evaluates to tru
 As stated above, Facts are provided to Rules and Decisions using the given() method. The Facts available to Rules/Decisions and RuleBooks/DecisionBooks are contained in a FactMap, which is a special kind of Map that allows for easy access to the underlying objects contained in Facts. The reason why Facts exist is so that there is always a reference to the objects that Rules and Decisions work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to representative object.
 
 #### 3.4.1 The Single Fact Convenience Method
-Facts really only have a single convenience method. Since the FactMap is what is passed into then when() and then() methods, most of the convenience methods around Facts are made available in the FactMap. However, there is one... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the Fact can be used.
+Facts really only have a single convenience method. Since the FactMap is what is passed into then when() and then() methods, most of the convenience methods around Facts are made available in the FactMap. However, there is one in the Fact class... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the Fact can be used.
 
 #### 3.4.2 The FactMap Convenience Methods
 Although the reason for FactMaps is important, that doesn't mean anyone wants to chain a bunch of boiler plate calls to get to the value object contained in an underlying Fact. So, some convenience methods are there to make life easier when working with when() and then() methods.
@@ -508,9 +506,9 @@ public class FirstTimeHomeBuyerRule {
 public class ExampleSolution {
   public static void main(String[] args) {
     HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
-    ApplicantBean applicant = new ApplicantBean(620, 30000, true);
-    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    ApplicantBean applicant1 = new ApplicantBean(650, 20000, true);
+    ApplicantBean applicant2 = new ApplicantBean(620, 30000, true);
+    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant1", applicant).given("applicant2", applicant2).run();
     
     System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
   }
