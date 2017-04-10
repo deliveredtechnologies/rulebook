@@ -3,8 +3,12 @@ package com.deliveredtechnologies.rulebook.lang;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 
 /**
- * Created by clong on 3/29/17.
+ * An interface for building RuleBook objects.
  */
 public interface TerminatingRuleBookBuilder<T> {
+  /**
+   * Builds a RuleBook object.
+   * @return  a RuleBook object
+   */
   RuleBook<T> build();
 }

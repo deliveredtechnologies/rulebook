@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Tests for {@link Fact}
+ * Tests for {@link Fact}.
  */
 public class FactTest {
 

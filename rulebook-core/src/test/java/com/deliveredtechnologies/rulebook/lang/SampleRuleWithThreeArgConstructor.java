@@ -1,6 +1,10 @@
 package com.deliveredtechnologies.rulebook.lang;
 
-import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.NameValueReferable;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.model.Rule;
 
 import java.util.List;
@@ -10,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * A sample rule with a 3-arg constrcutor.
+ * A sample rule with a 3-arg constructor.
  */
 public class SampleRuleWithThreeArgConstructor<T, U> implements Rule<T, U> {
 

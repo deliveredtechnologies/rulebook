@@ -1,13 +1,10 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
-import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
-import com.deliveredtechnologies.rulebook.runner.*;
-import com.deliveredtechnologies.rulebook.util.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +22,9 @@ import java.util.Optional;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
+/**
+ * Runs the POJO Rules in a specified package as a RuleBook.
+ */
 public class RuleBookRunner implements RuleBook {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
@@ -32,10 +32,19 @@ public class RuleBookRunner implements RuleBook {
   private RuleBook _ruleBook;
   private String _package;
 
+  /**
+   * Creates a new RuleBookRunner using the specified package and the default RuleBook.
+   * @param rulePackage a package to scan for POJO Rules
+   */
   public RuleBookRunner(String rulePackage) {
     this(new CoRRuleBook(), rulePackage);
   }
 
+  /**
+   * Creates a new RuleBookRunner using the specified package and the supplied RuleBook.
+   * @param ruleBook    the RuleBook to use as a delegate for the RuleBookRunner
+   * @param rulePackage the package to scan for POJO rules
+   */
   public RuleBookRunner(RuleBook ruleBook, String rulePackage) {
     _ruleBook = ruleBook;
     _package = rulePackage;
@@ -66,6 +75,9 @@ public class RuleBookRunner implements RuleBook {
     return _ruleBook.getResult();
   }
 
+  /**
+   * Define the Rules in the RuleBook as Rule annotated POJO Rules in the specified package.
+   */
   @Override
   public void defineRules() {
     try {
@@ -76,7 +88,7 @@ public class RuleBookRunner implements RuleBook {
               if (!getResult().isPresent()) {
                 setDefaultResult(new Object());
               }
-          });
+            });
           addRule(new RuleAdapter(rule.newInstance()));
         } catch (IllegalAccessException | InstantiationException ex) {
           LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
@@ -109,21 +121,20 @@ public class RuleBookRunner implements RuleBook {
       Files.walk(path, 1)
               .filter(p -> !Files.isDirectory(p))
               .forEach(p -> {
-                String fileName = p.getFileName().toString();
-                String className = fileName.substring(0, fileName.length() - 6);
-                try {
-                  Class<?> ruleClass = Class.forName(packageName + "." + className);
-                  if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleClass) != null) {
-                    classes.add(ruleClass);
+                  String fileName = p.getFileName().toString();
+                  String className = fileName.substring(0, fileName.length() - 6);
+                  try {
+                    Class<?> ruleClass = Class.forName(packageName + "." + className);
+                    if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleClass) != null) {
+                      classes.add(ruleClass);
+                    }
+                  } catch (ClassNotFoundException e) {
+                    LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
                   }
-                } catch (ClassNotFoundException e) {
-                  LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
-                }
-              });
-      classes.sort(
-              (class1, class2) ->
-                      getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class1).order() -
-                      getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class2).order());
+                });
+      classes.sort((class1, class2) ->
+                      getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class1).order()
+                      - getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class2).order());
 
       return classes;
     } catch (URISyntaxException ex) {

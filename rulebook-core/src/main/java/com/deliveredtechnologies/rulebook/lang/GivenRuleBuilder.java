@@ -30,7 +30,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds a fact into the Rule.
+   * Adds a fact to the Rule.
    * @param name  the name of the fact
    * @param value the value of the fact
    * @return      a GivenRuleBuilder
@@ -40,7 +40,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds one or more facts into the Rule using a {@link NameValueReferableMap}.
+   * Adds one or more facts into the Rule using a {@link NameValueReferableMap}.
    * @param   facts the facts to be added to the Rule
    * @return  the current builder object
    */
@@ -50,7 +50,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds one or more facts into the Rule.
+   * Adds one or more facts into the Rule.
    * @param   facts one or more facts
    * @return  the current builder object
    */
@@ -61,7 +61,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds a condition into the Rule.
+   * Adds the condition for the Rule.
    * @param condition the condition specified for the Rule
    * @return          a builder that allows for the Rule to be built following the condition
    */
@@ -70,7 +70,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds a using constraint into the Rule that restricts the facts supplied to the subsequent 'then' action.
+   * Adds a using constraint in the Rule that restricts the facts supplied to the subsequent 'then' action.
    * @param factNames the fact names to be supplied to the subsequent 'then' action
    * @return          a builder the allows for the Rule to be built following the 'using' statement
    */
@@ -79,7 +79,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds a then action into the Rule.
+   * Adds a then action into the Rule.
    * @param action  an action that the rule will execute based on the condition
    * @return        a builder that allows for the Rule to be built following the 'then' statement
    */
@@ -88,7 +88,7 @@ public class GivenRuleBuilder<T, U> {
   }
 
   /**
-   * Builds a then action into the Rule.
+   * Addds a then action into the Rule.
    * @param action  an action that the rule will execute based on the condition; accepts facts and the result
    * @return        a builder that allows for the Rule to be built following the 'then' statement
    */

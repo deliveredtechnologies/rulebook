@@ -1,6 +1,10 @@
 package com.deliveredtechnologies.rulebook.lang;
 
-import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import org.junit.Assert;
@@ -12,15 +16,20 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link RuleBuilder}.
  */
 public class RuleBuilderTest {
   @Test
-  public void ruleBuilderShouldCreateGWTRules() {
-    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
+  @SuppressWarnings("unchecked")
+  public void ruleBuilderShouldCreateGwtRules() {
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
+            (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
     Rule rule = RuleBuilder.create()
             .withFactType(String.class)
             .given("fact1", "First Fact")

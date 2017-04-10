@@ -1,9 +1,20 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
-import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
-import com.deliveredtechnologies.rulebook.runner.*;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutRuleAnnotation;
+import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutResult;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,10 +27,13 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 /**
- * Tests for {@link RuleAdapter}
+ * Tests for {@link RuleAdapter}.
  */
 public class RuleAdapterTest {
 
@@ -72,11 +86,12 @@ public class RuleAdapterTest {
     NameValueReferableMap factMap = new FactMap();
     Rule<String, Object> rule = new GoldenRule<>(String.class);
     SampleRuleWithResult pojo = new SampleRuleWithResult();
-    RuleAdapter ruleAdapter = new RuleAdapter(pojo, rule);
 
     factMap.setValue("value1", 5100);
     factMap.setValue("fact1", "Fact1");
     factMap.setValue("fact2", "Fact2");
+
+    RuleAdapter ruleAdapter = new RuleAdapter(pojo, rule);
     ruleAdapter.addFacts(new Fact<String>("fact1", "Fact One"),
             new Fact<String>("fact2", "Fact Two"),
             new Fact<Integer>("value1", 500));

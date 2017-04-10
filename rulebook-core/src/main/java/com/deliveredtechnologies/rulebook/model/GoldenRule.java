@@ -1,21 +1,35 @@
 package com.deliveredtechnologies.rulebook.model;
 
-import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.NameValueReferable;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.TypeConvertibleFactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.util.ArrayUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.function.Consumer;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
-import static com.deliveredtechnologies.rulebook.RuleState.NEXT;
-
+/**
+ * A standard implementation of {@link Rule}.
+ * @param <T> the fact type
+ * @param <U> the Result type
+ */
 public class GoldenRule<T, U> implements Rule<T, U> {
 
   private static Logger LOGGER = LoggerFactory.getLogger(GoldenRule.class);
@@ -25,7 +39,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   private Predicate<NameValueReferableTypeConvertibleMap<T>> _condition;
   private List<Object> _actionChain = new ArrayList<>();
   private Map<Integer, List<String>> _factNames = new HashMap<>();
-  private RuleState _ruleState = NEXT;
+  private RuleState _ruleState = RuleState.NEXT;
   private Class<T> _factType;
 
   public GoldenRule(Class<T> factType) {
@@ -50,7 +64,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   }
 
   @Override
-  public void setCondition(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) throws IllegalStateException {
+  public void setCondition(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) {
     _condition = condition;
   }
 
@@ -109,9 +123,11 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   public boolean invoke() {
     try {
       //only use facts of the specified type
-      NameValueReferableMap<T> typeFilteredFacts = new FactMap<T>((Map<String, NameValueReferable<T>>) _facts.values().stream()
-              .filter((Object fact) -> _factType.isAssignableFrom(((Fact) fact).getValue().getClass()))
-              .collect(Collectors.toMap(fact -> ((Fact) fact).getName(), fact -> (Fact<T>) fact)));
+      NameValueReferableMap<T> typeFilteredFacts =
+              new FactMap<T>((Map<String, NameValueReferable<T>>) _facts.values().stream()
+              .filter((Object fact) -> _factType.isAssignableFrom(((NameValueReferable) fact).getValue().getClass()))
+              .collect(Collectors.toMap(fact ->
+                      ((NameValueReferable<Object>) fact).getName(), fact -> (NameValueReferable<T>) fact)));
 
       //invoke then() action(s) if when() is true or if when() was never specified
       if (getCondition() == null || getCondition().test(new TypeConvertibleFactMap<T>(typeFilteredFacts))) {
@@ -139,21 +155,21 @@ public class GoldenRule<T, U> implements Rule<T, U> {
           Stream.of(action.getClass().getMethods())
                   .filter(method -> method.getName().equals("accept"))
                   .findFirst()
-                  .ifPresent(method -> {
-                    try {
-                      method.setAccessible(true);
-                      method.invoke(action,
+                    .ifPresent(method -> {
+                        try {
+                          method.setAccessible(true);
+                          method.invoke(action,
                               ArrayUtils.combine(
                                       new Object[]{new TypeConvertibleFactMap<>(usingFacts)},
                                       new Object[]{getResult().orElseGet(() -> result)},
                                       method.getParameterCount()));
-                      if (result.getValue() != null) {
-                        _result = result;
-                      }
-                    } catch (IllegalAccessException | InvocationTargetException err) {
-                      LOGGER.error("Error invoking action on " + action.getClass(), err);
-                    }
-                  });
+                          if (result.getValue() != null) {
+                            _result = result;
+                          }
+                        } catch (IllegalAccessException | InvocationTargetException err) {
+                          LOGGER.error("Error invoking action on " + action.getClass(), err);
+                        }
+                      });
           _facts.putAll(usingFacts);
         }
 

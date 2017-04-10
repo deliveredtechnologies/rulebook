@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by clong on 4/6/17.
+ * Tests for {@link TypeConvertibleFactMap}.
  */
 public class TypeConvertibleFactMapTest {
 

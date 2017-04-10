@@ -1,6 +1,12 @@
 package com.deliveredtechnologies.rulebook.model;
 
-import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Fact;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 4/6/17.
+ * Tests for {@link GoldenRule}.
  */
 public class GoldenRuleTest {
   @Test

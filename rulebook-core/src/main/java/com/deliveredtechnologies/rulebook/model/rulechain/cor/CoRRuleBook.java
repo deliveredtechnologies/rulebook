@@ -8,6 +8,10 @@ import com.deliveredtechnologies.rulebook.model.RuleBook;
 
 import java.util.Optional;
 
+/**
+ * A RuleBook implementation that chains Rules together using the Chain of Responsibility (CoR) pattern.
+ * @param <T> the Result type
+ */
 public class CoRRuleBook<T> implements RuleBook<T> {
   private Handler<Rule> _headRule = null;
   private Handler<Rule> _tailRule = null;
@@ -37,9 +41,9 @@ public class CoRRuleBook<T> implements RuleBook<T> {
       defineRules();
     }
     headRule.ifPresent(ruleHandler -> {
-      ruleHandler.getDelegate().setFacts(facts);
-      getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
-    });
+        ruleHandler.getDelegate().setFacts(facts);
+        getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
+      });
     headRule.ifPresent(Handler::handleRequest);
   }
 

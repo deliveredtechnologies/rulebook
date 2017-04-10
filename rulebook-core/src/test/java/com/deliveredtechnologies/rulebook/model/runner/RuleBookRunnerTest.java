@@ -2,7 +2,6 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.runner.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by clong on 4/6/17.
+ * Tests for {@link RuleBookRunner}.
  */
 public class RuleBookRunnerTest {
   @Test
