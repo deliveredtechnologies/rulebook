@@ -9,8 +9,6 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.4-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-## _Note: The DSL in the RuleBook develop branch has changed significantly; This README will be updated soon to reflect those changes._ 
-
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
 
@@ -416,7 +414,7 @@ public class LowCreditScoreRule {
   private List<ApplicantBean> applicants;
 
   @Result
-  private float rate;
+  private double rate;
     
   @When
   public boolean when() {
@@ -426,7 +424,7 @@ public class LowCreditScoreRule {
 
   @Then
   public RuleState then() {
-    rate *= 4f;
+    rate *= 4;
     return BREAK;
   }
 }
@@ -438,19 +436,19 @@ public class QuarterPointReductionRule {
   List<ApplicantBean> applicants; 
 
   @Result
-  private float rate;
+  private double rate;
 
   @When
   public boolean when() {
     return 
       applicants.stream().anyMatch(applicant -> applicant.getCreditScore() >= 700) &&
-      applicants.stream().map(applicant -> applicant.getCashOnHand()).reduce(0.0, Float::sum) >= 50000;
+      applicants.stream().map(applicant -> applicant.getCashOnHand()).reduce(0.0, Double::sum) >= 50000;
   }
 
   @Then
   public void then() {
     approved = true;
-    return rate = rate - (rate * 0.25f);
+    return rate = rate - (rate * 0.25);
   }
 }
 ```
@@ -461,7 +459,7 @@ public class ExtraPointRule {
   List<ApplicantBean> applicants; 
 
   @Result
-  private float rate;
+  private double rate;
 
   @When
   public boolean when() {
@@ -471,7 +469,7 @@ public class ExtraPointRule {
 
   @Then
   public void then() {
-    rate += 1f;
+    rate += 1;
   }
 }
 ```
@@ -482,7 +480,7 @@ public class FirstTimeHomeBuyerRule {
   List<ApplicantBean> applicants; 
 
   @Result
-  private float rate;
+  private double rate;
 
   @When
   public boolean when() {
@@ -492,19 +490,24 @@ public class FirstTimeHomeBuyerRule {
 
   @Then
   public void then() {
-    rate = rate - (rate * 0.20f);
+    rate = rate - (rate * 0.20);
   }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
-    ApplicantBean applicant = new ApplicantBean(620, 30000, true);
-    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules.homeloan");
+    NameValueReferrableMap<ApplicantBean> facts = new FactMap<>();
+    ApplicantBean applicant1 = new ApplicantBean(650, 20000, true);
+    ApplicantBean applicant2 = new ApplicantBean(620, 30000, true);
+    facts.put(new Fact<>(applicant1);
+    facts.put(new Fact<>(applicant2);
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+    ruleBook.setDefaultResult(new Result(4.5));
+    ruleBook.run(facts);
+    
+    System.out.println("Applicant qualified for the following rate: " + ruleBook.getResult());
   }
 }
 ```
