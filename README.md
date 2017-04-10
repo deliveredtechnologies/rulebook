@@ -97,76 +97,51 @@ compile 'com.deliveredtechnologies:rulebook-core:0.4'
 ## 2 Using RuleBook
 ### 2.1 A HelloWorld Example
 ```java
-public class ExampleRuleBook extends RuleBook {
-  @Override
-  public void defineRules() {
-    //one rule prints "Hello World"
-    addRule(StandardRule.create()
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule
       .then(f -> System.out.print("Hello "))
-      .then(f -> System.out.println("World")));
-  }
-}
+      .then(f -> System.out.println("World")))
+    .build();
 ```
 **...or use 2 rules**
 ```java
-public class ExampleRuleBook extends RuleBook {
-  @Override
-  public void defineRules() {
-    //first rule prints "Hello"
-    addRule(StandardRule.create().then(f -> System.out.print("Hello ")));
-    //second rule prints "World"
-    addRule(StandardRule.create().then(f -> System.out.println("World")));
-  }
-}
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule.then(f -> System.out.print("Hello ")))
+    .addRule(rule -> rule.then(f -> System.out.println("World")))
+    .build();
 ```
 **now, run it!**
 ```java
-public class ExampleMainClass {
-  public static void main(String[] args) {
-    RuleBook exampleRuleBook = new ExampleRuleBook();
-    exampleRuleBook.run();
-  }
-}
+ruleBook.run(new FactMap());
 ```
 ### 2.2 The Above Example Using Facts
 ```java
-public class ExampleRuleBook extends RuleBook<String> {
-  @Override
-  public void defineRules() {
-    //first rule prints "Hello" value from helloFact
-    addRule(StandardRule.create().when(f -> f.containsKey("hello"))
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule
+      .when(f -> f.containsKey("hello"))
       .using("hello")
-      .then(System.out::print));
-    //second rule prints "World" value from worldFact
-    addRule(StandardRule.create().when(f -> f.containsKey("world"))
+      .then(f -> System.out::print))
+    .addRule(rule -> rule
+      .when(f -> f.containsKey("world"))
       .using("world")
-      .then(System.out::println));
-  }
-}
+      .then(f -> System.out::print))
+    .build();
 ```
 **..or it could be a single rule**
 ```java
-public class ExampleRuleBook extends RuleBook<String> {
-  @Override
-  public void defineRules() {
-    //first rule prints "Hello" value from helloFact
-    addRule(StandardRule.create().when(f -> f.containsKey("hello") && f.containsKey)
-      .using("hello").then(System.out::print)
-      .using("world").then(System.out::println));
-  }
-}
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule
+      .when(f -> f.containsKey("hello") && f.containsKey("world")
+      .using("hello").then(f -> System.out::print))
+      .using("world").then(f -> System.out::print))
+    .build();
 ```
 **now, run it!**
 ```java
-public class ExampleMainClass {
-  public static void main(String[] args) {
-    RuleBook exampleRuleBook = new ExampleRuleBook();
-    exampleRuleBook
-      .given("hello", "Hello")
-      .given("world", "World")
-      .run();
-  }
-}
+NameValueReferableMap factMap = new FactMap();
+factMap.setValue("hello", "Hello");
+factMap.setValue("world", " World");
+ruleBook.run(factMap);
 ```
 ### 2.3 A [Slightly] More Complex Scenario
 
