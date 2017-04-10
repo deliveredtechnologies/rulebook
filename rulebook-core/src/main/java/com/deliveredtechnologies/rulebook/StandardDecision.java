@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 /**
  * StandardDecision is the standard implementation of {@link Decision}.
  */
+@Deprecated
 public class StandardDecision<T, U> implements Decision<T, U> {
   private static Logger LOGGER = LoggerFactory.getLogger(StandardDecision.class);
 

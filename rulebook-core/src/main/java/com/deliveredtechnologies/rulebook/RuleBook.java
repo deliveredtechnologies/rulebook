@@ -9,6 +9,7 @@ import java.util.Optional;
  * RuleBook is an abstract class that follows the Template Method design pattern, leaving the defineRules() method
  * implementation for subclasses. This class facilitates the aggregation and chaining together of Rules.
  */
+@Deprecated
 public abstract class RuleBook<T> {
   protected Optional<Rule<T>> _headRule = Optional.empty();
   protected Rule<T> _tailRule;

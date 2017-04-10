@@ -7,7 +7,7 @@ package com.deliveredtechnologies.rulebook;
  * The <code>Result</code> object can then contain a pointer to any instance, which can be shared with lamda calls
  * and across other objects (i.e. DecisionBook and Decision objects)
  */
-public class Result<T> {
+public class Result<T> implements Referable<T> {
   private T _value;
 
   public Result() {}
@@ -21,6 +21,7 @@ public class Result<T> {
    *
    * @return the object stored in the Result object
    */
+  @Override
   public T getValue() {
     return _value;
   }
@@ -30,7 +31,16 @@ public class Result<T> {
    *
    * @param value the object to be stored in the Result object
    */
+  @Override
   public void setValue(T value) {
     this._value = value;
+  }
+
+  @Override
+  public String toString() {
+    if (_value == null) {
+      return "";
+    }
+    return _value.toString();
   }
 }
