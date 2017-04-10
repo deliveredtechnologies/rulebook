@@ -147,15 +147,13 @@ ruleBook.run(factMap);
 
 _MegaBank issues home loans. If an applicant's credit score is less than 600 then they must pay 4x the current rate. If an applicant’s credit score is between 600, but less than 700, then they must pay a an additional point on top of their rate. If an applicant’s credit score is at least 700 and they have at least $25,000 cash on hand, then they get a quarter point reduction on their rate. If an applicant is a first time home buyer then they get a 20% reduction on their calculated rate after adjustments are made based on credit score (note: first time home buyer discount is only available for applicants with a 600 credit score or greater)._
 
-This type of problem lends itself well to Decisions. As stated above, Decsisions accept one type of Fact and return a different type of Result. In this case, the Facts are applicant information for each applicant and the Result is whether the loan is approved or denied. The following code example shows how the rules for this scenario can be implemeted.
-
 ```java
 public class ApplicantBean {
   private int creditScore;
-  private float cashOnHand;
+  private double cashOnHand;
   private boolean firstTimeHomeBuyer;
 
-  public ApplicantBean(int creditScore, float cashOnHand, boolean firstTimeHomeBuyer) {
+  public ApplicantBean(int creditScore, double cashOnHand, boolean firstTimeHomeBuyer) {
     this.creditScore = creditScore;
     this.cashOnHand = cashOnHand;
     this.firstTimeHomeBuyer = firstTimeHomeBuyer;
@@ -169,11 +167,11 @@ public class ApplicantBean {
     this.creditScore = creditScore;
   }
 
-  public float getCashOnHand() {
+  public double getCashOnHand() {
     return cashOnHand;
   }
 
-  public void setCashOnHand(float cashOnHand) {
+  public void setCashOnHand(double cashOnHand) {
     this.cashOnHand = cashOnHand;
   }
 
@@ -187,90 +185,104 @@ public class ApplicantBean {
 }
 ```
 ```java
-public class HomeLoanRateDecisionBook extends DecisionBook<ApplicantBean, Float> {
+public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
   protected void defineRules() {
     //credit score under 600 gets a 4x rate increase
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 600)
-      .then((facts, result) -> result.setValue(result.getValue() * 4f))
-      .stop());
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop()
+      .build());
 
     //credit score between 600 and 700 pays a 1 point increase
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 700)
-      .then((facts, result) -> result.setValue(result.getValue() + 1f)));
+      .then((facts, result) -> result.setValue(result.getValue() + 1))
+      .build());
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> 
             facts.getOne().getCreditScore() >= 700 &&
-            facts.getOne().getCashOnHand() >= 25000f)
-      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+            facts.getOne().getCashOnHand() >= 25000)
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25))
+      .build());
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().isFirstTimeHomeBuyer())
-      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80))
+      .build());
     }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
-    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+      .withDefaultResult(4.5)
+      .build();
+    NameValueReferableMap facts = new FactMap();
+    facts.setValue("applicant", new ApplicantBean(650, 20000.0, true))
+    homeLoanRateRuleBook.run(facts);
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+    System.out.println("Applicant qualified for the following rate: " + homeLoanRateRuleBook.getResult());
   }
 }
 ```
 **...or nix the ApplicantBean and just use independent Facts**
 ```java
-public class HomeLoanRateDecisionBook extends DecisionBook {
+public class HomeLoanRateRuleBook extends RuleBook<Double> {
   @Override
   protected void defineRules() {
     //credit score under 600 gets a 4x rate increase
-    addRule(StandardDecision.create(Integer.class, Float.class)
-      .when(facts -> facts.getValue("Credit Score" < 600)
-      .then((facts, result) -> result.setValue(result.getValue() * 4f))
-      .stop());
+    addRule(RuleBuilder.create().withResultType(Double.class)
+      .when(facts -> facts.getIntVal("Credit Score") < 600)
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop()
+      .build());
 
     //credit score between 600 and 700 pays a 1 point increase
-    addRule(StandardDecision.create(Integer.class, Float.class)
-      .when(facts -> facts.getValue("Credit Score") < 700)
-      .then((facts, result) -> result.setValue(result.getValue() + 1f)));
+    addRule(RuleBuilder.create().withResultType(Double.class)
+      .when(facts -> facts.getIntVal("Credit Score") < 700)
+      .then((facts, result) -> result.setValue(result.getValue() + 1))
+      .build());
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(StandardDecision.create(Object.class, Float.class)
+    addRule(RuleBuilder.create().withResultType(Float.class)
       .when(facts -> 
-            facts.getIntValue("Credit Score") >= 700 &&
+            facts.getIntVal("Credit Score") >= 700 &&
             facts.getDblVal("Cash on Hand") >= 25000
-      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25))
+      .build());
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(StandardDecision.create(Boolean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(Boolean.class).withResultType(Float.class)
       .when(facts -> facts.getOne())
-      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80f))
+      .build());
     }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    homeLoanRateDecisionBook.withDefaultResult(4.5f)
-      .given("Credit Score", 650)
-      .given("Cash on Hand", 20000)
-      .given("First Time Homebuyer", true).run();
+    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+      .withDefaultResult(4.5)
+      .build();
+      
+    NameValueReferableMap facts = new FactMap();
+    facts.set("Credit Score", 650);
+    facts.set("Cash on Hand", 20000);
+    facts.set("First Time Homebuyer", true)
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+    homeLoanRateRuleBook.run(facts);
+    
+    System.out.println("Applicant qualified for the following rate: " + homeLoanRateRuleBook.getResult());
   }
 }
 ```
-
-In the above example, the default Result value was initialized to false. So, unless a Decision set the result to something else, the result of running the DecisionBook would be false. And unfortunately, for these applicants, they just didn't meet the requirements for a loan at MegaBank as determined by the rules.
 
 <sub>[[Top](#contents)]</sub>
 
@@ -286,43 +298,45 @@ Much like the Given-When-Then language for defining tests that was popularized b
 * **When** a condition evaluates to true
 * **Then** an action is triggered
 
-**Given** methods can accept one or more Facts in various different forms and are used as a collection of information provided to a single Rule/Decision or a chain of Rules/Decisions called a RuleBook/DecisionBook.
+**Given** methods can accept one or more facts in various different forms and are used as a collection of information provided to a single Rule. When grouping Rules into a RuleBook, facts are supplied to the Rules when the RuleBook is run, so the 'Given' can be inferred.
 
-**When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule/Decision.
+**When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule.
 
-**Then** methods accept a Consumer (or BiConsumer for Decisions) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule or Decision that will all be 
+**Then** methods accept a Consumer (or BiConsumer for Rules that have a Result) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule that will all be 
 invoked in the order they are specified if the when() condition evaluates to true.
 
 ### 3.2 The Using Method
-**Using** methods reduce the set of Facts available to a then() method. Mutiple using() methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
+**Using** methods reduce the set of facts available to a then() method. Mutiple using() methods can also be chained together if so desired. The aggregate of the facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
 
 ### 3.3 The Stop Method
 **Stop** methods break the rule chain. If a stop() method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
 
 ### 3.4 Working With Facts
-As stated above, Facts are provided to Rules and Decisions using the given() method. The Facts available to Rules/Decisions and RuleBooks/DecisionBooks are contained in a FactMap, which is a special kind of Map that allows for easy access to the underlying objects contained in Facts. The reason why Facts exist is so that there is always a reference to the objects that Rules and Decisions work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to representative object.
+Facts can provided to Rules using the given() method. In RuleBooks, facts are provided to Rules when the RuleBook is run. The facts available to Rules and RuleBooks are contained in a NameValueReferableMap (the base implementation being FactMap), which is a special kind of Map that allows for easy access to the underlying objects contained in facts. The reason why facts exist is so that there is always a reference to the objects that Rules work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to a representative object.
 
 #### 3.4.1 The Single Fact Convenience Method
-Facts really only have a single convenience method. Since the FactMap is what is passed into then when() and then() methods, most of the convenience methods around Facts are made available in the FactMap. However, there is one... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the Fact can be used.
+Facts really only have a single convenience method. Since the NameValueReferableMap (e.g. FactMap) is what is passed into when() and then() methods, most of the convenience methods around facts are made available in the Map. However, there is one convenience method included in the Fact class... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the fact can be used.
 
 #### 3.4.2 The FactMap Convenience Methods
-Although the reason for FactMaps is important, that doesn't mean anyone wants to chain a bunch of boiler plate calls to get to the value object contained in an underlying Fact. So, some convenience methods are there to make life easier when working with when() and then() methods.
+Although the reason for NameValueReferableMaps (commonly referred to as FactMaps) is important, that doesn't mean anyone wants to chain a bunch of boiler plate calls to get to the value object contained in an underlying Fact. So, some convenience methods are there to make life easier when working with when() and then() methods.
 
 **getOne()** gets the value of the Fact when only one Fact exists in the FactMap
 
 **getValue(String name)** gets the value of the Fact by the name of the Fact
-
-**getStrVal(String name)** gets the value of the Fact by name as a String
-
-**getDblVal(String)** gets the value of the Fact by name as a Double
-
-**getIntVal(String)** gets the value of the Fact by name as an Integer
 
 **setValue(String name, T value)** sets the Fact with the name specified to the new value 
 
 **put(Fact fact)** adds a Fact to the FactMap, using the Fact's name as the key for the Map
 
 **toString()** toString gets the toString() method of the Fact's value when only one Fact exists
+
+The following methods are part of the NameValueReferrableTypeConvertible interface, which is implemented by the TypeConvertibleFactMap class as a NameValueReferrable decorator. You can think of it as a decorator for FactMaps (because it's also that too!) and it's what's used to inject facts into when() and then() methods.
+
+**getStrVal(String name)** gets the value of the Fact by name as a String
+
+**getDblVal(String)** gets the value of the Fact by name as a Double
+
+**getIntVal(String)** gets the value of the Fact by name as an Integer
 
 <sub>[Top](#contents)</sub>
 
@@ -366,7 +380,10 @@ public class HelloWorld {
 
 public static void main(String args[]) {
   RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules");
-  ruleBook.given(new Fact("hello", "Hello"), new Fact("world", "World")).run();
+  NameValueReferrable facts = new FactMap();
+  facts.setValue("hello", "Hello");
+  facts.setValue("world", "World");
+  ruleBook.run(facts);
   System.out.println(ruleBook.getResult()); //prints "Hello World"
 }
 ```
