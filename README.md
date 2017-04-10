@@ -225,7 +225,7 @@ public class ExampleSolution {
     facts.setValue("applicant", new ApplicantBean(650, 20000.0, true))
     homeLoanRateRuleBook.run(facts);
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateRuleBook.getResult());
+    homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
 ```
@@ -277,7 +277,7 @@ public class ExampleSolution {
     
     homeLoanRateRuleBook.run(facts);
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateRuleBook.getResult());
+    homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
 ```
@@ -382,7 +382,7 @@ public static void main(String args[]) {
   facts.setValue("hello", "Hello");
   facts.setValue("world", "World");
   ruleBook.run(facts);
-  System.out.println(ruleBook.getResult()); //prints "Hello World"
+  ruleBook.getResult().ifPresent(System.out::println) //prints "Hello World"
 }
 ```
 
@@ -506,8 +506,7 @@ public class ExampleSolution {
     
     ruleBook.setDefaultResult(new Result(4.5));
     ruleBook.run(facts);
-    
-    System.out.println("Applicant qualified for the following rate: " + ruleBook.getResult());
+    ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result);
   }
 }
 ```
