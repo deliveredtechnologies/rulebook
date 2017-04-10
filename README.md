@@ -124,7 +124,7 @@ RuleBook ruleBook = RuleBookBuilder.create()
     .addRule(rule -> rule
       .when(f -> f.containsKey("world"))
       .using("world")
-      .then(System.out::print))
+      .then(System.out::println))
     .build();
 ```
 **..or it could be a single rule**
@@ -133,7 +133,7 @@ RuleBook ruleBook = RuleBookBuilder.create()
     .addRule(rule -> rule
       .when(f -> f.containsKey("hello") && f.containsKey("world")
       .using("hello").then(System.out::print))
-      .using("world").then(System.out::print))
+      .using("world").then(System.out::println))
     .build();
 ```
 **now, run it!**
