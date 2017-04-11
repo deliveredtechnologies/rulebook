@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 
 /**
- * Tests for {@link RuleBookFactoryBean}
+ * Tests for {@link RuleBookFactoryBean}.
  */
 @ContextConfiguration(classes = TestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -85,7 +85,9 @@ public class RuleBookFactoryBeanTest {
 
   @Test
   public void ruleBookFactoryBeanShouldBeCreatedUsingClassAndPackageName() throws Exception {
-    RuleBookFactoryBean factoryBean = new RuleBookFactoryBean(CoRRuleBook.class, "com.deliveredtechnologies.rulebook.spring");
+    RuleBookFactoryBean factoryBean = new RuleBookFactoryBean(
+            CoRRuleBook.class,
+            "com.deliveredtechnologies.rulebook.spring");
     RuleBook<String> ruleBook = (RuleBook<String>)factoryBean.getObject();
 
     ruleBook.run(_facts);

@@ -2,10 +2,13 @@ package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.RuleState;
-import com.deliveredtechnologies.rulebook.annotation.*;
+import com.deliveredtechnologies.rulebook.annotation.Given;
+import com.deliveredtechnologies.rulebook.annotation.When;
+import com.deliveredtechnologies.rulebook.annotation.Rule;
+import com.deliveredtechnologies.rulebook.annotation.Then;
 
 /**
- * Created by clong on 4/11/17.
+ * Sample POJO Rule with no result for testing Spring support.
  */
 @Rule(order = 2)
 public class SpringRuleWithoutResult {

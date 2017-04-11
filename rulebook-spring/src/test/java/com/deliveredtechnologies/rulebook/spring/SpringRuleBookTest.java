@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 /**
- * Tests for {@link SpringRuleBook}
+ * Tests for {@link SpringRuleBook}.
  */
 @ContextConfiguration(classes = TestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,8 +31,11 @@ public class SpringRuleBookTest {
   NameValueReferableMap<String> _facts = new FactMap<>();
 
   @Autowired
-  SpringRuleWithResult ruleWithResult;
+  SpringRuleWithResult _ruleWithResult;
 
+  /**
+   * Setup the RuleBook and the facts to be used in testing.
+   */
   @Before
   public void setUp() {
     _ruleBook = new CoRRuleBook<>();
@@ -43,7 +46,7 @@ public class SpringRuleBookTest {
   @Test
   public void addingPojoRulesToSpringRuleBookShouldConvertThemToRules() throws InvalidClassException {
     SpringRuleBook<String> ruleBook = new SpringRuleBook<>(_ruleBook);
-    ruleBook.addRule(ruleWithResult);
+    ruleBook.addRule(_ruleWithResult);
     ruleBook.setDefaultResult("");
     ruleBook.run(_facts);
 

@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 import java.io.InvalidClassException;
 
 /**
- * Created by clong on 2/27/17.
  * Test configuration for rulebook-spring.
  */
 @Configuration
