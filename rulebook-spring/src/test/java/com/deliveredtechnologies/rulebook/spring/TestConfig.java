@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.StandardDecision;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -41,5 +42,10 @@ public class TestConfig {
             result.setValue("SecondRule");
           }));
     return ruleBookBean;
+  }
+
+  @Bean
+  public RuleBookFactoryBean ruleBookWithResult() {
+    return new RuleBookFactoryBean("com.deliveredtechnologies.rulebook.spring");
   }
 }

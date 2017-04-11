@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.InvalidClassException;
 
 /**
- * Created by clong on 2/27/17.
  * Tests for {@link RuleBookBean}
  */
 @ContextConfiguration(classes = TestConfig.class)
