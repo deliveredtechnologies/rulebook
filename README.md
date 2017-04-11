@@ -46,7 +46,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-a-spring-enabled-pojo-rule)
   * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
   * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
-  * [5.6 Spring Enabled POJO Rules Explained](#56-spring-enabled-pojo-rules-explained)
+  * [5.6 Ordering Rules With Spring](#56-ordering-rules-with-spring)
 * **[6 How to Contribute](#6-how-to-contribute)**
   * [6.1 Developer Guidelines](#61-developer-guidelines)
   
@@ -541,7 +541,11 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 ## 5 Using RuleBook with Spring
 
-RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. Instances of RuleBooks can
+even be specified directly using either the Java DSL or POJO Rules or both in combination.
+
+_Note: If you've been using earlier versions of RuleBook with Spring then all of that same stuff still works. All
+the same POJO and Spring annotated Rules still work too - and they are compatible with the new Spring support for RuleBook._
 
 ### 5.1 Adding RuleBook Spring Support to Your Maven Project
 
@@ -551,7 +555,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-spring</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
 </dependency>
 ```
 
@@ -560,13 +564,18 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.4.1'
+compile 'com.deliveredtechnologies:rulebook-spring:0.5'
 ```
 
-### 5.3 Creating a Spring Enabled POJO Rule
+### 5.3 Creating POJO Rules
+
+POJO Rules can be created just like they were created above without Spring.
 
 ```java
-@RuleBean
+
+package com.example.rulebook.spring;
+
+@Rule(order = 1)
 public class HelloSpringRule {
   @Given("hello")
   private String hello;
@@ -580,9 +589,32 @@ public class HelloSpringRule {
   }
   
   @Then
-  public RuleState then() {
+  public void then() {
     result = hello + " ";
-    return RuleState.NEXT;
+  }
+}
+```
+
+```java
+
+package com.example.rulebook.spring;
+
+@Rule(order = 2)
+public class WorldSpringRule {
+  @Given("world")
+  private String world;
+  
+  @Result
+  private String result;
+  
+  @When
+  public boolean when() {
+    return world != null;
+  }
+  
+  @Then
+  public void then() {
+    result += world;
   }
 }
 ```
@@ -592,21 +624,9 @@ public class HelloSpringRule {
 ```java
 @Configuration
 public class SpringConfig {
-  @Autowired
-  private ApplicationContext context;
-  
   @Bean
-  @Scope("prototype")
-  public RuleBookBean ruleBookBean() throws InvalidClassException {
-    RuleBookBean ruleBookBean = new RuleBookBean();
-    ruleBookBean.addRule(context.getBean(HelloSpringRule.class)); //add a Spring enabled POJO rule
-    ruleBookBean.addRule(StandardDecision.create()
-      .when(factMap -> factMap.containsKey("world"))
-      .then((factMap, result) -> {
-        result += factMap.getValue("world");
-        return RuleState.BREAK;
-      });
-    return ruleBookBean;
+  public RuleBookFactoryBean ruleBook() throws InvalidClassException {
+    return new RuleBookFactoryBean("com.example.rulebook.spring");
   }
 }
 ```
@@ -615,24 +635,23 @@ public class SpringConfig {
 
 ```java
   @Autowired
-  private ApplicationContext context;
+  private RuleBook<String> ruleBook;
   
   public void someMethod() {
-    RuleBookBean ruleBook = context.getBean(RuleBookBean.class));
-    ruleBook.given(new Fact("hello", "Hello"), new Fact("world", "World")).run(); 
-    System.out.println(ruleBook.getResult()); //prints "Hello World"
+    NameValueReferableMap<String> facts = new FactMap<>();
+    facts.setValue("hello", "Hello");
+    facts.setValue("world", "World");
+    ruleBook.run(facts);
+    ruleBook.ifPresent(System.out::println); //prints Hello World
   }
 ```
 
-### 5.6 Spring Enabled POJO Rules Explained
+#### 5.6 Ordering Rules With Spring
 
-In the Spring configuration, a RuleBookBean is used. RuleBookBean is like a RuleBookRunner that's made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice that RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
-
-_Note: Since Facts hold references to objects, if the same exact Facts are used in two different RuleBooks, DecisionBooks, RuleBookRunners, or RuleBookBeans_
-
-#### 5.6.1 Ordering Spring Enabled POJO Rules
-
-Unlike regular POJO Rules, Spring Enabled POJO Rules don't have an order property in RuleBean. That's because the order of Spring Enabled POJO Rules is determined by the order they are configured. Simple, right?
+If you were using the RuleBean annotation to create Spring enabled Rules, all of that stuff still works. And there Spring 
+enabled POJO Rules can still be configured in RuleBooks in Spring \[using SpringRuleBook\]. But RuleBean doesn't have an
+order property. So, if you need to order beans scanned using a RuleBookFactoryBean, just use the @Rule annotation like
+you would with regular non-Spring enabled POJO Rules. It works exactly the same way!
 
 <sub>[[Top](#contents)]</sub>
 

@@ -3,27 +3,24 @@ package com.deliveredtechnologies.rulebook.spring;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
-import com.deliveredtechnologies.rulebook.annotation.Result;
-import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
+import com.deliveredtechnologies.rulebook.annotation.Rule;
+import com.deliveredtechnologies.rulebook.annotation.Then;
 
 /**
- * Sample POJO Rule with result for testing Spring support.
+ * Sample POJO Rule with no result for testing Spring support.
  */
-@RuleBean
-public class SpringRuleWithResult {
+@Rule(order = 2)
+public class SpringRuleWithoutResult {
   @Given("value1")
   private String _value1;
 
   @Given("value2")
   private Fact<String> _value2;
 
-  @Result
-  private String _result = "";
-
   @When
   public boolean when() {
-    return _value1.equals(_value2.getValue());
+    return _value2.equals("value2");
   }
 
   /**
@@ -31,9 +28,8 @@ public class SpringRuleWithResult {
    * @return  RuleState.NEXT
    */
   @Then
-  public RuleState then() {
-    _value2.setValue("value2");
-    _result = "firstRule";
-    return RuleState.NEXT;
+  public void then() {
+    _value2.setValue("valueTwo");
   }
 }
+
