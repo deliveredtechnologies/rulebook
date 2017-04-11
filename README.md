@@ -575,7 +575,7 @@ POJO Rules can be created just like they were created above without Spring.
 
 package com.example.rulebook.spring;
 
-@Rule
+@Rule(order = 1)
 public class HelloSpringRule {
   @Given("hello")
   private String hello;
@@ -599,7 +599,7 @@ public class HelloSpringRule {
 
 package com.example.rulebook.spring;
 
-@Rule
+@Rule(order = 2)
 public class WorldSpringRule {
   @Given("world")
   private String world;
