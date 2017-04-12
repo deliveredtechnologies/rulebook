@@ -1,5 +1,9 @@
 com.deliveredtechnologies.rulebook
 com.deliveredtechnologies.rulebook.annotation
+com.deliveredtechnologies.rulebook.lang
+com.deliveredtechnologies.rulebook.model
+com.deliveredtechnologies.rulebook.model.rulechain.cor
+com.deliveredtechnologies.rulebook.model.runner
 com.deliveredtechnologies.rulebook.runner
 com.deliveredtechnologies.rulebook.spring
 com.deliveredtechnologies.rulebook.util
