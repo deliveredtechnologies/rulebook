@@ -9,6 +9,7 @@ import java.util.function.Predicate;
  * Rule is an interface that uses the following format:
  * rule.given(facts).when(some condition given facts).then(do something)
  */
+@Deprecated
 public interface Rule<T> {
 
   /**

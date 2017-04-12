@@ -2,14 +2,12 @@
 [RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.4|
 [Apache 2.0 License]:https://opensource.org/licenses/Apache-2.0
 
-# RuleBook <img src="LambdaBook.png" alt="RuleBook" height="100" align="left"/>
+# RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
 **&raquo; A Simple &amp; Intuitive Rules Abstraction for Java** <br/><sub> _100% Java_ &middot; _Lambda Enabled_ &middot; _Simple, Intuitive DSL_ &middot; _Lightweight_ </sub>
 
 ---
 
-#### _The next release of RuleBook is adding lot of great new stuff in the RuleBook Domain Specific Language. [Check It Out!](https://www.github.com/rulebook-rules/rulebook/tree/develop)_
-
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.4-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=master&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/Clayton7510/RuleBook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/Clayton7510/RuleBook?branch=master) [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.4-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=master&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -37,7 +35,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
-  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
+  * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-the-megabank-example-with-pojo-rules)
   * [4.3 POJO Rules Explained](#43-pojo-rules-explained)
     * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
@@ -48,7 +46,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-a-spring-enabled-pojo-rule)
   * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
   * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
-  * [5.6 Spring Enabled POJO Rules Explained](#56-spring-enabled-pojo-rules-explained)
+  * [5.6 Ordering Rules With Spring](#56-ordering-rules-with-spring)
 * **[6 How to Contribute](#6-how-to-contribute)**
   * [6.1 Developer Guidelines](#61-developer-guidelines)
   
@@ -80,7 +78,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-core</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
 </dependency>
 ```
 
@@ -97,90 +95,63 @@ compile 'com.deliveredtechnologies:rulebook-core:0.4'
 ## 2 Using RuleBook
 ### 2.1 A HelloWorld Example
 ```java
-public class ExampleRuleBook extends RuleBook {
-  @Override
-  public void defineRules() {
-    //one rule prints "Hello World"
-    addRule(StandardRule.create()
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule
       .then(f -> System.out.print("Hello "))
-      .then(f -> System.out.println("World")));
-  }
-}
+      .then(f -> System.out.println("World")))
+    .build();
 ```
 **...or use 2 rules**
 ```java
-public class ExampleRuleBook extends RuleBook {
-  @Override
-  public void defineRules() {
-    //first rule prints "Hello"
-    addRule(StandardRule.create().then(f -> System.out.print("Hello ")));
-    //second rule prints "World"
-    addRule(StandardRule.create().then(f -> System.out.println("World")));
-  }
-}
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule.then(f -> System.out.print("Hello ")))
+    .addRule(rule -> rule.then(f -> System.out.println("World")))
+    .build();
 ```
 **now, run it!**
 ```java
-public class ExampleMainClass {
-  public static void main(String[] args) {
-    RuleBook exampleRuleBook = new ExampleRuleBook();
-    exampleRuleBook.run();
-  }
-}
+ruleBook.run(new FactMap());
 ```
 ### 2.2 The Above Example Using Facts
 ```java
-public class ExampleRuleBook extends RuleBook<String> {
-  @Override
-  public void defineRules() {
-    //first rule prints "Hello" value from helloFact
-    addRule(StandardRule.create().when(f -> f.containsKey("hello"))
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule
+      .when(f -> f.containsKey("hello"))
       .using("hello")
-      .then(System.out::print));
-    //second rule prints "World" value from worldFact
-    addRule(StandardRule.create().when(f -> f.containsKey("world"))
+      .then(System.out::print))
+    .addRule(rule -> rule
+      .when(f -> f.containsKey("world"))
       .using("world")
-      .then(System.out::println));
-  }
-}
+      .then(System.out::println))
+    .build();
 ```
 **..or it could be a single rule**
 ```java
-public class ExampleRuleBook extends RuleBook<String> {
-  @Override
-  public void defineRules() {
-    //rule prints "Hello World"
-    addRule(StandardRule.create().when(f -> f.containsKey("hello") && f.containsKey("world")
-      .using("hello").then(System.out::print)
-      .using("world").then(System.out::println));
-  }
-}
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(rule -> rule
+      .when(f -> f.containsKey("hello") && f.containsKey("world")
+      .using("hello").then(System.out::print))
+      .using("world").then(System.out::println))
+    .build();
 ```
 **now, run it!**
 ```java
-public class ExampleMainClass {
-  public static void main(String[] args) {
-    RuleBook exampleRuleBook = new ExampleRuleBook();
-    exampleRuleBook
-      .given("hello", "Hello")
-      .given("world", " World")
-      .run();
-  }
-}
+NameValueReferableMap factMap = new FactMap();
+factMap.setValue("hello", "Hello");
+factMap.setValue("world", " World");
+ruleBook.run(factMap);
 ```
 ### 2.3 A [Slightly] More Complex Scenario
 
 _MegaBank issues home loans. If an applicant's credit score is less than 600 then they must pay 4x the current rate. If an applicant’s credit score is between 600, but less than 700, then they must pay a an additional point on top of their rate. If an applicant’s credit score is at least 700 and they have at least $25,000 cash on hand, then they get a quarter point reduction on their rate. If an applicant is a first time home buyer then they get a 20% reduction on their calculated rate after adjustments are made based on credit score (note: first time home buyer discount is only available for applicants with a 600 credit score or greater)._
 
-This type of problem lends itself well to Decisions. Decsisions accept one type of Fact and return a different type of Result. In this case, the Fact is applicant information and the Result is the rate for the loan. The following code example shows how the rules for this scenario can be implemeted.
-
 ```java
 public class ApplicantBean {
   private int creditScore;
-  private float cashOnHand;
+  private double cashOnHand;
   private boolean firstTimeHomeBuyer;
 
-  public ApplicantBean(int creditScore, float cashOnHand, boolean firstTimeHomeBuyer) {
+  public ApplicantBean(int creditScore, double cashOnHand, boolean firstTimeHomeBuyer) {
     this.creditScore = creditScore;
     this.cashOnHand = cashOnHand;
     this.firstTimeHomeBuyer = firstTimeHomeBuyer;
@@ -194,11 +165,11 @@ public class ApplicantBean {
     this.creditScore = creditScore;
   }
 
-  public float getCashOnHand() {
+  public double getCashOnHand() {
     return cashOnHand;
   }
 
-  public void setCashOnHand(float cashOnHand) {
+  public void setCashOnHand(double cashOnHand) {
     this.cashOnHand = cashOnHand;
   }
 
@@ -212,85 +183,101 @@ public class ApplicantBean {
 }
 ```
 ```java
-public class HomeLoanRateDecisionBook extends DecisionBook<ApplicantBean, Float> {
+public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
   protected void defineRules() {
     //credit score under 600 gets a 4x rate increase
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 600)
-      .then((facts, result) -> result.setValue(result.getValue() * 4f))
-      .stop());
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop()
+      .build());
 
     //credit score between 600 and 700 pays a 1 point increase
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 700)
-      .then((facts, result) -> result.setValue(result.getValue() + 1f)));
+      .then((facts, result) -> result.setValue(result.getValue() + 1))
+      .build());
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> 
             facts.getOne().getCreditScore() >= 700 &&
-            facts.getOne().getCashOnHand() >= 25000f)
-      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+            facts.getOne().getCashOnHand() >= 25000)
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25))
+      .build());
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(StandardDecision.create(ApplicantBean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().isFirstTimeHomeBuyer())
-      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80))
+      .build());
     }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    ApplicantBean applicant = new ApplicantBean(650, 20000, true);
-    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant", applicant).run();
+    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+      .withDefaultResult(4.5)
+      .build();
+    NameValueReferableMap facts = new FactMap();
+    facts.setValue("applicant", new ApplicantBean(650, 20000.0, true))
+    homeLoanRateRuleBook.run(facts);
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+    homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
 ```
 **...or nix the ApplicantBean and just use independent Facts**
 ```java
-public class HomeLoanRateDecisionBook extends DecisionBook {
+public class HomeLoanRateRuleBook extends RuleBook<Double> {
   @Override
   protected void defineRules() {
     //credit score under 600 gets a 4x rate increase
-    addRule(StandardDecision.create(Integer.class, Float.class)
-      .when(facts -> facts.getValue("Credit Score") < 600)
-      .then((facts, result) -> result.setValue(result.getValue() * 4f))
-      .stop());
+    addRule(RuleBuilder.create().withResultType(Double.class)
+      .when(facts -> facts.getIntVal("Credit Score") < 600)
+      .then((facts, result) -> result.setValue(result.getValue() * 4))
+      .stop()
+      .build());
 
     //credit score between 600 and 700 pays a 1 point increase
-    addRule(StandardDecision.create(Integer.class, Float.class)
-      .when(facts -> facts.getValue("Credit Score") < 700)
-      .then((facts, result) -> result.setValue(result.getValue() + 1f)));
+    addRule(RuleBuilder.create().withResultType(Double.class)
+      .when(facts -> facts.getIntVal("Credit Score") < 700)
+      .then((facts, result) -> result.setValue(result.getValue() + 1))
+      .build());
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(StandardDecision.create(Object.class, Float.class)
+    addRule(RuleBuilder.create().withResultType(Float.class)
       .when(facts -> 
-            facts.getIntValue("Credit Score") >= 700 &&
+            facts.getIntVal("Credit Score") >= 700 &&
             facts.getDblVal("Cash on Hand") >= 25000
-      .then((facts, result) -> result.setValue(result.getValue() - 0.25f)));
+      .then((facts, result) -> result.setValue(result.getValue() - 0.25))
+      .build());
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(StandardDecision.create(Boolean.class, Float.class)
+    addRule(RuleBuilder.create().withFactType(Boolean.class).withResultType(Float.class)
       .when(facts -> facts.getOne())
-      .then((facts, result) -> result.setValue(result.getValue() * 0.80f)));
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80f))
+      .build());
     }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
-    homeLoanRateDecisionBook.withDefaultResult(4.5f)
-      .given("Credit Score", 650)
-      .given("Cash on Hand", 20000)
-      .given("First Time Homebuyer", true).run();
+    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+      .withDefaultResult(4.5)
+      .build();
+      
+    NameValueReferableMap facts = new FactMap();
+    facts.set("Credit Score", 650);
+    facts.set("Cash on Hand", 20000);
+    facts.set("First Time Homebuyer", true)
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+    homeLoanRateRuleBook.run(facts);
+    
+    homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
 ```
@@ -309,43 +296,45 @@ Much like the Given-When-Then language for defining tests that was popularized b
 * **When** a condition evaluates to true
 * **Then** an action is triggered
 
-**Given** methods can accept one or more Facts in various different forms and are used as a collection of information provided to a single Rule/Decision or a chain of Rules/Decisions called a RuleBook/DecisionBook.
+**Given** methods can accept one or more facts in various different forms and are used as a collection of information provided to a single Rule. When grouping Rules into a RuleBook, facts are supplied to the Rules when the RuleBook is run, so the 'Given' can be inferred.
 
-**When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule/Decision.
+**When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule.
 
-**Then** methods accept a Consumer (or BiConsumer for Decisions) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule or Decision that will all be 
+**Then** methods accept a Consumer (or BiConsumer for Rules that have a Result) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule that will all be 
 invoked in the order they are specified if the when() condition evaluates to true.
 
 ### 3.2 The Using Method
-**Using** methods reduce the set of Facts available to a then() method. Mutiple using() methods can also be chained together if so desired. The aggregate of the Facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
+**Using** methods reduce the set of facts available to a then() method. Mutiple using() methods can also be chained together if so desired. The aggregate of the facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
 
 ### 3.3 The Stop Method
 **Stop** methods break the rule chain. If a stop() method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
 
 ### 3.4 Working With Facts
-As stated above, Facts are provided to Rules and Decisions using the given() method. The Facts available to Rules/Decisions and RuleBooks/DecisionBooks are contained in a FactMap, which is a special kind of Map that allows for easy access to the underlying objects contained in Facts. The reason why Facts exist is so that there is always a reference to the objects that Rules and Decisions work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to representative object.
+Facts can provided to Rules using the given() method. In RuleBooks, facts are provided to Rules when the RuleBook is run. The facts available to Rules and RuleBooks are contained in a NameValueReferableMap (the base implementation being FactMap), which is a special kind of Map that allows for easy access to the underlying objects contained in facts. The reason why facts exist is so that there is always a reference to the objects that Rules work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to a representative object.
 
 #### 3.4.1 The Single Fact Convenience Method
-Facts really only have a single convenience method. Since the FactMap is what is passed into then when() and then() methods, most of the convenience methods around Facts are made available in the FactMap. However, there is one in the Fact class... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the Fact can be used.
+Facts really only have a single convenience method. Since the NameValueReferableMap (e.g. FactMap) is what is passed into when() and then() methods, most of the convenience methods around facts are made available in the Map. However, there is one convenience method included in the Fact class... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the fact can be used.
 
 #### 3.4.2 The FactMap Convenience Methods
-Although the reason for FactMaps is important, that doesn't mean anyone wants to chain a bunch of boiler plate calls to get to the value object contained in an underlying Fact. So, some convenience methods are there to make life easier when working with when() and then() methods.
+Although the reason for NameValueReferableMaps (commonly referred to as FactMaps) is important, that doesn't mean anyone wants to chain a bunch of boiler plate calls to get to the value object contained in an underlying Fact. So, some convenience methods are there to make life easier when working with when() and then() methods.
 
 **getOne()** gets the value of the Fact when only one Fact exists in the FactMap
 
 **getValue(String name)** gets the value of the Fact by the name of the Fact
-
-**getStrVal(String name)** gets the value of the Fact by name as a String
-
-**getDblVal(String)** gets the value of the Fact by name as a Double
-
-**getIntVal(String)** gets the value of the Fact by name as an Integer
 
 **setValue(String name, T value)** sets the Fact with the name specified to the new value 
 
 **put(Fact fact)** adds a Fact to the FactMap, using the Fact's name as the key for the Map
 
 **toString()** toString gets the toString() method of the Fact's value when only one Fact exists
+
+The following methods are part of the NameValueReferrableTypeConvertible interface, which is implemented by the TypeConvertibleFactMap class as a NameValueReferrable decorator. You can think of it as a decorator for FactMaps (because it's also that too!) and it's what's used to inject facts into when() and then() methods.
+
+**getStrVal(String name)** gets the value of the Fact by name as a String
+
+**getDblVal(String)** gets the value of the Fact by name as a Double
+
+**getIntVal(String)** gets the value of the Fact by name as an Integer
 
 <sub>[Top](#contents)</sub>
 
@@ -389,13 +378,16 @@ public class HelloWorld {
 
 public static void main(String args[]) {
   RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules");
-  ruleBook.given(new Fact("hello", "Hello"), new Fact("world", "World")).run();
-  System.out.println(ruleBook.getResult()); //prints "Hello World"
+  NameValueReferrable facts = new FactMap();
+  facts.setValue("hello", "Hello");
+  facts.setValue("world", "World");
+  ruleBook.run(facts);
+  ruleBook.getResult().ifPresent(System.out::println) //prints "Hello World"
 }
 ```
 
 ### 4.2 A New MegaBank Example With POJO Rules
-_MegaBank changed their rate adjustment policy. They also now accept loan applications that include up to 3 applicants. If all of the applicants' credit scores are below 600, then they must pay 4x the current rate. However, if all of the applicants have a credit score of less than 700, but at least one applicant has a credit score greater than 600, then they must pay an additional point on top the rate. Also, if any of the applicants have a credit score of 700 or more and the sum of the cash on hand available from all applicants is greater than or equal to $50,000, then they get a quarter point reduction in their rate. And if at least one applicant is a first time home buyer and at least one applicant has a credit score of over 600, then they get a 20% reduction in their calculated rate after all other adjustments are made.
+_MegaBank changed their rate adjustment policy. They also now accept loan applications that include up to 3 applicants. If all of the applicants' credit scores are below 600, then they must pay 4x the current rate. However, if all of the applicants have a credit score of less than 700, but at least one applicant has a credit score greater than 600, then they must pay an additional point on top the rate. Also, if any of the applicants have a credit score of 700 or more and the sum of the cash on hand available from all applicants is greater than or equal to $50,000, then they get a quarter point reduction in their rate. And if at least one applicant is a first time home buyer and at least one applicant has a credit score of over 600, then they get a 20% reduction in their calculated rate after all other adjustments are made._
 
 **...using the ApplicantBean defined above**
 ```java
@@ -422,7 +414,7 @@ public class LowCreditScoreRule {
   private List<ApplicantBean> applicants;
 
   @Result
-  private float rate;
+  private double rate;
     
   @When
   public boolean when() {
@@ -432,7 +424,7 @@ public class LowCreditScoreRule {
 
   @Then
   public RuleState then() {
-    rate *= 4f;
+    rate *= 4;
     return BREAK;
   }
 }
@@ -444,19 +436,19 @@ public class QuarterPointReductionRule {
   List<ApplicantBean> applicants; 
 
   @Result
-  private float rate;
+  private double rate;
 
   @When
   public boolean when() {
     return 
       applicants.stream().anyMatch(applicant -> applicant.getCreditScore() >= 700) &&
-      applicants.stream().map(applicant -> applicant.getCashOnHand()).reduce(0.0, Float::sum) >= 50000;
+      applicants.stream().map(applicant -> applicant.getCashOnHand()).reduce(0.0, Double::sum) >= 50000;
   }
 
   @Then
   public void then() {
     approved = true;
-    return rate = rate - (rate * 0.25f);
+    return rate = rate - (rate * 0.25);
   }
 }
 ```
@@ -467,7 +459,7 @@ public class ExtraPointRule {
   List<ApplicantBean> applicants; 
 
   @Result
-  private float rate;
+  private double rate;
 
   @When
   public boolean when() {
@@ -477,7 +469,7 @@ public class ExtraPointRule {
 
   @Then
   public void then() {
-    rate += 1f;
+    rate += 1;
   }
 }
 ```
@@ -488,7 +480,7 @@ public class FirstTimeHomeBuyerRule {
   List<ApplicantBean> applicants; 
 
   @Result
-  private float rate;
+  private double rate;
 
   @When
   public boolean when() {
@@ -498,19 +490,23 @@ public class FirstTimeHomeBuyerRule {
 
   @Then
   public void then() {
-    rate = rate - (rate * 0.20f);
+    rate = rate - (rate * 0.20);
   }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateDecisionBook homeLoanRateDecisionBook = new HomeLoanRateDecisionBook();
+    RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules.homeloan");
+    NameValueReferrableMap<ApplicantBean> facts = new FactMap<>();
     ApplicantBean applicant1 = new ApplicantBean(650, 20000, true);
     ApplicantBean applicant2 = new ApplicantBean(620, 30000, true);
-    homeLoanRateDecisionBook.withDefaultResult(4.5f).given("applicant1", applicant).given("applicant2", applicant2).run();
+    facts.put(new Fact<>(applicant1);
+    facts.put(new Fact<>(applicant2);
     
-    System.out.println("Applicant qualified for the following rate: " + homeLoanRateDecisionBook.getResult());
+    ruleBook.setDefaultResult(new Result(4.5));
+    ruleBook.run(facts);
+    ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result);
   }
 }
 ```
@@ -545,7 +541,11 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 ## 5 Using RuleBook with Spring
 
-RuleBooks in Spring can be created using Spring configurations with RuleBookBean classes. RuleBookBean classes should be scoped as prototype and they can add either rules created through the RuleBook DSL or Spring enabled POJO rules. And creating a Spring enabled POJO rule couldn't be easier; just create a POJO rule, but instead of using @Rule, use @RuleBean.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. Instances of RuleBooks can
+even be specified directly using either the Java DSL or POJO Rules or both in combination.
+
+_Note: If you've been using earlier versions of RuleBook with Spring then all of that same stuff still works. All
+the same POJO and Spring annotated Rules still work too - and they are compatible with the new Spring support for RuleBook._
 
 ### 5.1 Adding RuleBook Spring Support to Your Maven Project
 
@@ -555,7 +555,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-spring</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
 </dependency>
 ```
 
@@ -564,13 +564,18 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.4'
+compile 'com.deliveredtechnologies:rulebook-spring:0.5'
 ```
 
-### 5.3 Creating a Spring Enabled POJO Rule
+### 5.3 Creating POJO Rules
+
+POJO Rules can be created just like they were created above without Spring.
 
 ```java
-@RuleBean
+
+package com.example.rulebook.spring;
+
+@Rule(order = 1)
 public class HelloSpringRule {
   @Given("hello")
   private String hello;
@@ -584,9 +589,32 @@ public class HelloSpringRule {
   }
   
   @Then
-  public RuleState then() {
+  public void then() {
     result = hello + " ";
-    return RuleState.NEXT;
+  }
+}
+```
+
+```java
+
+package com.example.rulebook.spring;
+
+@Rule(order = 2)
+public class WorldSpringRule {
+  @Given("world")
+  private String world;
+  
+  @Result
+  private String result;
+  
+  @When
+  public boolean when() {
+    return world != null;
+  }
+  
+  @Then
+  public void then() {
+    result += world;
   }
 }
 ```
@@ -596,21 +624,9 @@ public class HelloSpringRule {
 ```java
 @Configuration
 public class SpringConfig {
-  @Autowired
-  private ApplicationContext context;
-  
   @Bean
-  @Scope("prototype")
-  public RuleBookBean ruleBookBean() throws InvalidClassException {
-    RuleBookBean ruleBookBean = new RuleBookBean();
-    ruleBookBean.addRule(context.getBean(HelloSpringRule.class)); //add a Spring enabled POJO rule
-    ruleBookBean.addRule(StandardDecision.create()
-      .when(factMap -> factMap.containsKey("world"))
-      .then((factMap, result) -> {
-        result += factMap.getValue("world");
-        return RuleState.BREAK;
-      });
-    return ruleBookBean;
+  public RuleBookFactoryBean ruleBook() throws InvalidClassException {
+    return new RuleBookFactoryBean("com.example.rulebook.spring");
   }
 }
 ```
@@ -619,24 +635,23 @@ public class SpringConfig {
 
 ```java
   @Autowired
-  private ApplicationContext context;
+  private RuleBook<String> ruleBook;
   
   public void someMethod() {
-    RuleBookBean ruleBook = context.getBean(RuleBookBean.class));
-    ruleBook.given(new Fact("hello", "Hello"), new Fact("world", "World")).run(); 
-    System.out.println(ruleBook.getResult()); //prints "Hello World"
+    NameValueReferableMap<String> facts = new FactMap<>();
+    facts.setValue("hello", "Hello");
+    facts.setValue("world", "World");
+    ruleBook.run(facts);
+    ruleBook.ifPresent(System.out::println); //prints Hello World
   }
 ```
 
-### 5.6 Spring Enabled POJO Rules Explained
+#### 5.6 Ordering Rules With Spring
 
-In the Spring configuration, a RuleBookBean is used. RuleBookBean is like a RuleBookRunner that's made for Spring. The difference between RuleBookBean and RuleBookRunner is that RuleBookBean easily allows rules to be specified/wired up with Spring by delegating injection to Spring. Notice that RuleBookBean is also scoped as “prototype” in the examples above. This is because RuleBookBean also stores state - in the form of Facts and [possibly] a Result. If it was a Singleton then any time the RuleBookBean object was used, Facts could be changed across threads, and the Result could get overwritten.
-
-_Note: Since Facts hold references to objects, if the same exact Facts are used in two different RuleBooks, DecisionBooks, RuleBookRunners, or RuleBookBeans_
-
-#### 5.6.1 Ordering Spring Enabled POJO Rules
-
-Unlike regular POJO Rules, Spring Enabled POJO Rules don't have an order property in RuleBean. That's because the order of Spring Enabled POJO Rules is determined by the order they are configured. Simple, right?
+If you were using the RuleBean annotation to create Spring enabled Rules, all of that stuff still works. And there Spring 
+enabled POJO Rules can still be configured in RuleBooks in Spring \[using SpringRuleBook\]. But RuleBean doesn't have an
+order property. So, if you need to order beans scanned using a RuleBookFactoryBean, just use the @Rule annotation like
+you would with regular non-Spring enabled POJO Rules. It works exactly the same way!
 
 <sub>[[Top](#contents)]</sub>
 

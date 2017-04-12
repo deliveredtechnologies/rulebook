@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.StandardDecision;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 import java.io.InvalidClassException;
 
 /**
- * Created by clong on 2/27/17.
  * Test configuration for rulebook-spring.
  */
 @Configuration
@@ -41,5 +41,10 @@ public class TestConfig {
             result.setValue("SecondRule");
           }));
     return ruleBookBean;
+  }
+
+  @Bean
+  public RuleBookFactoryBean ruleBookWithResult() {
+    return new RuleBookFactoryBean("com.deliveredtechnologies.rulebook.spring");
   }
 }

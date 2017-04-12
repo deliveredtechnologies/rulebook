@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 
 /**
- * Created by clong on 2/23/17.
- *
+ * A convenience DecisionBook for POJO Rules that may be created by Spring.
  */
+@Deprecated
 public class RuleBookBean extends DecisionBook {
   private static Logger LOGGER = LoggerFactory.getLogger(DecisionBook.class);
 

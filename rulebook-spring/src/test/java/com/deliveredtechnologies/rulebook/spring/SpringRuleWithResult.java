@@ -8,7 +8,7 @@ import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
 /**
- * Created by clong on 2/27/17.
+ * Sample POJO Rule with result for testing Spring support.
  */
 @RuleBean
 public class SpringRuleWithResult {

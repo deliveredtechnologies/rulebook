@@ -26,15 +26,15 @@ public final class AnnotationUtils {
    */
   @SuppressWarnings("unchecked")
   public static List<Field> getAnnotatedFields(Class annotation, Class clazz) {
-    List<Field> fields = new ArrayList<>();
     if (clazz == Object.class) {
-      return fields;
+      return new ArrayList<>();
     }
-    fields.addAll((List<Field>)
-        Arrays.stream(clazz.getDeclaredFields())
-        .filter(field -> field.getAnnotation(annotation) != null)
-        .collect(Collectors.toList()));
-    fields.addAll(getAnnotatedFields(annotation, clazz.getSuperclass()));
+    List<Field> fields = (List<Field>)Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> field.getAnnotation(annotation) != null)
+            .collect(Collectors.toList());
+    if (clazz.getSuperclass() != null) {
+      fields.addAll(getAnnotatedFields(annotation, clazz.getSuperclass()));
+    }
     return fields;
   }
 

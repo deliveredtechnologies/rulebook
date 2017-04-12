@@ -1,32 +1,32 @@
 package com.deliveredtechnologies.rulebook;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 /**
- * A FactMap is an extension of {@link HashMap}; it stores facts by their name and provides convenience methods for
+ * A FactMap decorates {@link Map}; it stores facts by their name and provides convenience methods for
  * accessing {@link Fact} objects.
  */
-public class FactMap<T> implements Map<String, Fact<T>> {
+public class FactMap<T> implements NameValueReferableMap<T> {
 
-  private Map<String, Fact<T>> _facts;
+  private Map<String, NameValueReferable<T>> _facts;
 
-  public FactMap(Map<String, Fact<T>> facts) {
+  public FactMap(Map<String, NameValueReferable<T>> facts) {
     _facts = facts;
   }
 
   public FactMap() {
-    _facts = new HashMap<String, Fact<T>>();
+    _facts = new HashMap<>();
   }
 
   /**
    * The method getOne() gets the value of the single Fact in the FactMap.
    * @return the value of a fact stored if only one fact is stored, otherwise null
    */
+  @Override
   public T getOne() {
     if (_facts.size() == 1) {
       return _facts.values().iterator().next().getValue();
@@ -39,8 +39,9 @@ public class FactMap<T> implements Map<String, Fact<T>> {
    * @param name  the name of the Fact
    * @return      the value of the Fact
    */
+  @Override
   public T getValue(String name) {
-    return Optional.ofNullable(_facts.get(name)).map(Fact::getValue).orElse(null);
+    return Optional.ofNullable(_facts.get(name)).map(NameValueReferable::getValue).orElse(null);
   }
 
   /**
@@ -101,15 +102,15 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   }
 
   /**
-   * The method setValue sets the value of the Fact but its name.<br/>
+   * The method setValue sets the value of the Fact by its name.<br/>
    * If no Fact exists with the associated name, a new fact is created with the specified name and value.<br/>
    * @param name  the name of the Fact
    * @param value the value object of the Fact
    */
   public void setValue(String name, T value) {
-    Fact<T> fact = _facts.get(name);
+    NameValueReferable<T> fact = _facts.get(name);
     if (fact == null) {
-      fact = new Fact<T>(name, value);
+      fact = new Fact<>(name, value);
       _facts.put(name, fact);
       return;
     }
@@ -122,13 +123,15 @@ public class FactMap<T> implements Map<String, Fact<T>> {
    * @param fact  the Fact to be added to the FactMap
    * @return      the Fact that was just added
    */
-  public Fact<T> put(Fact<T> fact) {
-    return _facts.put(fact.getName(), fact);
+  @Override
+  public Fact<T> put(NameValueReferable<T> fact) {
+    return put(fact.getName(), fact);
   }
 
   @Override
-  public Fact<T> put(String key, Fact<T> value) {
-    return _facts.put(key, value);
+  public Fact<T> put(String key, NameValueReferable<T> fact) {
+    Optional<NameValueReferable<T>> prev = Optional.ofNullable(_facts.put(key, fact));
+    return prev.map(obj -> obj instanceof Fact ? (Fact<T>)obj : new Fact<>((NameValueReferable<T>)obj)).orElse(null);
   }
 
   @Override
@@ -153,16 +156,30 @@ public class FactMap<T> implements Map<String, Fact<T>> {
 
   @Override
   public Fact<T> get(Object key) {
-    return _facts.get(key);
+    NameValueReferable<T> obj = _facts.get(key);
+    if (obj == null) {
+      return null;
+    }
+    if (obj instanceof Fact) {
+      return (Fact<T>)obj;
+    }
+    return new Fact<>(obj);
   }
 
   @Override
   public Fact<T> remove(Object key) {
-    return _facts.remove(key);
+    NameValueReferable<T> obj = _facts.remove(key);
+    if (obj == null) {
+      return null;
+    }
+    if (obj instanceof Fact) {
+      return (Fact<T>)obj;
+    }
+    return new Fact<>(obj);
   }
 
   @Override
-  public void putAll(Map<? extends String, ? extends Fact<T>> map) {
+  public void putAll(Map<? extends String, ? extends NameValueReferable<T>> map) {
     _facts.putAll(map);
   }
 
@@ -177,12 +194,12 @@ public class FactMap<T> implements Map<String, Fact<T>> {
   }
 
   @Override
-  public Collection<Fact<T>> values() {
+  public Collection<NameValueReferable<T>> values() {
     return _facts.values();
   }
 
   @Override
-  public Set<Entry<String, Fact<T>>> entrySet() {
+  public Set<Entry<String, NameValueReferable<T>>> entrySet() {
     return _facts.entrySet();
   }
 

@@ -22,6 +22,7 @@ import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotat
 /**
  * RuleBookRunner creates a RuleBook from a package containing {@link Rule} annotated POJOs.
  */
+@Deprecated
 public class RuleBookRunner extends DecisionBook {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
