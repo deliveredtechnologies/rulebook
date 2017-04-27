@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -49,11 +50,6 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
   }
 
   @Override
-  public void setValue(String name, T obj) {
-    _map.setValue(name, obj);
-  }
-
-  @Override
   public Double getDblVal(String name) {
     Object value = getValue(name);
     if (value != null) {
@@ -74,6 +70,21 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
       }
     }
     return null;
+  }
+
+  @Override
+  public Boolean getBoolVal(String name) {
+    return null;
+  }
+
+  @Override
+  public BigDecimal getBigDeciVal(String name) {
+    return null;
+  }
+
+  @Override
+  public void setValue(String name, T obj) {
+    _map.setValue(name, obj);
   }
 
   @Override
