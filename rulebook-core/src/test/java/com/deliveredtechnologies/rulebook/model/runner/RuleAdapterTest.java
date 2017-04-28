@@ -261,7 +261,9 @@ public class RuleAdapterTest {
     ruleAdapter.setResult(result);
     ruleAdapter.invoke();
 
-    Assert.assertEquals("So Factual Too!", ((Fact)_factMap.get("fact2")).getValue());
+    Assert.assertEquals("SecondFact", ((Fact)_factMap.get("fact2")).getValue());
+    Assert.assertEquals(subRuleWithResult.getFact2(), "SecondFact");
+    Assert.assertEquals(subRuleWithResult.getFact1(), "FirstFact");
     Assert.assertEquals(subRuleWithResult.getResult(), result.getValue());
   }
 
