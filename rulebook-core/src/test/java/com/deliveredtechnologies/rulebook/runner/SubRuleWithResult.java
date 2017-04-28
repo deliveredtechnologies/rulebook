@@ -16,4 +16,8 @@ public class SubRuleWithResult extends SampleRuleWithResult {
   public boolean condition() {
     return getFact1().equals(getFact2());
   }
+
+  public String getSubFact() {
+    return _subFact;
+  }
 }
