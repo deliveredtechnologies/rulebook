@@ -58,7 +58,6 @@ public class RuleAdapter implements Rule {
     }
     _rule = rule;
     _pojoRule = pojoRule;
-
   }
 
   /**
