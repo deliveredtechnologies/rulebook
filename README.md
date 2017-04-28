@@ -1,5 +1,5 @@
-[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.5|
-[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.5|
+[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.5.1|
+[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.5.1|
 [Apache 2.0 License]:https://opensource.org/licenses/Apache-2.0
 
 # RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
@@ -78,7 +78,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-core</artifactId>
-    <version>0.5</version>
+    <version>0.5.1</version>
 </dependency>
 ```
 
@@ -87,7 +87,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-core:0.5'
+compile 'com.deliveredtechnologies:rulebook-core:0.5.1'
 ```
 
 <sub>[[Top](#contents)]</sub>
