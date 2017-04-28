@@ -79,6 +79,10 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
 
   @Override
   public BigDecimal getBigDeciVal(String name) {
+    Object value = getValue(name);
+    if (value instanceof Double) {
+      return BigDecimal.valueOf((Double)value);
+    }
     return null;
   }
 
