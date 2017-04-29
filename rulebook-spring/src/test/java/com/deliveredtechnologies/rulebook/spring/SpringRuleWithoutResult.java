@@ -20,7 +20,7 @@ public class SpringRuleWithoutResult {
 
   @When
   public boolean when() {
-    return _value2.equals("value2");
+    return _value2.equals(new Fact("value2"));
   }
 
   /**

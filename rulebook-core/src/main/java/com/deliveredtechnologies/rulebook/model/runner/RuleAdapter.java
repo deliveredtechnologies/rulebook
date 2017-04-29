@@ -130,7 +130,7 @@ public class RuleAdapter implements Rule {
     }
 
     //If nothing was explicitly set, then convert the method in the class
-    return Arrays.stream(_pojoRule.getClass().getMethods())
+    _rule.setCondition(Arrays.stream(_pojoRule.getClass().getMethods())
             .filter(method -> method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)
             .filter(method -> Arrays.stream(method.getDeclaredAnnotations()).anyMatch(When.class::isInstance))
             .findFirst()
@@ -142,7 +142,8 @@ public class RuleAdapter implements Rule {
                 }
               })
             //If the condition still can't be determined, then just hand back one that returns false
-            .orElse(o -> false);
+            .orElse(o -> false));
+    return _rule.getCondition();
   }
 
   @Override
@@ -169,7 +170,9 @@ public class RuleAdapter implements Rule {
   @Override
   @SuppressWarnings("unchecked")
   public boolean invoke() {
+    // getActions and getCondition are called here so that they could be overridden prior to calling invoke()
     getActions();
+    getCondition();
     return _rule.invoke();
   }
 
