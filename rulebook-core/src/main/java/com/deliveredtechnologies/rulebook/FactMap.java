@@ -49,6 +49,7 @@ public class FactMap<T> implements NameValueReferableMap<T> {
    * @param name  the name of the Fact in the FactMap
    * @return      the String value of the Fact specified
    */
+  @Deprecated
   public String getStrVal(String name) {
     if (getValue(name) instanceof String) {
       return (String)getValue(name);
@@ -61,6 +62,7 @@ public class FactMap<T> implements NameValueReferableMap<T> {
    * @param name  the name of the Fact in the FactMap
    * @return      the Integer value of the Fact specified
    */
+  @Deprecated
   public Integer getIntVal(String name) {
     Object value = getValue(name);
     if (value != null) {
@@ -79,6 +81,7 @@ public class FactMap<T> implements NameValueReferableMap<T> {
    * @param name  the name of the Fact in the FactMap
    * @return      the Double value of the Fact specified
    */
+  @Deprecated
   public Double getDblVal(String name) {
     Object value = getValue(name);
     if (value != null) {
