@@ -79,6 +79,7 @@ public class TypeConvertibleFactMapTest {
     Fact<Double> fact3 = new Fact<Double>("lockness", 3.50);
     Fact<Integer> fact4 = new Fact<Integer>("jackson", 20);
     Fact<Long> fact5 = new Fact<Long>("grant", 50L);
+    Fact<BigDecimal> fact6 = new Fact<BigDecimal>("lincoln", new BigDecimal(5.0));
 
     FactMap factMap = new FactMap();
     TypeConvertibleFactMap typeConvertibleFactMap = new TypeConvertibleFactMap(factMap);
@@ -87,18 +88,43 @@ public class TypeConvertibleFactMapTest {
     factMap.put(fact3);
     factMap.put(fact4);
     factMap.put(fact5);
+    factMap.put(fact6);
 
     BigDecimal fact1decimal = typeConvertibleFactMap.getBigDeciVal("fact1");
     BigDecimal fact2decimal = typeConvertibleFactMap.getBigDeciVal("benjamin");
     BigDecimal fact3decimal = typeConvertibleFactMap.getBigDeciVal("lockness");
     BigDecimal fact4decimal = typeConvertibleFactMap.getBigDeciVal("jackson");
     BigDecimal fact5decimal = typeConvertibleFactMap.getBigDeciVal("grant");
+    BigDecimal fact6bigdecimal = typeConvertibleFactMap.getBigDeciVal("lincoln");
 
     Assert.assertEquals(BigDecimal.valueOf(100), fact1decimal);
     Assert.assertEquals(BigDecimal.valueOf(100.00f), fact2decimal);
     Assert.assertEquals(BigDecimal.valueOf(3.50), fact3decimal);
     Assert.assertEquals(new BigDecimal(20), fact4decimal);
     Assert.assertEquals(BigDecimal.valueOf(50L), fact5decimal);
+    Assert.assertEquals(BigDecimal.valueOf(5), fact6bigdecimal);
     Assert.assertNull(typeConvertibleFactMap.getBigDeciVal("doesNotExist"));
+  }
+
+  @Test
+  public void getBoolValConvertsFactValueToBoolean() {
+    Fact<String> fact1 = new Fact<String>("true string", "true");
+    Fact<String> fact2 = new Fact<String>("false string", "false");
+    Fact<Boolean> fact3 = new Fact<Boolean>("true boolean", true);
+    Fact<Boolean> fact4 = new Fact<Boolean>("false boolean", false);
+
+    FactMap factMap = new FactMap();
+    factMap.put(fact1);
+    factMap.put(fact2);
+    factMap.put(fact3);
+    factMap.put(fact4);
+
+    TypeConvertibleFactMap typeConvertibleFactMap = new TypeConvertibleFactMap(factMap);
+
+    Assert.assertTrue(typeConvertibleFactMap.getBoolVal("true string"));
+    Assert.assertFalse(typeConvertibleFactMap.getBoolVal("false string"));
+    Assert.assertTrue(typeConvertibleFactMap.getBoolVal("true boolean"));
+    Assert.assertFalse(typeConvertibleFactMap.getBoolVal("false boolean"));
+    Assert.assertFalse(typeConvertibleFactMap.getBoolVal("does not exist"));
   }
 }
