@@ -336,6 +336,10 @@ The following methods are part of the NameValueReferrableTypeConvertible interfa
 
 **getIntVal(String)** gets the value of the Fact by name as an Integer
 
+**getBigDeciVal(String)** gets the value of the Fact by name as a BigDecimal
+
+**getBoolVal(String)** gets the value of the Fact by name as a Boolean
+
 <sub>[Top](#contents)</sub>
 
 ## 4 POJO Rules
