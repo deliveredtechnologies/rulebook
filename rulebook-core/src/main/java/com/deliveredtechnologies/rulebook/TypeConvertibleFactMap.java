@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -49,31 +50,67 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
   }
 
   @Override
-  public void setValue(String name, T obj) {
-    _map.setValue(name, obj);
-  }
-
-  @Override
   public Double getDblVal(String name) {
     Object value = getValue(name);
     if (value != null) {
-      if (Float.class == value.getClass()) {
+      if (value instanceof Float) {
         return Double.valueOf((Float) value);
       }
-      if (Double.class == value.getClass()) {
+      if (value instanceof Double) {
         return (Double)value;
       }
-      if (Integer.class == value.getClass()) {
+      if (value instanceof Integer) {
         return Double.valueOf((Integer) value);
       }
-      if (Long.class == value.getClass()) {
+      if (value instanceof Long) {
         return Double.valueOf((Long) value);
       }
-      if (String.class == value.getClass()) {
+      if (value instanceof String) {
         return Double.parseDouble((String)value);
       }
     }
     return null;
+  }
+
+  @Override
+  public Boolean getBoolVal(String name) {
+    Object value = getValue(name);
+    if (value instanceof String) {
+      return Boolean.valueOf((String)value);
+    }
+    if (value instanceof Boolean) {
+      return (Boolean)value;
+    }
+    return false;
+  }
+
+  @Override
+  public BigDecimal getBigDeciVal(String name) {
+    Object value = getValue(name);
+    if (value instanceof Double) {
+      return BigDecimal.valueOf((Double)value);
+    }
+    if (value instanceof Float) {
+      return BigDecimal.valueOf((Float)value);
+    }
+    if (value instanceof Integer) {
+      return BigDecimal.valueOf((Integer)value);
+    }
+    if (value instanceof Long) {
+      return BigDecimal.valueOf((Long)value);
+    }
+    if (value instanceof String) {
+      return new BigDecimal((String)value);
+    }
+    if (value instanceof BigDecimal) {
+      return (BigDecimal)value;
+    }
+    return null;
+  }
+
+  @Override
+  public void setValue(String name, T obj) {
+    _map.setValue(name, obj);
   }
 
   @Override

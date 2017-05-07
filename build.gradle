@@ -145,16 +145,42 @@ project('rulebook-core') {
                 developer {
                     id 'Clayton7510'
                     name 'Clayton Long'
+                    url 'https://github.com/Clayton7510'
                     email 'Clayton7510@gmail.com'
+                    roles {
+                        role 'Author'
+                    }
                 }
             }
 
             contributors {
                 contributor {
                     name 'Nicholas Lambert'
+                    url 'https://github.com/NicolasLambert'
+                    roles {
+                        role 'code contributor for v0.2.1'
+                    }
                 }
                 contributor {
                     name 'wheezymustafa'
+                    url 'https://github.com/wheezymustafa'
+                    roles {
+                        role 'raised bugs and enhancement suggestions for v0.3 and v0.3.1'
+                    }
+                }
+                contributor {
+                    name 'Alessandro Torrisi'
+                    url 'https://github.com/typhoon1978'
+                    roles {
+                        role 'raised bug for v0.5.1'
+                    }
+                }
+                contributor {
+                    name 'Marc Seeger'
+                    url 'https://github.com/Gersee'
+                    roles {
+                        role 'raised bug for v0.5.1'
+                    }
                 }
             }
         }
