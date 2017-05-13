@@ -120,11 +120,11 @@ public class GoldenRule<T, U> implements Rule<T, U> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public boolean invoke() {
+  public boolean invoke(NameValueReferableMap facts) {
     try {
       //only use facts of the specified type
       NameValueReferableMap<T> typeFilteredFacts =
-              new FactMap<T>((Map<String, NameValueReferable<T>>) _facts.values().stream()
+              new FactMap<T>((Map<String, NameValueReferable<T>>) facts.values().stream()
               .filter((Object fact) -> _factType.isAssignableFrom(((NameValueReferable) fact).getValue().getClass()))
               .collect(Collectors.toMap(fact ->
                       ((NameValueReferable<Object>) fact).getName(), fact -> (NameValueReferable<T>) fact)));
@@ -143,7 +143,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
           if (factNames != null) {
             usingFacts = new FactMap<T>(factNames.stream()
                     .filter(typeFilteredFacts::containsKey)
-                    .collect(Collectors.toMap(name -> name, name -> (NameValueReferable<T>)_facts.get(name))));
+                    .collect(Collectors.toMap(name -> name, name -> (NameValueReferable<T>)facts.get(name))));
           } else {
             usingFacts = typeFilteredFacts;
           }
