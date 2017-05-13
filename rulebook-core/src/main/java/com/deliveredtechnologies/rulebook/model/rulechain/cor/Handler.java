@@ -1,5 +1,7 @@
 package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+
 import java.util.Optional;
 
 /**
@@ -9,9 +11,10 @@ import java.util.Optional;
 public interface Handler<T> {
 
   /**
-   * Handle the request.
+   * Handles the request.
+   * @param facts the facts to be applied
    */
-  void handleRequest();
+  void handleRequest(NameValueReferableMap facts);
 
   /**
    * Get the delegate: the object contained within the handler implementation.

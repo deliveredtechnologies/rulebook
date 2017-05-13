@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.model.Rule;
@@ -24,14 +25,13 @@ public class RuleHandler implements Handler<Rule> {
    */
   @Override
   @SuppressWarnings("unchecked")
-  public void handleRequest() {
-    boolean actionResult = _rule.invoke();
+  public void handleRequest(NameValueReferableMap facts) {
+    boolean actionResult = _rule.invoke(facts);
     if (!actionResult || _rule.getRuleState() == RuleState.NEXT) {
       getSuccessor().ifPresent(handler -> {
-          handler.getDelegate().setFacts(_rule.getFacts());
           _rule.getResult().ifPresent(result -> handler.getDelegate().setResult((Result)result));
+          handler.handleRequest(facts);
         });
-      getSuccessor().ifPresent(Handler::handleRequest);
     }
   }
 
