@@ -23,7 +23,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact4", "Fourth Fact"))
             .then(facts -> facts.setValue("fact5", "Fifth Fact")).build());
     handler1.setSuccessor(handler2);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(5, factMap.size());
   }
@@ -41,7 +41,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact4", "Fourth Fact"))
             .then(facts -> facts.setValue("fact5", "Fifth Fact")).build());
     handler1.setSuccessor(handler2);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(3, factMap.size());
     Assert.assertNotNull(factMap.get("fact5"));
@@ -61,7 +61,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact4", "Fourth Fact"))
             .then(facts -> facts.setValue("fact5", "Fifth Fact")).build());
     handler1.setSuccessor(handler2);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(3, factMap.size());
     Assert.assertNotNull(factMap.get("fact3"));
@@ -79,7 +79,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact3", "Third Fact"))
             .stop().build());
     handler1.setSuccessor(null);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(3, factMap.size());
     Assert.assertNotNull(factMap.get("fact1"));

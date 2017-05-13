@@ -169,11 +169,11 @@ public class RuleAdapter implements Rule {
 
   @Override
   @SuppressWarnings("unchecked")
-  public boolean invoke() {
+  public boolean invoke(NameValueReferableMap facts) {
     // getActions and getCondition are called here so that they could be overridden prior to calling invoke()
     getActions();
     getCondition();
-    return _rule.invoke();
+    return _rule.invoke(facts);
   }
 
   @Override
