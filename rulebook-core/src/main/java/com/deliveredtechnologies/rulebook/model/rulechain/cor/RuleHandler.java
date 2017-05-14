@@ -22,15 +22,16 @@ public class RuleHandler implements Handler<Rule> {
   /**
    * Invokes the current Rule's action and then moves down the chain to the successor
    * if the RuleState of the current Rule is next or the action(s) was not executed.
+   * @param obj facts to be applied to the request (rule invocation)
    */
   @Override
   @SuppressWarnings("unchecked")
-  public void handleRequest(NameValueReferableMap facts) {
-    boolean actionResult = _rule.invoke(facts);
+  public void handleRequest(Object obj) {
+    boolean actionResult = _rule.invoke((NameValueReferableMap)obj);
     if (!actionResult || _rule.getRuleState() == RuleState.NEXT) {
       getSuccessor().ifPresent(handler -> {
           _rule.getResult().ifPresent(result -> handler.getDelegate().setResult((Result)result));
-          handler.handleRequest(facts);
+          handler.handleRequest(obj);
         });
     }
   }

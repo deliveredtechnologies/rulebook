@@ -170,7 +170,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                           LOGGER.error("Error invoking action on " + action.getClass(), err);
                         }
                       });
-          _facts.putAll(usingFacts);
+          facts.putAll(usingFacts);
         }
 
         return true;

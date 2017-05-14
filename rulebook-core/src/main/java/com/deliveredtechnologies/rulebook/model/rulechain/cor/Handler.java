@@ -12,9 +12,9 @@ public interface Handler<T> {
 
   /**
    * Handles the request.
-   * @param facts the facts to be applied
+   * @param obj parameter for handling the request
    */
-  void handleRequest(NameValueReferableMap facts);
+  void handleRequest(Object obj);
 
   /**
    * Get the delegate: the object contained within the handler implementation.
