@@ -185,7 +185,7 @@ public class ApplicantBean {
 ```java
 public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
-  protected void defineRules() {
+  public void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 600)
@@ -218,11 +218,11 @@ public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+    RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
     NameValueReferableMap facts = new FactMap();
-    facts.setValue("applicant", new ApplicantBean(650, 20000.0, true))
+    facts.setValue("applicant", new ApplicantBean(650, 20000.0, true));
     homeLoanRateRuleBook.run(facts);
     
     homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
@@ -233,7 +233,7 @@ public class ExampleSolution {
 ```java
 public class HomeLoanRateRuleBook extends RuleBook<Double> {
   @Override
-  protected void defineRules() {
+  public void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(RuleBuilder.create().withResultType(Double.class)
       .when(facts -> facts.getIntVal("Credit Score") < 600)
@@ -266,7 +266,7 @@ public class HomeLoanRateRuleBook extends RuleBook<Double> {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+    RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
       
@@ -335,6 +335,10 @@ The following methods are part of the NameValueReferrableTypeConvertible interfa
 **getDblVal(String)** gets the value of the Fact by name as a Double
 
 **getIntVal(String)** gets the value of the Fact by name as an Integer
+
+**getBigDeciVal(String)** gets the value of the Fact by name as a BigDecimal
+
+**getBoolVal(String)** gets the value of the Fact by name as a Boolean
 
 <sub>[Top](#contents)</sub>
 
