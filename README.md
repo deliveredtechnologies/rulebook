@@ -218,7 +218,7 @@ public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    RuleBook<Double> homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
+    RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
     NameValueReferableMap facts = new FactMap();
@@ -266,7 +266,7 @@ public class HomeLoanRateRuleBook extends RuleBook<Double> {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    RuleBook<Double> homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
+    RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
       
