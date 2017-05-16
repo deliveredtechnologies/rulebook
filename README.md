@@ -185,7 +185,7 @@ public class ApplicantBean {
 ```java
 public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
-  protected void defineRules() {
+  public void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 600)
@@ -233,7 +233,7 @@ public class ExampleSolution {
 ```java
 public class HomeLoanRateRuleBook extends RuleBook<Double> {
   @Override
-  protected void defineRules() {
+  public void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(RuleBuilder.create().withResultType(Double.class)
       .when(facts -> facts.getIntVal("Credit Score") < 600)
