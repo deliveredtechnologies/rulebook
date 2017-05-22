@@ -183,7 +183,7 @@ project('rulebook-core') {
                     }
                 }
                 contributor {
-                    name ''
+                    name 'abhineet27'
                     url 'https://github.com/abhineet27'
                     roles {
                         role 'raised toString bug in TypeConvertibleFactMap for v0.6.1'
