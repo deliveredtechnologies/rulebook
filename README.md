@@ -451,8 +451,7 @@ public class QuarterPointReductionRule {
 
   @Then
   public void then() {
-    approved = true;
-    return rate = rate - (rate * 0.25);
+    rate = rate - (rate * 0.25);
   }
 }
 ```
@@ -508,7 +507,7 @@ public class ExampleSolution {
     facts.put(new Fact<>(applicant1);
     facts.put(new Fact<>(applicant2);
     
-    ruleBook.setDefaultResult(new Result(4.5));
+    ruleBook.setDefaultResult(4.5);
     ruleBook.run(facts);
     ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result);
   }
