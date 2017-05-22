@@ -1,5 +1,5 @@
-[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.6|
-[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.6|
+[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.6.1|
+[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.6.1|
 [Apache 2.0 License]:https://opensource.org/licenses/Apache-2.0
 
 # RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.6-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=master&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.6.1-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -62,8 +62,8 @@ cd RuleBook
 
 ### 1.2 Maven Central Releases
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.6-brightgreen.svg)][RuleBook-Core Maven Central]
-* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.6-brightgreen.svg)][RuleBook-Spring Maven Central]
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.6.1-brightgreen.svg)][RuleBook-Core Maven Central]
+* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.6.1-brightgreen.svg)][RuleBook-Spring Maven Central]
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
@@ -78,7 +78,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-core</artifactId>
-    <version>0.6</version>
+    <version>0.6.1</version>
 </dependency>
 ```
 
@@ -87,7 +87,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-core:0.6'
+compile 'com.deliveredtechnologies:rulebook-core:0.6.1'
 ```
 
 <sub>[[Top](#contents)]</sub>
@@ -185,7 +185,7 @@ public class ApplicantBean {
 ```java
 public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
-  protected void defineRules() {
+  public void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
       .when(facts -> facts.getOne().getCreditScore() < 600)
@@ -218,11 +218,11 @@ public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+    RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
     NameValueReferableMap facts = new FactMap();
-    facts.setValue("applicant", new ApplicantBean(650, 20000.0, true))
+    facts.setValue("applicant", new ApplicantBean(650, 20000.0, true));
     homeLoanRateRuleBook.run(facts);
     
     homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
@@ -233,7 +233,7 @@ public class ExampleSolution {
 ```java
 public class HomeLoanRateRuleBook extends RuleBook<Double> {
   @Override
-  protected void defineRules() {
+  public void defineRules() {
     //credit score under 600 gets a 4x rate increase
     addRule(RuleBuilder.create().withResultType(Double.class)
       .when(facts -> facts.getIntVal("Credit Score") < 600)
@@ -266,7 +266,7 @@ public class HomeLoanRateRuleBook extends RuleBook<Double> {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    HomeLoanRateRuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook).withResultType(Double.class)
+    RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
       
@@ -335,6 +335,10 @@ The following methods are part of the NameValueReferrableTypeConvertible interfa
 **getDblVal(String)** gets the value of the Fact by name as a Double
 
 **getIntVal(String)** gets the value of the Fact by name as an Integer
+
+**getBigDeciVal(String)** gets the value of the Fact by name as a BigDecimal
+
+**getBoolVal(String)** gets the value of the Fact by name as a Boolean
 
 <sub>[Top](#contents)</sub>
 
