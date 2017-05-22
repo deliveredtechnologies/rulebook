@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Tests for {@link TypeConvertibleFactMap}.
  */
@@ -126,5 +129,14 @@ public class TypeConvertibleFactMapTest {
     Assert.assertTrue(typeConvertibleFactMap.getBoolVal("true boolean"));
     Assert.assertFalse(typeConvertibleFactMap.getBoolVal("false boolean"));
     Assert.assertFalse(typeConvertibleFactMap.getBoolVal("does not exist"));
+  }
+
+  @Test
+  public void toStringDelegatesToDecoratedMap() {
+    NameValueReferableMap factMap = mock(NameValueReferableMap.class);
+    when(factMap.toString()).thenReturn("delegated!");
+
+    NameValueReferableMap facts = new TypeConvertibleFactMap(factMap);
+    Assert.assertEquals("delegated!", facts.toString());
   }
 }

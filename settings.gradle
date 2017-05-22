@@ -1,4 +1,4 @@
-rootProject.name = 'rulebook-all'
+rootProject.name = 'rulebook'
 
 include 'rulebook-core'
 include 'rulebook-spring'

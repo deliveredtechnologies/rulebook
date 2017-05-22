@@ -177,4 +177,9 @@ public class TypeConvertibleFactMap<T> implements NameValueReferableTypeConverti
   public Set<Entry<String, NameValueReferable<T>>> entrySet() {
     return _map.entrySet();
   }
+
+  @Override
+  public String toString() {
+    return _map.toString();
+  }
 }
