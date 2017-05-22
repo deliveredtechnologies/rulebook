@@ -1,0 +1,3 @@
+rootProject.name = 'rulebook-examples'
+
+include 'megabank'
