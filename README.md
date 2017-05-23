@@ -558,7 +558,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-spring</artifactId>
-    <version>0.5</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
@@ -567,7 +567,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.5'
+compile 'com.deliveredtechnologies:rulebook-spring:0.6.2'
 ```
 
 ### 5.3 Creating POJO Rules
