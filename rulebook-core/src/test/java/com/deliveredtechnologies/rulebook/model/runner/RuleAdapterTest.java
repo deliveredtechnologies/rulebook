@@ -196,7 +196,7 @@ public class RuleAdapterTest {
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRule);
     Predicate predicate = ruleAdapter.getCondition();
 
-    Assert.assertFalse(predicate.test(null));
+    Assert.assertTrue(predicate.test(null));
   }
 
   @Test

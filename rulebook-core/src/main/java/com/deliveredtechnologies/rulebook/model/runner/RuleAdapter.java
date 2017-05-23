@@ -141,8 +141,8 @@ public class RuleAdapter implements Rule {
                   return false;
                 }
               })
-            //If the condition still can't be determined, then just hand back one that returns false
-            .orElse(o -> false));
+            //If the condition still can't be determined, then just hand back one that returns true
+            .orElse(o -> true));
     return _rule.getCondition();
   }
 

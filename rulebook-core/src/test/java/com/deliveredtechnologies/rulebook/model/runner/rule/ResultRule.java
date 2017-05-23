@@ -13,11 +13,6 @@ public class ResultRule {
   @Result
   private double _result;
 
-  @When
-  public boolean when() {
-    return true;
-  }
-
   @Then
   public void then() {
     _result += 1.5;
