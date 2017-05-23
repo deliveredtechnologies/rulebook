@@ -187,6 +187,7 @@ project('rulebook-core') {
                     url 'https://github.com/abhineet27'
                     roles {
                         role 'raised toString bug in TypeConvertibleFactMap for v0.6.1'
+                        role 'raised POJO result chaining on read bug for v0.6.2'
                     }
                 }
             }

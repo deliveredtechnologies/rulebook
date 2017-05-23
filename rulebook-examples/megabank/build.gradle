@@ -1,0 +1,15 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+dependencies {
+    compile 'com.deliveredtechnologies:rulebook-core:0.6.2-SNAPSHOT'
+}
+
+mainClassName = 'com.example.pojorules.homeloan.ExampleSolution'
