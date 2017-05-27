@@ -31,6 +31,7 @@ public class RuleBookRunner implements RuleBook {
 
   private RuleBook _ruleBook;
   private String _package;
+  private boolean _threadsafe;
 
   /**
    * Creates a new RuleBookRunner using the specified package and the default RuleBook.
@@ -46,8 +47,19 @@ public class RuleBookRunner implements RuleBook {
    * @param rulePackage the package to scan for POJO rules
    */
   public RuleBookRunner(RuleBook ruleBook, String rulePackage) {
+    this(ruleBook, rulePackage, false);
+  }
+
+  /**
+   * Creates a new RuleBookRunner with an option for thread safety.
+   * @param ruleBook    the RuleBook to use as a delegate for the RuleBookRunner
+   * @param rulePackage the package to scan for POJO rules
+   * @param threadsafe  if set to true, RuleBookRunner will be used in thread safe mode.
+   */
+  public RuleBookRunner(RuleBook ruleBook, String rulePackage, boolean threadsafe) {
     _ruleBook = ruleBook;
     _package = rulePackage;
+    _threadsafe = threadsafe;
   }
 
   @Override
@@ -57,14 +69,13 @@ public class RuleBookRunner implements RuleBook {
 
   @Override
   public void run(NameValueReferableMap facts) {
-    if (!hasRules()) {
+    if (_threadsafe) {
       synchronized (_ruleBook) {
-        if (!hasRules()) {  //double check locking to guard against an unsynchronized state change
-          defineRules();
-        }
+        defineAndRunRules(facts);
       }
+    } else {
+      defineAndRunRules(facts);
     }
-    _ruleBook.run(facts);
   }
 
   @Override
@@ -106,6 +117,14 @@ public class RuleBookRunner implements RuleBook {
   @Override
   public boolean hasRules() {
     return _ruleBook.hasRules();
+  }
+
+  private void defineAndRunRules(NameValueReferableMap facts) {
+    if (!hasRules()) {
+      defineRules();
+    }
+
+    _ruleBook.run(facts);
   }
 
   private List<Class<?>> findRuleClassesInPackage(String packageName) throws InvalidPathException, IOException {

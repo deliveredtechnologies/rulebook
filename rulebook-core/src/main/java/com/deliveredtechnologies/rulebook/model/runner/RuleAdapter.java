@@ -160,7 +160,7 @@ public class RuleAdapter implements Rule {
       for (Method actionMethod : getAnnotatedMethods(Then.class, _pojoRule.getClass())) {
         actionMethod.setAccessible(true);
         Object then = getThenMethodAsBiConsumer(actionMethod).map(Object.class::cast)
-                .orElse(getThenMethodAsConsumer(actionMethod).orElse(factMap -> { }));
+            .orElse(getThenMethodAsConsumer(actionMethod).orElse(factMap -> { }));
         actionList.add(then);
       }
       _rule.getActions().addAll(actionList);
