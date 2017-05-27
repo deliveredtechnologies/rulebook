@@ -71,10 +71,20 @@ public class RuleBookRunner implements RuleBook {
   public void run(NameValueReferableMap facts) {
     if (_threadsafe) {
       synchronized (_ruleBook) {
-        defineAndRunRules(facts);
+        if (!hasRules()) {
+          defineRules();
+        }
+        _ruleBook.run(facts);
       }
     } else {
-      defineAndRunRules(facts);
+      if (!hasRules()) {
+        synchronized(_ruleBook) {
+          if (!hasRules()) {
+            defineRules();
+          }
+        }
+        _ruleBook.run(facts);
+      }
     }
   }
 
@@ -117,14 +127,6 @@ public class RuleBookRunner implements RuleBook {
   @Override
   public boolean hasRules() {
     return _ruleBook.hasRules();
-  }
-
-  private void defineAndRunRules(NameValueReferableMap facts) {
-    if (!hasRules()) {
-      defineRules();
-    }
-
-    _ruleBook.run(facts);
   }
 
   private List<Class<?>> findRuleClassesInPackage(String packageName) throws InvalidPathException, IOException {
