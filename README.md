@@ -67,8 +67,8 @@ cd RuleBook
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.7-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.7-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.6.2-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.6.2-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 
@@ -451,8 +451,7 @@ public class QuarterPointReductionRule {
 
   @Then
   public void then() {
-    approved = true;
-    return rate = rate - (rate * 0.25);
+    rate = rate - (rate * 0.25);
   }
 }
 ```
@@ -508,7 +507,7 @@ public class ExampleSolution {
     facts.put(new Fact<>(applicant1);
     facts.put(new Fact<>(applicant2);
     
-    ruleBook.setDefaultResult(new Result(4.5));
+    ruleBook.setDefaultResult(4.5);
     ruleBook.run(facts);
     ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result);
   }

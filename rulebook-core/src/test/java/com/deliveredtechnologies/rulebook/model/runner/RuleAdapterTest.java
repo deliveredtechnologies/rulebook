@@ -9,6 +9,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.runner.rule.ResultRule;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutRuleAnnotation;
@@ -195,7 +196,7 @@ public class RuleAdapterTest {
     RuleAdapter ruleAdapter = new RuleAdapter(sampleRule);
     Predicate predicate = ruleAdapter.getCondition();
 
-    Assert.assertFalse(predicate.test(null));
+    Assert.assertTrue(predicate.test(null));
   }
 
   @Test
@@ -321,5 +322,13 @@ public class RuleAdapterTest {
     ruleAdapter.addAction(biConsumer);
 
     verify(rule, times(1)).addAction(biConsumer);
+  }
+
+  @Test
+  public void resultIsInitializedWithDefaultValue() throws InvalidClassException {
+    RuleAdapter ruleAdapter = new RuleAdapter(new ResultRule());
+    ruleAdapter.setResult(new Result<Double>(1.0));
+    ruleAdapter.invoke();
+    Assert.assertEquals(2.5, (double)(ruleAdapter.getResult().get().getValue()), 0.0);
   }
 }

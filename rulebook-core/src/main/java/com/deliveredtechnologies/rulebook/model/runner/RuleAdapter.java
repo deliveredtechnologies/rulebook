@@ -138,8 +138,8 @@ public class RuleAdapter implements Rule {
                   return false;
                 }
               })
-            //If the condition still can't be determined, then just hand back one that returns false
-            .orElse(o -> false));
+            //If the condition still can't be determined, then just hand back one that returns true
+            .orElse(o -> true));
     return _rule.getCondition();
   }
 
@@ -178,6 +178,16 @@ public class RuleAdapter implements Rule {
   @SuppressWarnings("unchecked")
   public void setResult(Result result) {
     _rule.setResult(result);
+
+    getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _pojoRule.getClass())
+          .ifPresent(field -> {
+              field.setAccessible(true);
+              try {
+                field.set(_pojoRule, result.getValue());
+              } catch (Exception ex) {
+                LOGGER.error("Unable to set @Result field in " + _pojoRule.getClass(), ex);
+              }
+            });
   }
 
   @Override
