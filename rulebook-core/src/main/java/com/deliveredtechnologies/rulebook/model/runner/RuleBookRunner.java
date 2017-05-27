@@ -50,6 +50,12 @@ public class RuleBookRunner implements RuleBook {
     this(ruleBook, rulePackage, false);
   }
 
+  /**
+   * Creates a new RuleBookRunner with an option for thread safety.
+   * @param ruleBook    the RuleBook to use as a delegate for the RuleBookRunner
+   * @param rulePackage the package to scan for POJO rules
+   * @param threadsafe  if set to true, RuleBookRunner will be used in thread safe mode.
+   */
   public RuleBookRunner(RuleBook ruleBook, String rulePackage, boolean threadsafe) {
     _ruleBook = ruleBook;
     _package = rulePackage;
