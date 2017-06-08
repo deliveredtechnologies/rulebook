@@ -115,11 +115,11 @@ ruleBook.run(new FactMap());
 ### 2.2 The Above Example Using Facts
 ```java
 RuleBook ruleBook = RuleBookBuilder.create()
-    .addRule(rule -> rule
+    .addRule(rule -> rule.withFactType(String.class)
       .when(f -> f.containsKey("hello"))
       .using("hello")
       .then(System.out::print))
-    .addRule(rule -> rule
+    .addRule(rule -> rule.withFactType(String.class)
       .when(f -> f.containsKey("world"))
       .using("world")
       .then(System.out::println))
@@ -128,7 +128,7 @@ RuleBook ruleBook = RuleBookBuilder.create()
 **..or it could be a single rule**
 ```java
 RuleBook ruleBook = RuleBookBuilder.create()
-    .addRule(rule -> rule
+    .addRule(rule -> rule.withFactType(String.class)
       .when(f -> f.containsKey("hello") && f.containsKey("world")
       .using("hello").then(System.out::print))
       .using("world").then(System.out::println))
