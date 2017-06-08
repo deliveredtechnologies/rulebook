@@ -96,7 +96,7 @@ compile 'com.deliveredtechnologies:rulebook-core:0.6.2'
 ### 2.1 A HelloWorld Example
 ```java
 RuleBook ruleBook = RuleBookBuilder.create()
-    .addRule(rule -> rule
+    .addRule(rule -> rule.withNoSpecifiedFactType()
       .then(f -> System.out.print("Hello "))
       .then(f -> System.out.println("World")))
     .build();
@@ -104,8 +104,8 @@ RuleBook ruleBook = RuleBookBuilder.create()
 **...or use 2 rules**
 ```java
 RuleBook ruleBook = RuleBookBuilder.create()
-    .addRule(rule -> rule.then(f -> System.out.print("Hello ")))
-    .addRule(rule -> rule.then(f -> System.out.println("World")))
+    .addRule(rule -> rule.withNoSpecifiedFactType().then(f -> System.out.print("Hello ")))
+    .addRule(rule -> rule.withNoSpecifiedFactType().then(f -> System.out.println("World")))
     .build();
 ```
 **now, run it!**
