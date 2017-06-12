@@ -15,27 +15,25 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
 
   private Class<? extends RuleBook> _ruleBookType;
   private String _package;
-  private boolean _threadsafe;
 
-  public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType, boolean threadsafe, String pkg) {
+  public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType, String pkg) {
     _ruleBookType = ruleBookType;
-    _threadsafe = threadsafe;
     _package = pkg;
   }
 
   public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType) {
-    this(ruleBookType, true,null);
+    this(ruleBookType,null);
   }
 
   public RuleBookFactoryBean(String pkg) {
-    this(null, true, pkg);
+    this(null, pkg);
   }
 
   @Override
   public RuleBook getObject() throws Exception {
     if (_package != null) {
       if (_ruleBookType != null) {
-        return new RuleBookRunner(RuleBookBuilder.create(_ruleBookType).build(), _package, _threadsafe);
+        return new RuleBookRunner(RuleBookBuilder.create(_ruleBookType).build(), _package);
       }
       return new RuleBookRunner(_package);
     }
