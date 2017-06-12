@@ -156,20 +156,20 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                   .filter(method -> method.getName().equals("accept"))
                   .findFirst()
                     .ifPresent(method -> {
-                        try {
-                          method.setAccessible(true);
-                          method.invoke(action,
-                              ArrayUtils.combine(
-                                      new Object[]{new TypeConvertibleFactMap<>(usingFacts)},
-                                      new Object[]{getResult().orElseGet(() -> result)},
-                                      method.getParameterCount()));
-                          if (result.getValue() != null) {
-                            _result = result;
-                          }
-                        } catch (IllegalAccessException | InvocationTargetException err) {
-                          LOGGER.error("Error invoking action on " + action.getClass(), err);
+                      try {
+                        method.setAccessible(true);
+                        method.invoke(action,
+                            ArrayUtils.combine(
+                                    new Object[]{new TypeConvertibleFactMap<>(usingFacts)},
+                                    new Object[]{getResult().orElseGet(() -> result)},
+                                    method.getParameterCount()));
+                        if (result.getValue() != null) {
+                          _result = result;
                         }
-                      });
+                      } catch (IllegalAccessException | InvocationTargetException err) {
+                        LOGGER.error("Error invoking action on " + action.getClass(), err);
+                      }
+                    });
           facts.putAll(usingFacts);
         }
 

@@ -30,9 +30,9 @@ public class RuleHandler implements Handler<Rule> {
     boolean actionResult = _rule.invoke((NameValueReferableMap)obj);
     if (!actionResult || _rule.getRuleState() == RuleState.NEXT) {
       getSuccessor().ifPresent(handler -> {
-          _rule.getResult().ifPresent(result -> handler.getDelegate().setResult((Result)result));
-          handler.handleRequest(obj);
-        });
+        _rule.getResult().ifPresent(result -> handler.getDelegate().setResult((Result)result));
+        handler.handleRequest(obj);
+      });
     }
   }
 

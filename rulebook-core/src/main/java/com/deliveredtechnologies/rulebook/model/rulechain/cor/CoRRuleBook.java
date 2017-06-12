@@ -42,9 +42,9 @@ public class CoRRuleBook<T> implements RuleBook<T> {
 
     Optional<Handler<Rule>> headRule = Optional.ofNullable(_headRule);
     headRule.ifPresent(ruleHandler -> {
-        getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
-        ruleHandler.handleRequest(facts);
-      });
+      getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
+      ruleHandler.handleRequest(facts);
+    });
   }
 
   @Override

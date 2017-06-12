@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class Result<T> implements Referable<T> {
   private Map<Long, T> _valueMap = new HashMap<>();
-  private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
 
   public Result() {}
 
@@ -28,11 +28,11 @@ public class Result<T> implements Referable<T> {
    */
   @Override
   public T getValue() {
-    lock.readLock().lock();
+    _lock.readLock().lock();
     try {
       return _valueMap.get(Thread.currentThread().getId());
     } finally {
-      lock.readLock().unlock();
+      _lock.readLock().unlock();
     }
   }
 
@@ -43,24 +43,24 @@ public class Result<T> implements Referable<T> {
    */
   @Override
   public void setValue(T value) {
-    lock.writeLock().lock();
+    _lock.writeLock().lock();
     try {
       _valueMap.put(Thread.currentThread().getId(), value);
     } finally {
-      lock.writeLock().unlock();
+      _lock.writeLock().unlock();
     }
   }
 
   @Override
   public String toString() {
-    lock.readLock().lock();
+    _lock.readLock().lock();
     try {
       if (_valueMap.containsKey(Thread.currentThread().getId())) {
         return _valueMap.get(Thread.currentThread().getId()).toString();
       }
       return "";
     } finally {
-      lock.readLock().unlock();
+      _lock.readLock().unlock();
     }
   }
 }

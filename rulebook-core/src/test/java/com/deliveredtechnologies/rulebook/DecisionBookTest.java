@@ -75,14 +75,14 @@ public class DecisionBookTest {
         addRule(StandardDecision.create(String.class, StringBuffer.class)
             .when(facts -> true)
             .then((facts, result) -> {
-                result.getValue().append(facts.getValue("hello"));
-              })
+              result.getValue().append(facts.getValue("hello"));
+            })
         );
         addRule(StandardDecision.create(String.class, StringBuffer.class)
             .when(facts -> true)
             .then((facts, results) -> {
-                results.getValue().append(facts.getValue("world"));
-              })
+              results.getValue().append(facts.getValue("world"));
+            })
         );
       }
     };

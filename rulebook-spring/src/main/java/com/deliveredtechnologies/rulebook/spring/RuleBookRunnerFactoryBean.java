@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.RuleBookFactory;
+import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunnerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -15,6 +16,10 @@ public class RuleBookRunnerFactoryBean implements FactoryBean<RuleBookFactory> {
 
   public RuleBookRunnerFactoryBean(Class<? extends RuleBook> ruleBookType, String pkg) {
     _factory = new RuleBookRunnerFactory(ruleBookType, pkg);
+  }
+
+  public RuleBookRunnerFactoryBean(String pkg) {
+    this(CoRRuleBook.class, pkg);
   }
 
   @Override

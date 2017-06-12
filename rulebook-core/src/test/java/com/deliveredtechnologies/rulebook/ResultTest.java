@@ -1,18 +1,22 @@
 package com.deliveredtechnologies.rulebook;
 
 import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
-import com.deliveredtechnologies.rulebook.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 
 /**
- * Tests for {@link Result}
+ * Tests for {@link Result}.
  */
 public class ResultTest {
   @Test
-  public void aRulebookRunInDifferentThreadsHaveDifferentResults() throws Exception {
+  public void rulebooksRunInDifferentThreadsHaveDifferentResults() throws Exception {
     //define the RuleBook
     com.deliveredtechnologies.rulebook.model.RuleBook ruleBook = RuleBookBuilder.create()
         .withResultType(String.class).withDefaultResult("Nada")
@@ -55,7 +59,7 @@ public class ResultTest {
     service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
     //check the results of the execution of the same RuleBook run in different threads with different results
-    Assert.assertEquals(resultA.get(), "Hello World");
     Assert.assertEquals(resultB.get(), "Bye Felicia");
+    Assert.assertEquals(resultA.get(), "Hello World");
   }
 }
