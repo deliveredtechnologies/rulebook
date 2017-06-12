@@ -10,8 +10,8 @@ public class RuleBookRunnerFactory implements RuleBookFactory {
   private String _pkg;
 
   public RuleBookRunnerFactory(Class<? extends RuleBook> ruleBookType, String pkg) {
-    this._ruleBookType = ruleBookType;
-    this._pkg = pkg;
+    _ruleBookType = ruleBookType;
+    _pkg = pkg;
   }
 
   public RuleBookRunnerFactory(String pkg) {

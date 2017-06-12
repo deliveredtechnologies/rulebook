@@ -16,6 +16,7 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
   private Class<? extends RuleBook> _ruleBookType;
   private String _package;
 
+  @Deprecated
   public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType, String pkg) {
     _ruleBookType = ruleBookType;
     _package = pkg;
@@ -25,6 +26,7 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
     this(ruleBookType,null);
   }
 
+  @Deprecated
   public RuleBookFactoryBean(String pkg) {
     this(null, pkg);
   }
