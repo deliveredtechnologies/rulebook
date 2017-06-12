@@ -1,5 +1,9 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * This is a wrapper class for the actual result.
  * This is needed to ensure that an instance is available and that a reference is maintained to the actual that
@@ -8,12 +12,13 @@ package com.deliveredtechnologies.rulebook;
  * and across other objects (i.e. DecisionBook and Decision objects)
  */
 public class Result<T> implements Referable<T> {
-  private T _value;
+  private Map<Long, T> _valueMap = new HashMap<>();
+  private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
   public Result() {}
 
   public Result(T value) {
-    this._value = value;
+    _valueMap.put(Thread.currentThread().getId(), value);
   }
 
   /**
@@ -23,7 +28,12 @@ public class Result<T> implements Referable<T> {
    */
   @Override
   public T getValue() {
-    return _value;
+    lock.readLock().lock();
+    try {
+      return _valueMap.get(Thread.currentThread().getId());
+    } finally {
+      lock.readLock().unlock();
+    }
   }
 
   /**
@@ -33,14 +43,24 @@ public class Result<T> implements Referable<T> {
    */
   @Override
   public void setValue(T value) {
-    this._value = value;
+    lock.writeLock().lock();
+    try {
+      _valueMap.put(Thread.currentThread().getId(), value);
+    } finally {
+      lock.writeLock().unlock();
+    }
   }
 
   @Override
   public String toString() {
-    if (_value == null) {
+    lock.readLock().lock();
+    try {
+      if (_valueMap.containsKey(Thread.currentThread().getId())) {
+        return _valueMap.get(Thread.currentThread().getId()).toString();
+      }
       return "";
+    } finally {
+      lock.readLock().unlock();
     }
-    return _value.toString();
   }
 }
