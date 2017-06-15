@@ -89,10 +89,20 @@ public interface Rule<T, U> {
   List<Object> getActions();
 
   /**
-   * Invokes the Rule.
+   * Invokes the Rule; defaults to calling invoke(facts) using the facts assigned to
+   * the Rule.
    * @return  true if the the action(s) were executed, otherwise false
    */
-  boolean invoke();
+  default boolean invoke() {
+    return invoke(getFacts());
+  }
+
+  /**
+   * Invokes the Rule using the given facts in place of the facts assigned to the Rule.
+   * @param facts the facts to be used in the invocation of the Rule
+   * @return      true if the action(s) were executed, otherwise false
+   */
+  boolean invoke(NameValueReferableMap facts);
 
   /**
    * Sets the Result of the Rule.

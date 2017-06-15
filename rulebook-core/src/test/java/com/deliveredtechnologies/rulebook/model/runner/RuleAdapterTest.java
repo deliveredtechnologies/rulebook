@@ -212,9 +212,9 @@ public class RuleAdapterTest {
   public void addingActionsAddsToActionList() throws InvalidClassException {
     RuleAdapter ruleAdapter = new RuleAdapter(new SampleRuleWithResult());
     BiConsumer<NameValueReferableTypeConvertibleMap<Object>, Result<Object>> biConsumer =
-            (facts, result) -> facts.setValue("fact", "Fact");
+        (facts, result) -> facts.setValue("fact", "Fact");
     Consumer<NameValueReferableTypeConvertibleMap<Object>> consumer =
-            facts -> facts.setValue("fact2", "Fact2");
+        facts -> facts.setValue("fact2", "Fact2");
     ruleAdapter.addAction(biConsumer);
     ruleAdapter.addAction(consumer);
 

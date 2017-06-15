@@ -99,14 +99,14 @@ public class StandardRule<T> implements Rule<T> {
               .filter(method -> method.getName().equals("accept"))
               .findFirst()
               .ifPresent(method -> {
-                  try {
-                    method.setAccessible(true);
-                    method.invoke(action,
-                        ArrayUtils.combine(new Object[]{usingFacts}, otherArgs, method.getParameterCount()));
-                  } catch (IllegalAccessException | InvocationTargetException err) {
-                    LOGGER.error("Error invoking action on " + action.getClass(), err);
-                  }
-                });
+                try {
+                  method.setAccessible(true);
+                  method.invoke(action,
+                      ArrayUtils.combine(new Object[]{usingFacts}, otherArgs, method.getParameterCount()));
+                } catch (IllegalAccessException | InvocationTargetException err) {
+                  LOGGER.error("Error invoking action on " + action.getClass(), err);
+                }
+              });
         }
 
         //if stop() was invoked, stop the rule chain after then is finished executing

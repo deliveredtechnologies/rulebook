@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.6.2-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=master&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.6.2-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -49,7 +49,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [5.6 Ordering Rules With Spring](#56-ordering-rules-with-spring)
 * **[6 How to Contribute](#6-how-to-contribute)**
   * [6.1 Developer Guidelines](#61-developer-guidelines)
-  
+
 ## 1 Getting RuleBook
 
 ### 1.1 Building RuleBook
@@ -201,7 +201,7 @@ public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
 
     //credit score is 700 and they have at least $25,000 cash on hand
     addRule(RuleBuilder.create().withFactType(ApplicantBean.class).withResultType(Double.class)
-      .when(facts -> 
+      .when(facts ->
             facts.getOne().getCreditScore() >= 700 &&
             facts.getOne().getCashOnHand() >= 25000)
       .then((facts, result) -> result.setValue(result.getValue() - 0.25))
@@ -224,7 +224,7 @@ public class ExampleSolution {
     NameValueReferableMap facts = new FactMap();
     facts.setValue("applicant", new ApplicantBean(650, 20000.0, true));
     homeLoanRateRuleBook.run(facts);
-    
+
     homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
@@ -249,7 +249,7 @@ public class HomeLoanRateRuleBook extends RuleBook<Double> {
 
     //credit score is 700 and they have at least $25,000 cash on hand
     addRule(RuleBuilder.create().withResultType(Float.class)
-      .when(facts -> 
+      .when(facts ->
             facts.getIntVal("Credit Score") >= 700 &&
             facts.getDblVal("Cash on Hand") >= 25000
       .then((facts, result) -> result.setValue(result.getValue() - 0.25))
@@ -269,14 +269,14 @@ public class ExampleSolution {
     RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
       .withDefaultResult(4.5)
       .build();
-      
+
     NameValueReferableMap facts = new FactMap();
     facts.set("Credit Score", 650);
     facts.set("Cash on Hand", 20000);
     facts.set("First Time Homebuyer", true)
-    
+
     homeLoanRateRuleBook.run(facts);
-    
+
     homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
@@ -288,7 +288,7 @@ public class ExampleSolution {
 
 The RuleBook Java Domain Specific Language (DSL) uses the Given-When-Then format, popularized by Behavior Driven Development (BDD) and associated testing frameworks (e.g. Cucumber and Spock). Many of the ideas that went into creating the RuleBook Java DSL are also borrowed from BDD, including: _**Sentences should be used to describe rules**_ and _**Rules should be defined using a ubiquitous language that translates into the codebase**_.
 
-### 3.1 Given-When-Then: The Basis of the RuleBook Language 
+### 3.1 Given-When-Then: The Basis of the RuleBook Language
 
 Much like the Given-When-Then language for defining tests that was popularized by BDD, RuleBook uses a Given-When-Then language for defining rules. The RuleBook Given-When-Then methods have the following meanings.
 
@@ -300,7 +300,7 @@ Much like the Given-When-Then language for defining tests that was popularized b
 
 **When** methods accept a Predicate that evaluates a condition based on the Facts provided. Only one when() method can be specified per Rule.
 
-**Then** methods accept a Consumer (or BiConsumer for Rules that have a Result) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule that will all be 
+**Then** methods accept a Consumer (or BiConsumer for Rules that have a Result) that describe the action to be invoked if the condition in the when() method evaluates to true. There can be multiple then() methods specified in a Rule that will all be
 invoked in the order they are specified if the when() condition evaluates to true.
 
 ### 3.2 The Using Method
@@ -322,7 +322,7 @@ Although the reason for NameValueReferableMaps (commonly referred to as FactMaps
 
 **getValue(String name)** gets the value of the Fact by the name of the Fact
 
-**setValue(String name, T value)** sets the Fact with the name specified to the new value 
+**setValue(String name, T value)** sets the Fact with the name specified to the new value
 
 **put(Fact fact)** adds a Fact to the FactMap, using the Fact's name as the key for the Map
 
@@ -359,18 +359,18 @@ public class HelloWorld {
 
   @Given("hello")
   private String hello;
-  
+
   @Given("world")
   private String world;
-  
+
   @Result
   private String helloworld;
-  
+
   @When
   public boolean when() {
     return true;
   }
-  
+
   @Then
   public RuleState then() {
     helloworld = hello + " " + world;
@@ -419,7 +419,7 @@ public class LowCreditScoreRule {
 
   @Result
   private double rate;
-    
+
   @When
   public boolean when() {
     return applicants.stream()
@@ -437,14 +437,14 @@ public class LowCreditScoreRule {
 @Rule(order = 3)
 public class QuarterPointReductionRule {
   @Given
-  List<ApplicantBean> applicants; 
+  List<ApplicantBean> applicants;
 
   @Result
   private double rate;
 
   @When
   public boolean when() {
-    return 
+    return
       applicants.stream().anyMatch(applicant -> applicant.getCreditScore() >= 700) &&
       applicants.stream().map(applicant -> applicant.getCashOnHand()).reduce(0.0, Double::sum) >= 50000;
   }
@@ -459,14 +459,14 @@ public class QuarterPointReductionRule {
 @Rule(order = 3)
 public class ExtraPointRule {
   @Given
-  List<ApplicantBean> applicants; 
+  List<ApplicantBean> applicants;
 
   @Result
   private double rate;
 
   @When
   public boolean when() {
-    return 
+    return
       applicants.stream().anyMatch(applicant -> applicant.getCreditScore() < 700 && applicant.getCreditScore() >= 600);
   }
 
@@ -480,14 +480,14 @@ public class ExtraPointRule {
 @Rule(order = 4)
 public class FirstTimeHomeBuyerRule {
   @Given
-  List<ApplicantBean> applicants; 
+  List<ApplicantBean> applicants;
 
   @Result
   private double rate;
 
   @When
   public boolean when() {
-    return 
+    return
       applicants.stream().anyMatch(applicant -> applicant.isFirstTimeHomeBuyer());
   }
 
@@ -506,7 +506,7 @@ public class ExampleSolution {
     ApplicantBean applicant2 = new ApplicantBean(620, 30000, true);
     facts.put(new Fact<>(applicant1);
     facts.put(new Fact<>(applicant2);
-    
+
     ruleBook.setDefaultResult(4.5);
     ruleBook.run(facts);
     ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result);
@@ -582,15 +582,15 @@ package com.example.rulebook.spring;
 public class HelloSpringRule {
   @Given("hello")
   private String hello;
-  
+
   @Result
   private String result;
-  
+
   @When
   public boolean when() {
     return hello != null;
   }
-  
+
   @Then
   public void then() {
     result = hello + " ";
@@ -606,15 +606,15 @@ package com.example.rulebook.spring;
 public class WorldSpringRule {
   @Given("world")
   private String world;
-  
+
   @Result
   private String result;
-  
+
   @When
   public boolean when() {
     return world != null;
   }
-  
+
   @Then
   public void then() {
     result += world;
@@ -628,8 +628,8 @@ public class WorldSpringRule {
 @Configuration
 public class SpringConfig {
   @Bean
-  public RuleBookFactoryBean ruleBook() throws InvalidClassException {
-    return new RuleBookFactoryBean("com.example.rulebook.spring");
+  public RuleBookRunnerFactoryBean ruleBook() throws InvalidClassException {
+    return new RuleBookRunnerFactoryBean("com.example.rulebook.spring");
   }
 }
 ```
@@ -638,9 +638,10 @@ public class SpringConfig {
 
 ```java
   @Autowired
-  private RuleBook<String> ruleBook;
-  
+  private RuleBookFactory<String> ruleBookFactory;
+
   public void someMethod() {
+    RuleBook ruleBook = ruleBookFactory.createRuleBook();
     NameValueReferableMap<String> facts = new FactMap<>();
     facts.setValue("hello", "Hello");
     facts.setValue("world", "World");
@@ -651,7 +652,7 @@ public class SpringConfig {
 
 #### 5.6 Ordering Rules With Spring
 
-If you were using the RuleBean annotation to create Spring enabled Rules, all of that stuff still works. And there Spring 
+If you were using the RuleBean annotation to create Spring enabled Rules, all of that stuff still works. And there Spring
 enabled POJO Rules can still be configured in RuleBooks in Spring \[using SpringRuleBook\]. But RuleBean doesn't have an
 order property. So, if you need to order beans scanned using a RuleBookFactoryBean, just use the @Rule annotation like
 you would with regular non-Spring enabled POJO Rules. It works exactly the same way!

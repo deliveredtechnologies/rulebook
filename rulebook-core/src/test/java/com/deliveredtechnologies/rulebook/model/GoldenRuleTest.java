@@ -75,7 +75,7 @@ public class GoldenRuleTest {
   public void addingActionsAddsActionsToTheActionList() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = facts -> facts.setValue("fact1", "Fact1");
     BiConsumer<NameValueReferableTypeConvertibleMap<String>, Result<String>> biConsumer =
-            (facts, result) -> result.setValue("result");
+        (facts, result) -> result.setValue("result");
     Rule<String, String> rule = new GoldenRule<>(String.class);
     rule.addAction(consumer);
     rule.addAction(biConsumer);
