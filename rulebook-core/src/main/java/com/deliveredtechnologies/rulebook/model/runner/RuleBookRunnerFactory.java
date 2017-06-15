@@ -46,8 +46,8 @@ public class RuleBookRunnerFactory implements RuleBookFactory {
       RuleBook ruleBook = _ruleBookType.newInstance();
       return new RuleBookRunner(ruleBook, _pkg);
     } catch (InstantiationException | IllegalAccessException e) {
-      LOGGER.warn("Error creating RuleBookRunner with RuleBook type " + _ruleBookType.getName() +
-          "; using default RuleBook type" ,e);
+      LOGGER.warn("Error creating RuleBookRunner with RuleBook type " + _ruleBookType.getName()
+          + "; using default RuleBook type" ,e);
       return new RuleBookRunner(_pkg);
     }
   }
