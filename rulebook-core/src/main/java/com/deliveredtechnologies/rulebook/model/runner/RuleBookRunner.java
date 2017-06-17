@@ -15,9 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
@@ -29,80 +30,78 @@ public class RuleBookRunner implements RuleBook {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
-  private RuleBook _ruleBook;
   private String _package;
+  private Class<? extends RuleBook> _prototypeClass;
+
+  @SuppressWarnings("unchecked")
+  private Result _result = new Result(new Object());
 
   /**
    * Creates a new RuleBookRunner using the specified package and the default RuleBook.
    * @param rulePackage a package to scan for POJO Rules
    */
   public RuleBookRunner(String rulePackage) {
-    this(new CoRRuleBook(), rulePackage);
+    this(CoRRuleBook.class, rulePackage);
   }
 
   /**
    * Creates a new RuleBookRunner using the specified package and the supplied RuleBook.
-   * @param ruleBook    the RuleBook to use as a delegate for the RuleBookRunner
-   * @param rulePackage the package to scan for POJO rules
+   * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner
+   * @param rulePackage   the package to scan for POJO rules
    */
-  public RuleBookRunner(RuleBook ruleBook, String rulePackage) {
-    _ruleBook = ruleBook;
+  public RuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
+    _prototypeClass = ruleBookClass;
     _package = rulePackage;
   }
 
   @Override
   public void addRule(Rule rule) {
-    _ruleBook.addRule(rule);
+    throw new IllegalStateException("Rules are only added to a RuleBookRunner on run()!");
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void run(NameValueReferableMap facts) {
-    if (!hasRules()) {
-      defineRules();
-    }
-    _ruleBook.run(facts);
-  }
 
+    try {
+      RuleBook ruleBook = _prototypeClass.newInstance();
+      List<Class<?>> classes = findRuleClassesInPackage(_package);
+      for (Class<?> rule : classes) {
+        try {
+          getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field ->
+              ruleBook.setDefaultResult(_result.getValue() == null ? new Object() : _result.getValue())
+          );
+          ruleBook.addRule(new RuleAdapter(rule.newInstance()));
+        } catch (IllegalAccessException | InstantiationException ex) {
+          LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
+        }
+      }
+      ruleBook.run(facts);
+      Optional<Result> result = ruleBook.getResult();
+      result.ifPresent(res -> _result.setValue(res.getValue()));
+    } catch (IOException | InvalidPathException ex) {
+      LOGGER.error("Unable to find rule classes in package '" + _package + "'", ex);
+    } catch (InstantiationException | IllegalAccessException ex) {
+      LOGGER.error("Unable to create an instance of '" + _prototypeClass.getName()
+          + "' with the default constructor", ex);
+    }
+  }
 
   @Override
   @SuppressWarnings("unchecked")
   public void setDefaultResult(Object result) {
-    _ruleBook.setDefaultResult(result);
+    _result.setValue(result);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public Optional<Result> getResult() {
-    return _ruleBook.getResult();
-  }
-
-  /**
-   * Define the Rules in the RuleBook as Rule annotated POJO Rules in the specified package.
-   */
-  @Override
-  public void defineRules() {
-    try {
-      List<Class<?>> classes = findRuleClassesInPackage(_package);
-      for (Class<?> rule : classes) {
-        try {
-          getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field -> {
-            if (!getResult().isPresent()) {
-              setDefaultResult(new Object());
-            }
-          });
-          addRule(new RuleAdapter(rule.newInstance()));
-        } catch (IllegalAccessException | InstantiationException ex) {
-          LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
-        }
-      }
-    } catch (IOException | InvalidPathException ex) {
-      LOGGER.error("Unable to find rule classes in package '" + _package + "'", ex);
-    }
+    return Optional.of(_result);
   }
 
   @Override
   public boolean hasRules() {
-    return _ruleBook.hasRules();
+    return true;
   }
 
   private List<Class<?>> findRuleClassesInPackage(String packageName) throws InvalidPathException, IOException {

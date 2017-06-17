@@ -6,8 +6,6 @@ import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Optional;
-
 /**
  * Spring FactoryBean for RuleBooks.
  */
@@ -35,7 +33,7 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
   public RuleBook getObject() throws Exception {
     if (_package != null) {
       if (_ruleBookType != null) {
-        return new RuleBookRunner(RuleBookBuilder.create(_ruleBookType).build(), _package);
+        return new RuleBookRunner(_ruleBookType, _package);
       }
       return new RuleBookRunner(_package);
     }
