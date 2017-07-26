@@ -47,7 +47,7 @@ public class TestConfig {
   }
 
   @Bean
-  public RuleBookRunnerFactoryBean ruleBookFactoryWithResult() {
-    return new RuleBookRunnerFactoryBean("com.deliveredtechnologies.rulebook.spring");
+  public RuleBookFactoryBean ruleBookFactoryWithResult() {
+    return new RuleBookFactoryBean("com.deliveredtechnologies.rulebook.spring");
   }
 }

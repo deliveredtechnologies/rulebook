@@ -14,6 +14,9 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
   private Class<? extends RuleBook> _ruleBookType;
   private String _package;
 
+  /**
+   * @Deprecated as of release v0.7; RuleBookRunner should be used instead.
+   */
   @Deprecated
   public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType, String pkg) {
     _ruleBookType = ruleBookType;
@@ -24,6 +27,10 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
     this(ruleBookType,null);
   }
 
+  /**
+   * @Deprecated as of release v0.7; RuleBookRunner should be used instead.
+   * @param pkg the package to scan Rule POJO classes from
+   */
   @Deprecated
   public RuleBookFactoryBean(String pkg) {
     this(null, pkg);
