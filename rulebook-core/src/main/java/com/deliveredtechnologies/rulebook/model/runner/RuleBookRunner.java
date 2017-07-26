@@ -101,7 +101,12 @@ public class RuleBookRunner implements RuleBook {
 
   @Override
   public boolean hasRules() {
-    return true;
+    try {
+      return findRuleClassesInPackage(_package).size() > 0;
+    } catch (IOException | InvalidPathException e) {
+      LOGGER.error("Unable to find rule classes in package '" + _package + "'", e);
+      return false;
+    }
   }
 
   private List<Class<?>> findRuleClassesInPackage(String packageName) throws InvalidPathException, IOException {

@@ -16,26 +16,24 @@ import static org.mockito.Mockito.verify;
 public class RuleBookRunnerTest {
   @Test
   public void ruleBookRunnerShouldAddRuleClassesInPackage() {
-    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
     ruleBookRunner.run(new FactMap());
 
-    verify(ruleBookRunner, times(4)).addRule(any(RuleAdapter.class));
+    Assert.assertTrue(ruleBookRunner.hasRules());
   }
 
   @Test
   public void ruleBookRunnerShouldNotLoadClassesIfNotInPackage() {
-    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook"));
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook");
     ruleBookRunner.run(new FactMap());
 
-    verify(ruleBookRunner, times(0)).addRule(any(RuleAdapter.class));
+    Assert.assertFalse(ruleBookRunner.hasRules());
   }
 
   @Test
   public void ruleBookRunnerShouldNotLoadClassesForInvalidPackage() {
-    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.invalid"));
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.invalid");
     ruleBookRunner.run(new FactMap());
-
-    verify(ruleBookRunner, times(0)).addRule(any(RuleAdapter.class));
   }
 
   @Test
