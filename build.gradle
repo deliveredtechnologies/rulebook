@@ -56,8 +56,9 @@ subprojects {
 
         //logging
         compile("org.slf4j:slf4j-api:1.7.22")
-
+        //unit testing
         testCompile("junit:junit:4.12")
+        testCompile("net.jodah:concurrentunit:0.4.2")
         //for mocking
         testCompile("org.mockito:mockito-all:1.10.19")
         testRuntime("cglib:cglib-nodep:3.1")
