@@ -50,6 +50,6 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
 
   @Override
   public boolean isSingleton() {
-    return false;
+    return true;
   }
 }

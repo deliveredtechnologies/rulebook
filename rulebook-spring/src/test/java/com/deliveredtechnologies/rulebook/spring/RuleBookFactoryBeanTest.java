@@ -52,9 +52,9 @@ public class RuleBookFactoryBeanTest {
   }
 
   @Test
-  public void ruleBookFactoryShouldBePrototypeScopeForRuleBooks() {
+  public void ruleBookFactoryShouldBeSingletonScopeForRuleBooks() {
     RuleBook ruleBook = (RuleBook)_context.getBean("ruleBookWithResult");
-    Assert.assertFalse(ruleBook == _ruleBook);
+    Assert.assertTrue(ruleBook == _ruleBook);
   }
 
   @Test
