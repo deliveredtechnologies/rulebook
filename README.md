@@ -628,8 +628,8 @@ public class WorldSpringRule {
 @Configuration
 public class SpringConfig {
   @Bean
-  public RuleBookRunnerFactoryBean ruleBook() throws InvalidClassException {
-    return new RuleBookRunnerFactoryBean("com.example.rulebook.spring");
+  public RuleBook ruleBook() {
+    return new RuleBookRunner("com.example.rulebook.spring");
   }
 }
 ```
@@ -638,15 +638,14 @@ public class SpringConfig {
 
 ```java
   @Autowired
-  private RuleBookFactory<String> ruleBookFactory;
+  private RuleBook ruleBook;
 
   public void someMethod() {
-    RuleBook ruleBook = ruleBookFactory.createRuleBook();
     NameValueReferableMap<String> facts = new FactMap<>();
     facts.setValue("hello", "Hello");
     facts.setValue("world", "World");
     ruleBook.run(facts);
-    ruleBook.ifPresent(System.out::println); //prints Hello World
+    ruleBook.getResult().ifPresent(System.out::println); //prints Hello World
   }
 ```
 
