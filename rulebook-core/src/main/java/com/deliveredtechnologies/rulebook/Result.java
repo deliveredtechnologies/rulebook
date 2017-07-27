@@ -14,11 +14,32 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Result<T> implements Referable<T> {
   private Map<Long, T> _valueMap = new HashMap<>();
   private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+  private T _defaultValue = null;
 
   public Result() {}
 
+  /**
+   * Creates an instance of Result with a default value.
+   *
+   * @param value the default value.
+   */
   public Result(T value) {
-    _valueMap.put(Thread.currentThread().getId(), value);
+    _defaultValue = value;
+  }
+
+  /**
+   * Resets the value of the Result to its default value.
+   */
+  public void reset() {
+    _lock.readLock().lock();
+    try {
+      if (_defaultValue == null) {
+        return;
+      }
+    } finally {
+      _lock.readLock().unlock();
+    }
+    setValue(_defaultValue);
   }
 
   /**
@@ -30,7 +51,11 @@ public class Result<T> implements Referable<T> {
   public T getValue() {
     _lock.readLock().lock();
     try {
-      return _valueMap.get(Thread.currentThread().getId());
+      long key = Thread.currentThread().getId();
+      if (_valueMap.containsKey(key)) {
+        return _valueMap.get(Thread.currentThread().getId());
+      }
+      return _defaultValue;
     } finally {
       _lock.readLock().unlock();
     }
@@ -55,8 +80,12 @@ public class Result<T> implements Referable<T> {
   public String toString() {
     _lock.readLock().lock();
     try {
-      if (_valueMap.containsKey(Thread.currentThread().getId())) {
-        return _valueMap.get(Thread.currentThread().getId()).toString();
+      long key = Thread.currentThread().getId();
+      if (_valueMap.containsKey(key)) {
+        return _valueMap.get(key).toString();
+      }
+      if (_defaultValue != null) {
+        return _defaultValue.toString();
       }
       return "";
     } finally {
