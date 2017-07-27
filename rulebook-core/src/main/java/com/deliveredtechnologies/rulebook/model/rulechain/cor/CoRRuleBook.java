@@ -36,6 +36,7 @@ public class CoRRuleBook<T> implements RuleBook<T> {
   @Override
   @SuppressWarnings("unchecked")
   public void run(NameValueReferableMap facts) {
+    getResult().ifPresent(Result::reset);
     if (_headRule == null) {
       defineRules();
     }
