@@ -48,45 +48,15 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     newRuleBook();
   }
 
-  private void newRuleBook() {
-    if (_ruleBook == null) {
-      try {
-        _ruleBook = _ruleBookClass.newInstance();
-      } catch (IllegalAccessException | InstantiationException e) {
-        try {
-          Constructor<?> constructor = _ruleBookClass.getConstructor(Class.class);
-          _ruleBook = (RuleBook<T>) constructor.newInstance(_resultType);
-        } catch (InvocationTargetException
-                | NoSuchMethodException
-                | InstantiationException
-                | IllegalAccessException ex) {
-          throw new IllegalStateException("RuleBook of class " + _ruleBookClass + " can not be instantiated", ex);
-        }
-      }
-    }
-  }
-
   /**
    * Specifies the Result type for the RuleBook.
    * @param resultType  result class
    * @param <U>         type of the result class
    * @return            a builder with the new Result type
    */
-  public <U> RuleBookBuilder<U> withResultType(Class<U> resultType) {
+  public <U> RuleBookWithResultTypeBuilder<U> withResultType(Class<U> resultType) {
     _resultType = resultType;
-    return new RuleBookBuilder<>(this);
-  }
-
-  /**
-   * Specifies the default Result value.
-   * Note: RuleBooks that return a single Result must have a default Result value set.
-   * @param result  the default value of the Result
-   * @return        a builder with the default Result value
-   */
-  public RuleBookBuilder<T> withDefaultResult(T result) {
-    newRuleBook();
-    _ruleBook.setDefaultResult(result);
-    return this;
+    return new RuleBookWithResultTypeBuilder<U>((new RuleBookBuilder<U>(this)).newRuleBook());
   }
 
   /**
@@ -94,10 +64,8 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
    * @param consumer  functional interface that supplies a RuleBookRuleBuilder for building a Rule
    * @return          a builder with the added Rule
    */
-  public RuleBookBuilder<T> addRule(Consumer<RuleBookRuleBuilder<T>> consumer) {
-    newRuleBook();
-    consumer.accept(new RuleBookRuleBuilder<>(_ruleBook));
-    return this;
+  public RuleBookAddRuleBuilder<T> addRule(Consumer<RuleBookRuleBuilder<T>> consumer) {
+    return new RuleBookAddRuleBuilder<>(newRuleBook(), consumer);
   }
 
   /**
@@ -106,10 +74,8 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
    * @param <U>   the fact type of the Rule
    * @return      RuleBookBuilder with the added Rule
    */
-  public <U> RuleBookBuilder<T> addRule(Rule<U, T> rule) {
-    newRuleBook();
-    _ruleBook.addRule(rule);
-    return this;
+  public <U> RuleBookAddRuleBuilder<T> addRule(Rule<U, T> rule) {
+    return new RuleBookAddRuleBuilder<>(newRuleBook(), rule);
   }
 
   /**
@@ -118,7 +84,25 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
    */
   @Override
   public RuleBook<T> build() {
-    newRuleBook();
+    return (new RuleBookBuilder<T>(_ruleBookClass)).newRuleBook();
+  }
+
+  private RuleBook<T> newRuleBook() {
+    if (_ruleBook == null) {
+      try {
+        _ruleBook = _ruleBookClass.newInstance();
+      } catch (IllegalAccessException | InstantiationException e) {
+        try {
+          Constructor<?> constructor = _ruleBookClass.getConstructor(Class.class);
+          _ruleBook = (RuleBook<T>) constructor.newInstance(_resultType);
+        } catch (InvocationTargetException
+            | NoSuchMethodException
+            | InstantiationException
+            | IllegalAccessException ex) {
+          throw new IllegalStateException("RuleBook of class " + _ruleBookClass + " can not be instantiated", ex);
+        }
+      }
+    }
     return _ruleBook;
   }
 }
