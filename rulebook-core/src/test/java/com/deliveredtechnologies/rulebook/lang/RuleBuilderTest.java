@@ -1,8 +1,9 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
-import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
@@ -39,6 +40,24 @@ public class RuleBuilderTest {
     rule.invoke();
 
     verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
+  }
+
+  @Test
+  public void ruleBuilderShouldCreateRuleWithClassAndBooleanConstructor() {
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
+        (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
+    Rule rule = RuleBuilder.create(GoldenRule.class, true)
+        .withFactType(String.class)
+        .when(facts -> false)
+        .then(consumer)
+        .stop()
+        .build();
+    boolean result = rule.invoke();
+
+    verify(consumer, times(0)).accept(any(NameValueReferableTypeConvertibleMap.class));
+
+    Assert.assertEquals(true, result);
+    Assert.assertEquals(RuleState.BREAK, rule.getRuleState());
   }
 
   @Test

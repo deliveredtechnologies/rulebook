@@ -41,9 +41,15 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   private Map<Integer, List<String>> _factNames = new HashMap<>();
   private RuleState _ruleState = RuleState.NEXT;
   private Class<T> _factType;
+  private boolean _stopOnRuleFailure = false;
 
   public GoldenRule(Class<T> factType) {
     _factType = factType;
+  }
+
+  public GoldenRule(Class<T> factType, boolean stopOnRuleConditionFail) {
+    this(factType);
+    _stopOnRuleFailure = stopOnRuleConditionFail;
   }
 
   @Override
@@ -173,6 +179,11 @@ public class GoldenRule<T, U> implements Rule<T, U> {
           facts.putAll(usingFacts);
         }
 
+        //stopping the rule chain only happens when the rule fails if _stopOnRuleFailure == true
+        if (_stopOnRuleFailure) {
+          this._ruleState = RuleState.NEXT;
+        }
+
         return true;
       }
     } catch (Exception ex) {
@@ -180,7 +191,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //eventually, we'll have to resolve that kind of issue ahead of time
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
-    return false;
+    return _stopOnRuleFailure;
   }
 
   @Override

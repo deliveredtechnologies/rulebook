@@ -29,7 +29,18 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   private Class<? extends Rule> _ruleClass;
   private Class<T> _factType;
   private Class<U> _resultType;
-  private Optional<Result<U>> _result = Optional.empty();
+  private boolean _stopOnRuleFailure = false;
+
+  /**
+   * Returns a new RuleBuilder for the specified Rule class.
+   * @param ruleClass         the class of Rule to build
+   * @param stopOnRuleFailure if true, stops the rule chain if RuleState is BREAK only if the rule fails
+   *                          (for supported rule classes)
+   * @return                  a new RuleBuilder
+   */
+  public static RuleBuilder<Object, Object> create(Class<? extends Rule> ruleClass, boolean stopOnRuleFailure) {
+    return new RuleBuilder<>(ruleClass, stopOnRuleFailure);
+  }
 
   /**
    * Returns a new RuleBuilder for the specified Rule class.
@@ -37,7 +48,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @return          a new RuleBuilder
    */
   public static RuleBuilder<Object, Object> create(Class<? extends Rule> ruleClass) {
-    return new RuleBuilder<Object, Object>(ruleClass);
+    return new RuleBuilder<>(ruleClass);
   }
 
   /**
@@ -54,6 +65,11 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     _ruleClass = ruleClass;
   }
 
+  private RuleBuilder(Class<? extends Rule> ruleClass, boolean stopOnRuleFailure) {
+    this(ruleClass);
+    _stopOnRuleFailure = stopOnRuleFailure;
+  }
+
   /**
    * Specifies the fact type for the Rule being built.
    * @param factType  the type of facts to be used in the Rule
@@ -64,6 +80,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     RuleBuilder<S, U> builder = new RuleBuilder<>(_ruleClass);
     builder._factType = factType;
     builder._resultType = _resultType;
+    builder._stopOnRuleFailure = _stopOnRuleFailure;
     return builder;
   }
 
@@ -77,6 +94,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     RuleBuilder<T, S> builder = new RuleBuilder<>(_ruleClass);
     builder._factType = _factType;
     builder._resultType = resultType;
+    builder._stopOnRuleFailure = _stopOnRuleFailure;
     return builder;
   }
 
@@ -171,24 +189,39 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   }
 
   private Rule<T, U> newRule() {
-    try {
-      Constructor<?> constructor = _ruleClass.getConstructor(new Class[] {});
-      return (Rule<T, U>)constructor.newInstance(new Object[]{});
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
-      LOGGER.debug("Attempt to use the default constructor faile for " + _ruleClass, ex);
-    }
-    try {
-      Constructor<?> constructor = _ruleClass.getConstructor(Class.class);
-      return (Rule<T, U>)constructor.newInstance(new Object[] {_factType});
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
-      LOGGER.debug("Attempt to use a single argument constrcutor for specifying the Fact type failed", ex);
+    if (_stopOnRuleFailure) {
+      try {
+        Constructor<?> constructor = _ruleClass.getConstructor(Class.class, boolean.class);
+        return (Rule<T, U>)constructor.newInstance(new Object[]{_factType, _stopOnRuleFailure});
+      } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
+        LOGGER.error("Unable to create an instance of the specified Rule class '"
+            + _ruleClass
+            + "' with the specified fact type and 'stopOnRuleFailire' boolean parameter");
+        return null;
+      }
     }
     try {
       Constructor<?> constructor = _ruleClass.getConstructor(Class.class, Class.class);
       return (Rule<T, U>)constructor.newInstance(new Object[]{_factType, _resultType});
     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
-      LOGGER.error("Unable to create an instance of the specified Rule class '" + _ruleClass + "'");
+      LOGGER.debug("Unable to create an instance of the specified Rule class '"
+          + _ruleClass
+          + "' with fact and result types specified");
     }
+    try {
+      Constructor<?> constructor = _ruleClass.getConstructor(Class.class);
+      return (Rule<T, U>)constructor.newInstance(new Object[] {_factType});
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
+      LOGGER.debug("Attempt to use a single argument constructor for specifying the Fact type failed", ex);
+    }
+    try {
+      Constructor<?> constructor = _ruleClass.getConstructor(new Class[] {});
+      return (Rule<T, U>)constructor.newInstance(new Object[]{});
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
+      LOGGER.debug("Attempt to use the default constructor failed for " + _ruleClass, ex);
+      LOGGER.error("Unable to create a Rule of type '" + _ruleClass.getName() + "'");
+    }
+
     return null;
   }
 }
