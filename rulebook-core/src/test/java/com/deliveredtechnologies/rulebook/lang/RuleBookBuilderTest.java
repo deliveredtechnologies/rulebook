@@ -19,7 +19,7 @@ import static org.mockito.Matchers.any;
  */
 public class RuleBookBuilderTest {
   @Test
-  public void ruleBookBuilderShouldBuildRulesWithoutaResult() {
+  public void ruleBookBuilderShouldBuildRulesWithoutResult() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     RuleBook ruleBook = RuleBookBuilder.create()
         .addRule(rule -> rule
@@ -32,7 +32,7 @@ public class RuleBookBuilderTest {
   }
 
   @Test
-  public void ruleBookBuilderShouldBuildRulesWithaResult() {
+  public void ruleBookBuilderShouldBuildRulesWithResult() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     RuleBook<Boolean> ruleBook = RuleBookBuilder.create().withResultType(Boolean.class).withDefaultResult(false)
             .addRule(rule -> rule
@@ -50,14 +50,15 @@ public class RuleBookBuilderTest {
   public void ruleBookBuilderShouldChainMultipleRulesWithResult() {
     NameValueReferableMap factMap = new FactMap();
     RuleBook<String> ruleBook = RuleBookBuilder.create().withResultType(String.class).withDefaultResult("initial value")
+            .addRule(RuleBuilder.create(GoldenRule.class)
+                    .withFactType(String.class)
+                    .withResultType(String.class)
+                    .when(facts -> true)
+                    .then((facts, result) -> result.setValue("RESULT"))
+                    .build())
             .addRule(rule -> rule
                     .withFactType(String.class)
                     .then(facts -> facts.setValue("fact", "FACT")))
-            .addRule(rule -> rule
-                    .withRuleType(GoldenRule.class)
-                    .withNoSpecifiedFactType()
-                    .when(facts -> true)
-                    .then((facts, result) -> result.setValue("RESULT")))
             .addRule(rule -> rule
                     .withFactType(String.class)
                     .using("fact2")
