@@ -6,7 +6,7 @@ import com.deliveredtechnologies.rulebook.model.RuleBook;
 import java.util.function.Consumer;
 
 /**
- * Created by clayton.long on 7/31/17.
+ * Builds the portion of the RuleBook that specifies a default result value.
  */
 public class RuleBookDefaultResultBuilder<T> implements TerminatingRuleBookBuilder<T> {
 

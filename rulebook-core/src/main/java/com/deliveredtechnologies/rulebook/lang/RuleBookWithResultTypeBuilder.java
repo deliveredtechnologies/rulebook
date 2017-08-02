@@ -3,7 +3,7 @@ package com.deliveredtechnologies.rulebook.lang;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 
 /**
- * Created by clayton.long on 7/31/17.
+ * Builds the porition of the RuleBook that specifies the default result type.
  */
 public class RuleBookWithResultTypeBuilder<T> {
 
