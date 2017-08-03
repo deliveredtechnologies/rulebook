@@ -8,6 +8,8 @@ import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -38,53 +40,63 @@ public class CoRRuleBookTest {
             .when(facts -> facts.containsKey("factoid"))
             .then((facts, result) -> result.setValue("Factoid Found!"))).build();
 
-    new Thread(() -> {
-      FactMap<String> facts = new FactMap<>();
-      facts.setValue("fact1", "fact1");
+    ExecutorService service = null;
+    try {
 
-      ruleBook.run(facts);
+      service = Executors.newCachedThreadPool();
 
-      waiter.assertEquals(ruleBook.getResult().get().toString(), "Unknown");
-      waiter.resume();
-      waiter.assertEquals(((Result<String>)ruleBook.getResult().get()).getValue(), "Unknown");
-      waiter.resume();
-      waiter.assertEquals(facts.getValue("fact1"), "<= 2 facts");
-      waiter.resume();
-    }).start();
+      service.execute(() -> {
+        FactMap<String> facts = new FactMap<>();
+        facts.setValue("fact1", "fact1");
 
-    new Thread(() -> {
-      FactMap<String> facts = new FactMap<>();
-      facts.setValue("fact1", "fact1");
-      facts.setValue("factoid", "fact2");
+        ruleBook.run(facts);
 
-      ruleBook.run(facts);
+        waiter.assertEquals(ruleBook.getResult().get().toString(), "Unknown");
+        waiter.resume();
+        waiter.assertEquals(((Result<String>) ruleBook.getResult().get()).getValue(), "Unknown");
+        waiter.resume();
+        waiter.assertEquals(facts.getValue("fact1"), "<= 2 facts");
+        waiter.resume();
+      });
 
-      waiter.assertEquals(ruleBook.getResult().get().toString(), "Factoid Found!");
-      waiter.resume();
-      waiter.assertEquals(facts.getValue("fact1"), "<= 2 facts");
-      waiter.resume();
-      waiter.assertEquals(facts.getValue("factoid"), "fact2");
-      waiter.resume();
-    }).start();
+      service.execute(() -> {
+        FactMap<String> facts = new FactMap<>();
+        facts.setValue("fact1", "fact1");
+        facts.setValue("factoid", "fact2");
 
-    new Thread(() -> {
-      FactMap<String> facts = new FactMap<>();
-      facts.setValue("fact1", "fact1");
-      facts.setValue("fact2", "fact2");
-      facts.setValue("fact3", "fact3");
+        ruleBook.run(facts);
 
-      ruleBook.run(facts);
+        waiter.assertEquals(ruleBook.getResult().get().toString(), "Factoid Found!");
+        waiter.resume();
+        waiter.assertEquals(facts.getValue("fact1"), "<= 2 facts");
+        waiter.resume();
+        waiter.assertEquals(facts.getValue("factoid"), "fact2");
+        waiter.resume();
+      });
 
-      waiter.assertEquals(ruleBook.getResult().get().toString(), "> 2 facts");
-      waiter.resume();
-      waiter.assertEquals(facts.getValue("fact1"), "fact1");
-      waiter.resume();
-      waiter.assertEquals(facts.getValue("fact2"), "fact2");
-      waiter.resume();
-      waiter.assertEquals(facts.getValue("fact3"), "fact3");
-      waiter.resume();
-    }).start();
+      service.execute(() -> {
+        FactMap<String> facts = new FactMap<>();
+        facts.setValue("fact1", "fact1");
+        facts.setValue("fact2", "fact2");
+        facts.setValue("fact3", "fact3");
 
-    waiter.await();
+        ruleBook.run(facts);
+
+        waiter.assertEquals(ruleBook.getResult().get().toString(), "> 2 facts");
+        waiter.resume();
+        waiter.assertEquals(facts.getValue("fact1"), "fact1");
+        waiter.resume();
+        waiter.assertEquals(facts.getValue("fact2"), "fact2");
+        waiter.resume();
+        waiter.assertEquals(facts.getValue("fact3"), "fact3");
+        waiter.resume();
+      });
+
+      waiter.await();
+    } finally {
+      if (service != null) {
+        service.shutdown();
+      }
+    }
   }
 }
