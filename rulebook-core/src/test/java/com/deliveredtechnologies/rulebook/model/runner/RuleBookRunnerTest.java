@@ -63,10 +63,7 @@ public class RuleBookRunnerTest {
   public void ruleBookRunnerIsThreadSafe() throws TimeoutException {
     final Waiter waiter = new Waiter();
 
-    RuleBook ruleBook1 = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
-    RuleBook ruleBook2 = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
-    RuleBook ruleBook3 = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
-    RuleBook ruleBook4 = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    RuleBook ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
 
     FactMap<String> equalFacts1 = new FactMap<>();
     equalFacts1.setValue("fact1", "Fact");
@@ -91,17 +88,17 @@ public class RuleBookRunnerTest {
       service = Executors.newCachedThreadPool();
 
       service.execute(() -> {
-        ruleBook1.run(equalFacts1);
+        ruleBook.run(equalFacts1);
         waiter.assertEquals("So Factual Too!", equalFacts1.getValue("fact1"));
         waiter.resume();
         waiter.assertEquals("So Factual!", equalFacts1.getValue("fact2"));
         waiter.resume();
-        waiter.assertEquals("Equivalence, Bitches!", ruleBook1.getResult().get().toString());
+        waiter.assertEquals("Equivalence, Bitches!", ruleBook.getResult().get().toString());
         waiter.resume();
       });
 
       service.execute(() -> {
-        ruleBook2.run(unequalFacts2);
+        ruleBook.run(unequalFacts2);
         waiter.assertEquals("Some", unequalFacts2.getValue("fact1"));
         waiter.resume();
         waiter.assertEquals("Value", unequalFacts2.getValue("fact2"));
@@ -109,17 +106,17 @@ public class RuleBookRunnerTest {
       });
 
       service.execute(() -> {
-        ruleBook3.run(equalFacts2);
+        ruleBook.run(equalFacts2);
         waiter.assertEquals("So Factual Too!", equalFacts2.getValue("fact1"));
         waiter.resume();
         waiter.assertEquals("So Factual!", equalFacts2.getValue("fact2"));
         waiter.resume();
-        waiter.assertEquals("Equivalence, Bitches!", ruleBook3.getResult().get().toString());
+        waiter.assertEquals("Equivalence, Bitches!", ruleBook.getResult().get().toString());
         waiter.resume();
       });
 
       service.execute(() -> {
-        ruleBook4.run(unequalFacts1);
+        ruleBook.run(unequalFacts1);
         waiter.assertEquals("Fact", unequalFacts1.getValue("fact1"));
         waiter.resume();
         waiter.assertEquals("Factoid", unequalFacts1.getValue("fact2"));
