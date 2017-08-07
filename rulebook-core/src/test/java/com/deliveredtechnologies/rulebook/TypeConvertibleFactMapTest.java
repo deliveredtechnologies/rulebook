@@ -6,7 +6,10 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+
 
 /**
  * Tests for {@link TypeConvertibleFactMap}.
@@ -14,9 +17,10 @@ import static org.mockito.Mockito.when;
 public class TypeConvertibleFactMapTest {
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getStrValConvertsFactValueToString() {
-    NameValueReferable<String> fact1 = new Fact<String>("fact1", "First Fact");
-    NameValueReferable<Integer> fact2 = new Fact<Integer>("benjamin", 100);
+    NameValueReferable<String> fact1 = new Fact<>("fact1", "First Fact");
+    NameValueReferable<Integer> fact2 = new Fact<>("benjamin", 100);
     NameValueReferableMap factMap = new FactMap();
     TypeConvertibleFactMap typeConvertibleFactMap = new TypeConvertibleFactMap(factMap);
     factMap.put(fact1);
@@ -27,9 +31,10 @@ public class TypeConvertibleFactMapTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getIntValConvertsFactValueToInteger() {
-    NameValueReferable<String> fact1 = new Fact<String>("fact1", "100");
-    NameValueReferable<Integer> fact2 = new Fact<Integer>("benjamin", 100);
+    NameValueReferable<String> fact1 = new Fact<>("fact1", "100");
+    NameValueReferable<Integer> fact2 = new Fact<>("benjamin", 100);
     NameValueReferableMap factMap = new FactMap();
     TypeConvertibleFactMap typeConvertibleFactMap = new TypeConvertibleFactMap(factMap);
     factMap.put(fact1);
@@ -46,12 +51,13 @@ public class TypeConvertibleFactMapTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getDblValConvertsFactValueToDouble() {
-    Fact<String> fact1 = new Fact<String>("fact1", "100");
-    Fact<Float> fact2 = new Fact<Float>("benjamin", 100.00f);
-    Fact<Double> fact3 = new Fact<Double>("lockness", 3.50);
-    Fact<Integer> fact4 = new Fact<Integer>("jackson", 20);
-    Fact<Long> fact5 = new Fact<Long>("grant", 50L);
+    Fact<String> fact1 = new Fact<>("fact1", "100");
+    Fact<Float> fact2 = new Fact<>("benjamin", 100.00f);
+    Fact<Double> fact3 = new Fact<>("lockness", 3.50);
+    Fact<Integer> fact4 = new Fact<>("jackson", 20);
+    Fact<Long> fact5 = new Fact<>("grant", 50L);
 
     FactMap factMap = new FactMap();
     TypeConvertibleFactMap typeConvertibleFactMap = new TypeConvertibleFactMap(factMap);
@@ -76,13 +82,14 @@ public class TypeConvertibleFactMapTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getBigDeciValConvertsFactValueToBigDecimal() {
-    Fact<String> fact1 = new Fact<String>("fact1", "100");
-    Fact<Float> fact2 = new Fact<Float>("benjamin", 100.00f);
-    Fact<Double> fact3 = new Fact<Double>("lockness", 3.50);
-    Fact<Integer> fact4 = new Fact<Integer>("jackson", 20);
-    Fact<Long> fact5 = new Fact<Long>("grant", 50L);
-    Fact<BigDecimal> fact6 = new Fact<BigDecimal>("lincoln", new BigDecimal(5.0));
+    Fact<String> fact1 = new Fact<>("fact1", "100");
+    Fact<Float> fact2 = new Fact<>("benjamin", 100.00f);
+    Fact<Double> fact3 = new Fact<>("lockness", 3.50);
+    Fact<Integer> fact4 = new Fact<>("jackson", 20);
+    Fact<Long> fact5 = new Fact<>("grant", 50L);
+    Fact<BigDecimal> fact6 = new Fact<>("lincoln", new BigDecimal(5.0));
 
     FactMap factMap = new FactMap();
     TypeConvertibleFactMap typeConvertibleFactMap = new TypeConvertibleFactMap(factMap);
@@ -110,11 +117,12 @@ public class TypeConvertibleFactMapTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getBoolValConvertsFactValueToBoolean() {
-    Fact<String> fact1 = new Fact<String>("true string", "true");
-    Fact<String> fact2 = new Fact<String>("false string", "false");
-    Fact<Boolean> fact3 = new Fact<Boolean>("true boolean", true);
-    Fact<Boolean> fact4 = new Fact<Boolean>("false boolean", false);
+    Fact<String> fact1 = new Fact<>("true string", "true");
+    Fact<String> fact2 = new Fact<>("false string", "false");
+    Fact<Boolean> fact3 = new Fact<>("true boolean", true);
+    Fact<Boolean> fact4 = new Fact<>("false boolean", false);
 
     FactMap factMap = new FactMap();
     factMap.put(fact1);
@@ -132,11 +140,24 @@ public class TypeConvertibleFactMapTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void toStringDelegatesToDecoratedMap() {
     NameValueReferableMap factMap = mock(NameValueReferableMap.class);
     when(factMap.toString()).thenReturn("delegated!");
 
     NameValueReferableMap facts = new TypeConvertibleFactMap(factMap);
     Assert.assertEquals("delegated!", facts.toString());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void putAllDelegatesToDecoratedMap() {
+    NameValueReferableMap factMap = mock(NameValueReferableMap.class);
+    FactMap map = new FactMap();
+
+    NameValueReferableMap facts = new TypeConvertibleFactMap(factMap);
+    facts.putAll(map);
+
+    verify(factMap, times(1)).putAll(map);
   }
 }

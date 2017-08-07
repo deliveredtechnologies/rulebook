@@ -36,16 +36,16 @@ public class CoRRuleBook<T> implements RuleBook<T> {
   @Override
   @SuppressWarnings("unchecked")
   public void run(NameValueReferableMap facts) {
+    getResult().ifPresent(Result::reset);
     if (_headRule == null) {
       defineRules();
     }
 
     Optional<Handler<Rule>> headRule = Optional.ofNullable(_headRule);
     headRule.ifPresent(ruleHandler -> {
-        ruleHandler.getDelegate().setFacts(facts);
-        getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
-      });
-    headRule.ifPresent(Handler::handleRequest);
+      getResult().ifPresent(result -> ruleHandler.getDelegate().setResult(result));
+      ruleHandler.handleRequest(facts);
+    });
   }
 
   @Override

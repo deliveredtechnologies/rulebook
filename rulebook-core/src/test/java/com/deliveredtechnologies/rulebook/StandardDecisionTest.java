@@ -41,8 +41,8 @@ public class StandardDecisionTest {
         .given("helo", "world")
         .when(facts -> true)
         .then((facts, result) -> {
-            result.setValue(true);
-          });
+          result.setValue(true);
+        });
     decision.run();
 
     Assert.assertTrue(decision.getResult());
@@ -111,8 +111,8 @@ public class StandardDecisionTest {
 
     decision1 = decision1.when(facts -> false);
     decision2 = decision2.when(facts -> true).then((facts, result) -> {
-        result.setValue(true);
-      });
+      result.setValue(true);
+    });
     decision1.setNextRule(decision2);
     decision1.run();
 
@@ -151,8 +151,8 @@ public class StandardDecisionTest {
 
     decision1 = decision1.when(facts -> true).then(f -> { });
     decision2 = decision2.when(facts -> true).then((facts, result) -> {
-        result.setValue(true);
-      });
+      result.setValue(true);
+    });
     decision1.setNextRule(decision2);
     decision1.run();
 

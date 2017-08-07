@@ -1,10 +1,11 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
+
+
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
-import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.Result;
-
+import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
@@ -73,19 +74,19 @@ public class RuleAdapter implements Rule {
   @Override
   public void addFacts(NameValueReferable... facts) {
     _rule.addFacts(facts);
-    mapGivenFactsToProperties();
+    mapFactsToProperties(_rule.getFacts());
   }
 
   @Override
   public void addFacts(NameValueReferableMap facts) {
     _rule.addFacts(facts);
-    mapGivenFactsToProperties();
+    mapFactsToProperties(_rule.getFacts());
   }
 
   @Override
   public void setFacts(NameValueReferableMap facts) {
     _rule.setFacts(facts);
-    mapGivenFactsToProperties();
+    mapFactsToProperties(_rule.getFacts());
   }
 
   @Override
@@ -135,12 +136,12 @@ public class RuleAdapter implements Rule {
             .filter(method -> Arrays.stream(method.getDeclaredAnnotations()).anyMatch(When.class::isInstance))
             .findFirst()
             .<Predicate>map(method -> object -> {
-                try {
-                  return (Boolean) method.invoke(_pojoRule);
-                } catch (InvocationTargetException | IllegalAccessException ex) {
-                  return false;
-                }
-              })
+              try {
+                return (Boolean) method.invoke(_pojoRule);
+              } catch (InvocationTargetException | IllegalAccessException ex) {
+                return false;
+              }
+            })
             //If the condition still can't be determined, then just hand back one that returns true
             .orElse(o -> true));
     return _rule.getCondition();
@@ -159,7 +160,7 @@ public class RuleAdapter implements Rule {
       for (Method actionMethod : getAnnotatedMethods(Then.class, _pojoRule.getClass())) {
         actionMethod.setAccessible(true);
         Object then = getThenMethodAsBiConsumer(actionMethod).map(Object.class::cast)
-                .orElse(getThenMethodAsConsumer(actionMethod).orElse(factMap -> { }));
+            .orElse(getThenMethodAsConsumer(actionMethod).orElse(factMap -> { }));
         actionList.add(then);
       }
       _rule.getActions().addAll(actionList);
@@ -169,11 +170,12 @@ public class RuleAdapter implements Rule {
 
   @Override
   @SuppressWarnings("unchecked")
-  public boolean invoke() {
+  public boolean invoke(NameValueReferableMap facts) {
+    mapFactsToProperties(facts);
     // getActions and getCondition are called here so that they could be overridden prior to calling invoke()
     getActions();
     getCondition();
-    return _rule.invoke();
+    return _rule.invoke(facts);
   }
 
   @Override
@@ -183,13 +185,13 @@ public class RuleAdapter implements Rule {
 
     getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _pojoRule.getClass())
           .ifPresent(field -> {
-              field.setAccessible(true);
-              try {
-                field.set(_pojoRule, result.getValue());
-              } catch (Exception ex) {
-                LOGGER.error("Unable to set @Result field in " + _pojoRule.getClass(), ex);
-              }
-            });
+            field.setAccessible(true);
+            try {
+              field.set(_pojoRule, result.getValue());
+            } catch (Exception ex) {
+              LOGGER.error("Unable to set @Result field in " + _pojoRule.getClass(), ex);
+            }
+          });
   }
 
   @Override
@@ -203,34 +205,34 @@ public class RuleAdapter implements Rule {
    * properties. If any matched properties are Facts, then the Fact object are mapped to those properties.
    */
   @SuppressWarnings("unchecked")
-  private void mapGivenFactsToProperties() {
+  private void mapFactsToProperties(NameValueReferableMap facts) {
     for (Field field : getAnnotatedFields(Given.class, _pojoRule.getClass())) {
       Given given = field.getAnnotation(Given.class);
       try {
         field.setAccessible(true);
         if (NameValueReferable.class.isAssignableFrom(field.getType())) {
-          field.set(_pojoRule, getFacts().get(given.value()));
+          field.set(_pojoRule, facts.get(given.value()));
         } else {
-          Object value = getFacts().getValue(given.value());
+          Object value = facts.getValue(given.value());
           if (value != null) {
             //set the field to the Fact that has the name of the @Given value
             field.set(_pojoRule, value);
           } else if (NameValueReferableMap.class.isAssignableFrom(field.getType())) {
             //if the field is a FactMap then give it the FactMap
-            field.set(_pojoRule, getFacts());
+            field.set(_pojoRule, facts);
           } else if (Collection.class.isAssignableFrom(field.getType())) {
             //set a Collection of Fact object values
-            Stream stream = getFacts().values().stream()
+            Stream stream = facts.values().stream()
                     .filter(fact -> { //filter on only facts that contain objects matching the generic type
-                        ParameterizedType paramType = (ParameterizedType)field.getGenericType();
-                        Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
-                        return genericType.equals(((NameValueReferable) fact).getValue().getClass());
-                      })
+                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
+                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
+                      return genericType.equals(((NameValueReferable) fact).getValue().getClass());
+                    })
                     .map(fact -> {
-                        ParameterizedType paramType = (ParameterizedType)field.getGenericType();
-                        Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
-                        return genericType.cast(((NameValueReferable)fact).getValue());
-                      });
+                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
+                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
+                      return genericType.cast(((NameValueReferable)fact).getValue());
+                    });
             if (List.class == field.getType()) {
               //map List of Fact values to field
               field.set(_pojoRule, stream.collect(Collectors.toList()));
@@ -240,13 +242,13 @@ public class RuleAdapter implements Rule {
             }
           } else if (Map.class == field.getType()) {
             //map Map of Fact values to field
-            Map map = (Map)getFacts().keySet().stream()
+            Map map = (Map)facts.keySet().stream()
                     .filter(key -> {
-                        ParameterizedType paramType = (ParameterizedType)field.getGenericType();
-                        Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[1];
-                        return genericType.equals(getFacts().getValue((String)key).getClass());
-                      })
-                    .collect(Collectors.toMap(key -> key, key -> getFacts().getValue((String)key)));
+                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
+                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[1];
+                      return genericType.equals(facts.getValue((String)key).getClass());
+                    })
+                    .collect(Collectors.toMap(key -> key, key -> facts.getValue((String)key)));
             field.set(_pojoRule, map);
           }
         }
@@ -261,37 +263,37 @@ public class RuleAdapter implements Rule {
   private Optional<BiConsumer> getThenMethodAsBiConsumer(Method method) {
     return getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, _pojoRule.getClass())
             .map(resultField -> (BiConsumer) (facts, result) -> {
-                try {
-                  Object retVal = method.invoke(_pojoRule);
-                  if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
-                    _rule.setRuleState(RuleState.BREAK);
-                  }
-                  resultField.setAccessible(true);
-                  Object resultVal = resultField.get(_pojoRule);
-                  ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                  LOGGER.error("Unable to access "
-                        + _pojoRule.getClass().getName()
-                        + " when converting then to BiConsumer", ex);
+              try {
+                Object retVal = method.invoke(_pojoRule);
+                if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+                  _rule.setRuleState(RuleState.BREAK);
                 }
-              });
+                resultField.setAccessible(true);
+                Object resultVal = resultField.get(_pojoRule);
+                ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
+              } catch (IllegalAccessException | InvocationTargetException ex) {
+                LOGGER.error("Unable to access "
+                      + _pojoRule.getClass().getName()
+                      + " when converting then to BiConsumer", ex);
+              }
+            });
   }
 
   private Optional<Consumer> getThenMethodAsConsumer(Method method) {
     if (!getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class,
             _pojoRule.getClass()).isPresent()) {
       return Optional.of((Consumer) obj -> {
-          try {
-            Object retVal = method.invoke(_pojoRule);
-            if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
-              _rule.setRuleState(RuleState.BREAK);
-            }
-          } catch (IllegalAccessException | InvocationTargetException ex) {
-            LOGGER.error("Unable to access "
-                  + _pojoRule.getClass().getName()
-                  + " when converting then to Consumer", ex);
+        try {
+          Object retVal = method.invoke(_pojoRule);
+          if (method.getReturnType() == RuleState.class && retVal == RuleState.BREAK) {
+            _rule.setRuleState(RuleState.BREAK);
           }
-        });
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+          LOGGER.error("Unable to access "
+                + _pojoRule.getClass().getName()
+                + " when converting then to Consumer", ex);
+        }
+      });
     }
     return Optional.empty();
   }

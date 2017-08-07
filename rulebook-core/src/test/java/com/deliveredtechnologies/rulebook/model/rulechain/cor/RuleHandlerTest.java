@@ -2,13 +2,12 @@ package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
-import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by clong on 4/3/17.
+ * Tests for {@link RuleHandler}.
  */
 public class RuleHandlerTest {
   @Test
@@ -23,7 +22,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact4", "Fourth Fact"))
             .then(facts -> facts.setValue("fact5", "Fifth Fact")).build());
     handler1.setSuccessor(handler2);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(5, factMap.size());
   }
@@ -41,7 +40,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact4", "Fourth Fact"))
             .then(facts -> facts.setValue("fact5", "Fifth Fact")).build());
     handler1.setSuccessor(handler2);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(3, factMap.size());
     Assert.assertNotNull(factMap.get("fact5"));
@@ -61,7 +60,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact4", "Fourth Fact"))
             .then(facts -> facts.setValue("fact5", "Fifth Fact")).build());
     handler1.setSuccessor(handler2);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(3, factMap.size());
     Assert.assertNotNull(factMap.get("fact3"));
@@ -79,7 +78,7 @@ public class RuleHandlerTest {
             .then(facts -> facts.setValue("fact3", "Third Fact"))
             .stop().build());
     handler1.setSuccessor(null);
-    handler1.handleRequest();
+    handler1.handleRequest(factMap);
 
     Assert.assertEquals(3, factMap.size());
     Assert.assertNotNull(factMap.get("fact1"));

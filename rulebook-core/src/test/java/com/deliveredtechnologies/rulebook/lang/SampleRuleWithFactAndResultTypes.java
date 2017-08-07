@@ -83,7 +83,7 @@ public class SampleRuleWithFactAndResultTypes<T, U> implements Rule<T, U> {
   }
 
   @Override
-  public boolean invoke() {
+  public boolean invoke(NameValueReferableMap facts) {
     return false;
   }
 

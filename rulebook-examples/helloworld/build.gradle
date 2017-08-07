@@ -1,0 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.deliveredtechnologies:rulebook-core:0.6.2'
+}
+
+mainClassName = 'com.example.pojorules.homeloan.ExampleSolution'

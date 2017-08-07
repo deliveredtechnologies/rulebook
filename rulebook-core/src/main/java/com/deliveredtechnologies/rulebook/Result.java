@@ -1,5 +1,9 @@
 package com.deliveredtechnologies.rulebook;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * This is a wrapper class for the actual result.
  * This is needed to ensure that an instance is available and that a reference is maintained to the actual that
@@ -8,12 +12,34 @@ package com.deliveredtechnologies.rulebook;
  * and across other objects (i.e. DecisionBook and Decision objects)
  */
 public class Result<T> implements Referable<T> {
-  private T _value;
+  private Map<Long, T> _valueMap = new HashMap<>();
+  private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+  private T _defaultValue = null;
 
   public Result() {}
 
+  /**
+   * Creates an instance of Result with a default value.
+   *
+   * @param value the default value.
+   */
   public Result(T value) {
-    this._value = value;
+    _defaultValue = value;
+  }
+
+  /**
+   * Resets the value of the Result to its default value.
+   */
+  public void reset() {
+    _lock.readLock().lock();
+    try {
+      if (_defaultValue == null) {
+        return;
+      }
+    } finally {
+      _lock.readLock().unlock();
+    }
+    setValue(_defaultValue);
   }
 
   /**
@@ -23,7 +49,16 @@ public class Result<T> implements Referable<T> {
    */
   @Override
   public T getValue() {
-    return _value;
+    _lock.readLock().lock();
+    try {
+      long key = Thread.currentThread().getId();
+      if (_valueMap.containsKey(key)) {
+        return _valueMap.get(Thread.currentThread().getId());
+      }
+      return _defaultValue;
+    } finally {
+      _lock.readLock().unlock();
+    }
   }
 
   /**
@@ -33,14 +68,28 @@ public class Result<T> implements Referable<T> {
    */
   @Override
   public void setValue(T value) {
-    this._value = value;
+    _lock.writeLock().lock();
+    try {
+      _valueMap.put(Thread.currentThread().getId(), value);
+    } finally {
+      _lock.writeLock().unlock();
+    }
   }
 
   @Override
   public String toString() {
-    if (_value == null) {
+    _lock.readLock().lock();
+    try {
+      long key = Thread.currentThread().getId();
+      if (_valueMap.containsKey(key)) {
+        return _valueMap.get(key).toString();
+      }
+      if (_defaultValue != null) {
+        return _defaultValue.toString();
+      }
       return "";
+    } finally {
+      _lock.readLock().unlock();
     }
-    return _value.toString();
   }
 }

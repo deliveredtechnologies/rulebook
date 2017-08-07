@@ -1,3 +1,4 @@
 rootProject.name = 'rulebook-examples'
 
 include 'megabank'
+include 'helloworld'

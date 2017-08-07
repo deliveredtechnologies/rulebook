@@ -6,8 +6,6 @@ import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Optional;
-
 /**
  * Spring FactoryBean for RuleBooks.
  */
@@ -16,15 +14,24 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
   private Class<? extends RuleBook> _ruleBookType;
   private String _package;
 
+  /**
+   * @deprecated as of release v0.7; RuleBookRunner should be used instead.
+   */
+  @Deprecated
   public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType, String pkg) {
     _ruleBookType = ruleBookType;
     _package = pkg;
   }
 
   public RuleBookFactoryBean(Class<? extends RuleBook> ruleBookType) {
-    this(ruleBookType, null);
+    this(ruleBookType,null);
   }
 
+  /**
+   * @deprecated as of release v0.7; RuleBookRunner should be used instead.
+   * @param pkg the package to scan Rule POJO classes from
+   */
+  @Deprecated
   public RuleBookFactoryBean(String pkg) {
     this(null, pkg);
   }
@@ -33,7 +40,7 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
   public RuleBook getObject() throws Exception {
     if (_package != null) {
       if (_ruleBookType != null) {
-        return new RuleBookRunner(RuleBookBuilder.create(_ruleBookType).build(), _package);
+        return new RuleBookRunner(_ruleBookType, _package);
       }
       return new RuleBookRunner(_package);
     }
@@ -50,6 +57,6 @@ public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
 
   @Override
   public boolean isSingleton() {
-    return false;
+    return true;
   }
 }

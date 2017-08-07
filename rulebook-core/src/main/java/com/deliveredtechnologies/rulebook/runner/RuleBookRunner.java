@@ -69,17 +69,17 @@ public class RuleBookRunner extends DecisionBook {
       Files.walk(path, 1)
           .filter(p -> !Files.isDirectory(p))
           .forEach(p -> {
-              String fileName = p.getFileName().toString();
-              String className = fileName.substring(0, fileName.length() - 6);
-              try {
-                Class<?> ruleClass = Class.forName(packageName + "." + className);
-                if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleClass) != null) {
-                  classes.add(ruleClass);
-                }
-              } catch (ClassNotFoundException e) {
-                LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
+            String fileName = p.getFileName().toString();
+            String className = fileName.substring(0, fileName.length() - 6);
+            try {
+              Class<?> ruleClass = Class.forName(packageName + "." + className);
+              if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleClass) != null) {
+                classes.add(ruleClass);
               }
-            });
+            } catch (ClassNotFoundException e) {
+              LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
+            }
+          });
       classes.sort(
           (class1, class2) -> getAnnotation(Rule.class, class1).order() - getAnnotation(Rule.class, class2).order());
 
