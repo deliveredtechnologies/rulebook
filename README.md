@@ -633,7 +633,7 @@ public class WorldSpringRule {
 @Configuration
 public class SpringConfig {
   @Bean
-  public RuleBook ruleBook() throws InvalidClassException {
+  public RuleBook ruleBook() {
     return new RuleBookRunner("com.example.rulebook.spring");
   }
 }
@@ -650,7 +650,7 @@ public class SpringConfig {
     facts.setValue("hello", "Hello");
     facts.setValue("world", "World");
     ruleBook.run(facts);
-    ruleBook.ifPresent(System.out::println); //prints Hello World
+    ruleBook.getResult().ifPresent(System.out::println); //prints Hello World
   }
 ```
 

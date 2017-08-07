@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
@@ -12,9 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for {@link RuleBookRunner}.
@@ -49,7 +48,7 @@ public class RuleBookRunnerTest {
     Fact<String> fact2 = new Fact("fact2", "Fact");
     FactMap<String> factMap = new FactMap<>();
 
-    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
     factMap.put(fact1);
     factMap.put(fact2);
     ruleBookRunner.run(factMap);
@@ -57,6 +56,13 @@ public class RuleBookRunnerTest {
     Assert.assertEquals("So Factual Too!", fact1.getValue());
     Assert.assertEquals("So Factual!", fact2.getValue());
     Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void rulesCanNotBeAddedByCallingAddRule() {
+    Rule rule = mock(Rule.class);
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    ruleBookRunner.addRule(rule);
   }
 
   @Test
