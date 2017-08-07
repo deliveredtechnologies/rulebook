@@ -2,13 +2,12 @@ package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
-import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by clong on 4/3/17.
+ * Tests for {@link RuleHandler}.
  */
 public class RuleHandlerTest {
   @Test

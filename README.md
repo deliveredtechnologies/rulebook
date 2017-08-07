@@ -26,6 +26,7 @@ Tired of classes filled with if/then/else statements? Need a nice abstraction th
   * [2.1 A Hello World Example](#21-a-helloworld-example)
   * [2.2 An Example Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
+  * [2.4 Thread Safety] (#24-thread-safety)
 * **[3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)**
   * [3.1 Given-When-Then: The Basis of the RuleBook Language](#31-given-when-then-the-basis-of-the-rulebook-language)
   * [3.2 The Using Method](#32-the-using-method)
@@ -281,6 +282,10 @@ public class ExampleSolution {
   }
 }
 ```
+
+## 2.4 Thread Safety
+
+RuleBooks are threadsafe. However, FactMaps and other implementations of NameValueReferableMap are not. This means that a single instance of a RuleBook can be run in different threads with different Facts without unexpected results. However, using the same exact FactMap across different threads may cause unexpected results. Facts represent data for individual invocations of a RuleBook, whereas RuleBooks represent reusable sets of Rules.
 
 <sub>[[Top](#contents)]</sub>
 
@@ -558,7 +563,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-spring</artifactId>
-    <version>0.6.2</version>
+    <version>0.7</version>
 </dependency>
 ```
 
@@ -567,7 +572,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.6.2'
+compile 'com.deliveredtechnologies:rulebook-spring:0.7'
 ```
 
 ### 5.3 Creating POJO Rules
