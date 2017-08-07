@@ -1,4 +1,5 @@
 rootProject.name = 'rulebook-examples'
 
-include 'megabank'
+include 'breaking-rule-chain'
+include 'megabank-pojo'
 include 'helloworld'

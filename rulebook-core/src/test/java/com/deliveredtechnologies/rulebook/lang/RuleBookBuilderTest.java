@@ -13,13 +13,14 @@ import org.mockito.Mockito;
 import java.util.function.Consumer;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
 
 /**
  * Tests for {@link RuleBookBuilder}.
  */
 public class RuleBookBuilderTest {
   @Test
-  public void ruleBookBuilderShouldBuildRulesWithoutaResult() {
+  public void ruleBookBuilderShouldBuildRulesWithoutResult() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     RuleBook ruleBook = RuleBookBuilder.create()
         .addRule(rule -> rule
@@ -28,11 +29,11 @@ public class RuleBookBuilderTest {
         .build();
     ruleBook.run(new FactMap());
 
-    Mockito.verify(consumer, Mockito.times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
+    Mockito.verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
 
   @Test
-  public void ruleBookBuilderShouldBuildRulesWithaResult() {
+  public void ruleBookBuilderShouldBuildRulesWithResult() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     RuleBook<Boolean> ruleBook = RuleBookBuilder.create().withResultType(Boolean.class).withDefaultResult(false)
             .addRule(rule -> rule
@@ -42,7 +43,7 @@ public class RuleBookBuilderTest {
             .build();
     ruleBook.run(new FactMap());
 
-    Mockito.verify(consumer, Mockito.times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
+    Mockito.verify(consumer, times(1)).accept(any(NameValueReferableTypeConvertibleMap.class));
     Assert.assertTrue(ruleBook.getResult().get().getValue());
   }
 
@@ -50,14 +51,15 @@ public class RuleBookBuilderTest {
   public void ruleBookBuilderShouldChainMultipleRulesWithResult() {
     NameValueReferableMap factMap = new FactMap();
     RuleBook<String> ruleBook = RuleBookBuilder.create().withResultType(String.class).withDefaultResult("initial value")
+            .addRule(RuleBuilder.create(GoldenRule.class)
+                    .withFactType(String.class)
+                    .withResultType(String.class)
+                    .when(facts -> true)
+                    .then((facts, result) -> result.setValue("RESULT"))
+                    .build())
             .addRule(rule -> rule
                     .withFactType(String.class)
                     .then(facts -> facts.setValue("fact", "FACT")))
-            .addRule(rule -> rule
-                    .withRuleType(GoldenRule.class)
-                    .withNoSpecifiedFactType()
-                    .when(facts -> true)
-                    .then((facts, result) -> result.setValue("RESULT")))
             .addRule(rule -> rule
                     .withFactType(String.class)
                     .using("fact2")
@@ -96,5 +98,32 @@ public class RuleBookBuilderTest {
 
     Assert.assertEquals(1, factMap.size());
     Assert.assertTrue(factMap.containsKey("fact1"));
+  }
+
+  @Test
+  public void ruleBookBuilderShouldStopOnRuleConditionIsFalseIfSpecified() {
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
+        (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
+    NameValueReferableMap<String> factMap = new FactMap<>();
+    RuleBook ruleBook = RuleBookBuilder.create()
+        .addRule(
+            RuleBuilder.create(GoldenRule.class, true)
+                .withFactType(String.class)
+                .when(facts -> false)
+                .then(consumer)
+                .stop()
+                .build())
+        .addRule(
+            RuleBuilder.create()
+                .withFactType(String.class)
+                .when(facts -> true)
+                .then(consumer)
+                .stop()
+                .build())
+        .build();
+
+    ruleBook.run(factMap);
+
+    Mockito.verify(consumer, times(0)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
 }
