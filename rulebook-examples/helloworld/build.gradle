@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.6.2'
+    compile 'com.deliveredtechnologies:rulebook-core:0.7'
 }
 
 mainClassName = 'com.example.pojorules.homeloan.ExampleSolution'
