@@ -30,7 +30,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
   * [2.1 A Hello World Example](#21-a-helloworld-example)
   * [2.2 An Example Using Facts](#22-the-above-example-using-facts)
   * [2.3 A \[Slightly\] More Complex Scenario](#23-a-slightly-more-complex-scenario)
-  * [2.4 Thread Safety] (#24-thread-safety)
+  * [2.4 Thread Safety](#24-thread-safety)
 * **[3 The RuleBook Domain Specific Language](#3-the-java-domain-specific-language-explained)**
   * [3.1 Given-When-Then: The Basis of the RuleBook Language](#31-given-when-then-the-basis-of-the-rulebook-language)
   * [3.2 The Using Method](#32-the-using-method)
