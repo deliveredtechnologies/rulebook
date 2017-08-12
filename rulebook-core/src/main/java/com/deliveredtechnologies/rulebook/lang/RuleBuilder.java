@@ -7,6 +7,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,9 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.CONTINUE_ON_FAILURE;
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.STOP_ON_FAILURE;
 
 /**
  * The initial builder used to build a Rule.
@@ -29,17 +33,18 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   private Class<? extends Rule> _ruleClass;
   private Class<T> _factType;
   private Class<U> _resultType;
-  private boolean _stopOnRuleFailure = false;
+  private RuleChainActionType _actionType = CONTINUE_ON_FAILURE;
 
   /**
    * Returns a new RuleBuilder for the specified Rule class.
-   * @param ruleClass         the class of Rule to build
-   * @param stopOnRuleFailure if true, stops the rule chain if RuleState is BREAK only if the rule fails
-   *                          (for supported rule classes)
-   * @return                  a new RuleBuilder
+   * @param ruleClass   the class of Rule to build
+   * @param actionType  if STOP_ON_FAILURE, stops the rule chain if RuleState is BREAK only if the rule fails
+   *                    (for supported rule classes); default is CONTINUE_ON_FAILURE
+   * @return            a new RuleBuilder
    */
-  public static RuleBuilder<Object, Object> create(Class<? extends Rule> ruleClass, boolean stopOnRuleFailure) {
-    return new RuleBuilder<>(ruleClass, stopOnRuleFailure);
+  public static RuleBuilder<Object, Object> create(Class<? extends Rule> ruleClass,
+                                                   RuleChainActionType actionType) {
+    return new RuleBuilder<>(ruleClass, actionType);
   }
 
   /**
@@ -65,9 +70,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     _ruleClass = ruleClass;
   }
 
-  private RuleBuilder(Class<? extends Rule> ruleClass, boolean stopOnRuleFailure) {
+  private RuleBuilder(Class<? extends Rule> ruleClass, RuleChainActionType actionType) {
     this(ruleClass);
-    _stopOnRuleFailure = stopOnRuleFailure;
+    _actionType = actionType;
   }
 
   /**
@@ -80,7 +85,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     RuleBuilder<S, U> builder = new RuleBuilder<>(_ruleClass);
     builder._factType = factType;
     builder._resultType = _resultType;
-    builder._stopOnRuleFailure = _stopOnRuleFailure;
+    builder._actionType = _actionType;
     return builder;
   }
 
@@ -94,7 +99,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     RuleBuilder<T, S> builder = new RuleBuilder<>(_ruleClass);
     builder._factType = _factType;
     builder._resultType = resultType;
-    builder._stopOnRuleFailure = _stopOnRuleFailure;
+    builder._actionType = _actionType;
     return builder;
   }
 
@@ -189,10 +194,10 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   }
 
   private Rule<T, U> newRule() {
-    if (_stopOnRuleFailure) {
+    if (_actionType.equals(STOP_ON_FAILURE)) {
       try {
-        Constructor<?> constructor = _ruleClass.getConstructor(Class.class, boolean.class);
-        return (Rule<T, U>)constructor.newInstance(new Object[]{_factType, _stopOnRuleFailure});
+        Constructor<?> constructor = _ruleClass.getConstructor(Class.class, RuleChainActionType.class);
+        return (Rule<T, U>)constructor.newInstance(new Object[]{_factType, _actionType});
       } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException ex) {
         LOGGER.error("Unable to create an instance of the specified Rule class '"
             + _ruleClass

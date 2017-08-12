@@ -8,6 +8,7 @@ import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,7 +47,7 @@ public class RuleBuilderTest {
   public void ruleBuilderShouldCreateRuleWithClassAndBooleanConstructor() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
         (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
-    Rule rule = RuleBuilder.create(GoldenRule.class, true)
+    Rule rule = RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
         .withFactType(String.class)
         .when(facts -> false)
         .then(consumer)

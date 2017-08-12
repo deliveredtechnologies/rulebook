@@ -5,6 +5,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.junit.Assert;
 import org.junit.Test;
@@ -107,7 +108,7 @@ public class RuleBookBuilderTest {
     NameValueReferableMap<String> factMap = new FactMap<>();
     RuleBook ruleBook = RuleBookBuilder.create()
         .addRule(
-            RuleBuilder.create(GoldenRule.class, true)
+            RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
                 .withFactType(String.class)
                 .when(facts -> false)
                 .then(consumer)
