@@ -18,7 +18,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.8-SNAPSHOT'
+    //for some reason the 0.8-SNAPSHOT wasn't updating in the tests; so a push was done to 0.8.1-SNAPSHOT
+    compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
     compile 'org.springframework.boot:spring-boot-starter'
 }
 
