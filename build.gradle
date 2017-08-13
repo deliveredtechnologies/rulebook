@@ -160,6 +160,7 @@ project('rulebook-core') {
                     url 'https://github.com/NicolasLambert'
                     roles {
                         role 'code contributor for v0.2.1'
+                        role 'raised dsl enhancement for v0.8'
                     }
                 }
                 contributor {
@@ -189,6 +190,13 @@ project('rulebook-core') {
                     roles {
                         role 'raised toString bug in TypeConvertibleFactMap for v0.6.1'
                         role 'raised POJO result chaining on read bug for v0.6.2'
+                    }
+                }
+                contributor {
+                    name 'Darrell Merryweather'
+                    url 'https://github.com/darrellme'
+                    roles {
+                        role 'raised rule chain enhancement for v0.8'
                     }
                 }
             }
