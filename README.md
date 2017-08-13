@@ -638,7 +638,7 @@ public class SpringConfig {
   }
 ```
 
-#### 5.6 Ordering Rules With Spring
+### 5.5 Ordering Rules With Spring
 
 If you were using the RuleBean annotation to create Spring enabled Rules, all of that stuff still works. And there Spring
 enabled POJO Rules can still be configured in RuleBooks in Spring \[using SpringRuleBook\]. But RuleBean doesn't have an
