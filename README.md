@@ -46,12 +46,11 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
-  * [5.1 Adding RuleBook Spring Support to Your Maven Project](#51-adding-rulebook-spring-support-to-your-maven-project)
-  * [5.2 Adding RuleBook Spring Support to Your Gradle Project](#52-adding-rulebook-spring-support-to-your-gradle-project)
-  * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-a-spring-enabled-pojo-rule)
-  * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
-  * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
-  * [5.6 Ordering Rules With Spring](#56-ordering-rules-with-spring)
+  * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
+  * [5.2 Creating a Spring Enabled POJO Rule](#52-creating-a-spring-enabled-pojo-rule)
+  * [5.3 Configuring a RuleBook in Spring](#53-configuring-a-rulebook-in-spring)
+  * [5.4 Using a Spring Enabled RuleBook](#54-using-a-spring-enabled-rulebook)
+  * [5.5 Ordering Rules With Spring](#55-ordering-rules-with-spring)
 * **[6 How to Contribute](#6-how-to-contribute)**
   * [6.1 Developer Guidelines](#61-developer-guidelines)
 
@@ -553,39 +552,19 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 ## 5 Using RuleBook with Spring
 
-RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. Instances of RuleBooks can
-even be specified directly using either the Java DSL or POJO Rules or both in combination.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBook's are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
 
-_Note: If you've been using earlier versions of RuleBook with Spring then all of that same stuff still works. All
-the same POJO and Spring annotated Rules still work too - and they are compatible with the new Spring support for RuleBook._
+### 5.1 Adding RuleBook Spring Support to Your Project
 
-### 5.1 Adding RuleBook Spring Support to Your Maven Project
+No additional configuration is needed for RuleBook to work with Spring. If you are using a current version of RuleBook then it works with Spring.
 
-_Add the code below to your pom.xml_
-
-```xml
-<dependency>
-    <groupId>com.deliveredtechnologies</groupId>
-    <artifactId>rulebook-spring</artifactId>
-    <version>0.7</version>
-</dependency>
-```
-
-### 5.2 Adding RuleBook Spring Support to Your Gradle Project
-
-_Add the code below to your build.gradle_
-
-```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.7'
-```
-
-### 5.3 Creating POJO Rules
+### 5.2 Creating POJO Rules
 
 POJO Rules can be created just like they were created above without Spring.
 
 ```java
 
-package com.example.rulebook.spring;
+package com.example.rulebook.helloworld;
 
 @Rule(order = 1)
 public class HelloSpringRule {
@@ -609,7 +588,7 @@ public class HelloSpringRule {
 
 ```java
 
-package com.example.rulebook.spring;
+package com.example.rulebook.helloworld;
 
 @Rule(order = 2)
 public class WorldSpringRule {
@@ -631,27 +610,28 @@ public class WorldSpringRule {
 }
 ```
 
-### 5.4 Configuring a RuleBook in Spring
+### 5.3 Configuring a RuleBook in Spring
 
 ```java
 @Configuration
 public class SpringConfig {
   @Bean
   public RuleBook ruleBook() {
-    return new RuleBookRunner("com.example.rulebook.spring");
+    RuleBook ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+    return ruleBook;
   }
 }
 ```
 
-### 5.5 Using a Spring Enabled RuleBook
+### 5.4 Using a Spring Enabled RuleBook
 
 ```java
   @Autowired
-  private RuleBook<String> ruleBook;
+  private RuleBook ruleBook;
 
-  public void someMethod() {
+  public void printResult() {
     NameValueReferableMap<String> facts = new FactMap<>();
-    facts.setValue("hello", "Hello");
+    facts.setValue("hello", "Hello ");
     facts.setValue("world", "World");
     ruleBook.run(facts);
     ruleBook.getResult().ifPresent(System.out::println); //prints Hello World
