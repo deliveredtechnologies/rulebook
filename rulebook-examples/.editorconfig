@@ -1,0 +1,12 @@
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.java]
+charset = utf-8
+indent_style = space
+indent_size = 2
+max_line_length = 120
+curly_braket_next_line = false
+spaces_around_operators = true
+continuation_indent_size = 4
