@@ -358,7 +358,7 @@ As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annot
 ### 4.1 A Hello World Example
 
 ```java
-package com.example.pojorules;
+package com.example.rulebook.helloworld;
 
 import com.deliveredtechnologies.rulebook.annotations.*;
 import com.deliveredtechnologies.rulebook.RuleState;
