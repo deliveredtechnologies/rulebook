@@ -5,6 +5,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.times;
  */
 public class RuleBookBuilderTest {
   @Test
-  public void ruleBookBuilderShouldBuildRulesWithoutResult() {
+  public void ruleBookBuilderBuildsRulesWithoutResult() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     RuleBook ruleBook = RuleBookBuilder.create()
         .addRule(rule -> rule
@@ -33,7 +34,7 @@ public class RuleBookBuilderTest {
   }
 
   @Test
-  public void ruleBookBuilderShouldBuildRulesWithResult() {
+  public void ruleBookBuilderBuildsRulesWithResult() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     RuleBook<Boolean> ruleBook = RuleBookBuilder.create().withResultType(Boolean.class).withDefaultResult(false)
             .addRule(rule -> rule
@@ -48,7 +49,7 @@ public class RuleBookBuilderTest {
   }
 
   @Test
-  public void ruleBookBuilderShouldChainMultipleRulesWithResult() {
+  public void ruleBookBuilderChainsMultipleRulesWithResult() {
     NameValueReferableMap factMap = new FactMap();
     RuleBook<String> ruleBook = RuleBookBuilder.create().withResultType(String.class).withDefaultResult("initial value")
             .addRule(RuleBuilder.create(GoldenRule.class)
@@ -75,18 +76,18 @@ public class RuleBookBuilderTest {
   }
 
   @Test
-  public void ruleBookBuilderShouldCreateSpecifiedType() {
+  public void ruleBookBuilderCreatesSpecifiedType() {
     Assert.assertNotNull(RuleBookBuilder.create(CoRRuleBook.class).build());
     Assert.assertNotNull(RuleBookBuilder.create(SampleRuleBookWithOneArgConstructor.class).build());
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBookBuilderShouldThrowExceptionOnRuleBookThatCantBeCreated() {
+  public void ruleBookBuilderThrowsExceptionOnRuleBookThatCantBeCreated() {
     RuleBookBuilder.create(SampleRuleBookWithPrivateConstructor.class).build();
   }
 
   @Test
-  public void ruleBookBuilderShouldAddRules() {
+  public void ruleBookBuilderAddsRules() {
     NameValueReferableMap<String> factMap = new FactMap<>();
     RuleBook ruleBook = RuleBookBuilder.create().addRule(
         RuleBuilder.create().withFactType(String.class)
@@ -101,13 +102,13 @@ public class RuleBookBuilderTest {
   }
 
   @Test
-  public void ruleBookBuilderShouldStopOnRuleConditionIsFalseIfSpecified() {
+  public void ruleBookBuilderStopsOnRuleConditionIsFalseIfSpecified() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
         (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
     NameValueReferableMap<String> factMap = new FactMap<>();
     RuleBook ruleBook = RuleBookBuilder.create()
         .addRule(
-            RuleBuilder.create(GoldenRule.class, true)
+            RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
                 .withFactType(String.class)
                 .when(facts -> false)
                 .then(consumer)
@@ -125,5 +126,32 @@ public class RuleBookBuilderTest {
     ruleBook.run(factMap);
 
     Mockito.verify(consumer, times(0)).accept(any(NameValueReferableTypeConvertibleMap.class));
+  }
+
+  @Test
+  public void ruleBookBuilderContinuesIfRuleIsSuccessfulAndStopOnFailureIsSpecified() {
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
+        (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
+    NameValueReferableMap<String> factMap = new FactMap<>();
+    RuleBook ruleBook = RuleBookBuilder.create()
+        .addRule(
+            RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
+                .withFactType(String.class)
+                .when(facts -> true)
+                .then(consumer)
+                .stop()
+                .build())
+        .addRule(
+            RuleBuilder.create()
+                .withFactType(String.class)
+                .when(facts -> true)
+                .then(consumer)
+                .stop()
+                .build())
+        .build();
+
+    ruleBook.run(factMap);
+
+    Mockito.verify(consumer, times(2)).accept(any(NameValueReferableTypeConvertibleMap.class));
   }
 }
