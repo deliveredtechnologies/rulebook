@@ -10,7 +10,6 @@ public class SpringConfig {
   @Bean
   public RuleBook ruleBook() {
     RuleBook ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
-    ruleBook.setDefaultResult("Something");
     return ruleBook;
   }
 }
