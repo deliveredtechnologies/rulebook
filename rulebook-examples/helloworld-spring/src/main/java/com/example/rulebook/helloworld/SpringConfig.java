@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class SpringConfig {
   @Bean
   public RuleBook ruleBook() {
-    return new RuleBookRunner("com.example.rulebook.helloworld");
+    RuleBook ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+    ruleBook.setDefaultResult("Something");
+    return ruleBook;
   }
 }
