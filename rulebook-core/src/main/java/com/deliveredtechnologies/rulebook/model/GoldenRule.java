@@ -199,9 +199,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
 
   @Override
   public void setResult(Result<U> result) {
-    if (result != null) {
-      _result = result;
-    }
+    _result = result;
   }
 
   @Override
