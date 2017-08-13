@@ -47,7 +47,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
   * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
-  * [5.2 Creating a Spring Enabled POJO Rule](#52-creating-a-spring-enabled-pojo-rule)
+  * [5.2 Creating Spring Enabled POJO Rules](#52-creating-spring-enabled-pojo-rules)
   * [5.3 Configuring a RuleBook in Spring](#53-configuring-a-rulebook-in-spring)
   * [5.4 Using a Spring Enabled RuleBook](#54-using-a-spring-enabled-rulebook)
   * [5.5 Ordering Rules With Spring](#55-ordering-rules-with-spring)
@@ -558,7 +558,7 @@ RuleBook can be integrated with Spring to inject instances of RuleBooks that are
 
 No additional configuration is needed for RuleBook to work with Spring. If you are using a current version of RuleBook then it works with Spring.
 
-### 5.2 Creating POJO Rules
+### 5.2 Creating Spring Enabled POJO Rules
 
 POJO Rules can be created just like they were created above without Spring.
 
