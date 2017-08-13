@@ -133,16 +133,16 @@ RuleBook ruleBook = RuleBookBuilder.create()
 **..or it could be a single rule**
 ```java
 RuleBook ruleBook = RuleBookBuilder.create()
-    .addRule(rule -> rule.withFactType(String.class)
-      .when(f -> f.containsKey("hello") && f.containsKey("world")
-      .using("hello").then(System.out::print))
-      .using("world").then(System.out::println))
-    .build();
+  .addRule(rule -> rule.withFactType(String.class)
+    .when(f -> f.containsKey("hello") && f.containsKey("world"))
+    .using("hello").then(System.out::print)
+    .using("world").then(System.out::println))
+  .build();
 ```
 **now, run it!**
 ```java
 NameValueReferableMap factMap = new FactMap();
-factMap.setValue("hello", "Hello");
+factMap.setValue("hello", "Hello ");
 factMap.setValue("world", " World");
 ruleBook.run(factMap);
 ```
