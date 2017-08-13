@@ -236,7 +236,7 @@ public class ExampleSolution {
 ```
 **...or nix the ApplicantBean and just use independent Facts**
 ```java
-public class HomeLoanRateRuleBook extends RuleBook<Double> {
+public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
   public void defineRules() {
     //credit score under 600 gets a 4x rate increase
@@ -253,37 +253,37 @@ public class HomeLoanRateRuleBook extends RuleBook<Double> {
       .build());
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(RuleBuilder.create().withResultType(Float.class)
+    addRule(RuleBuilder.create().withResultType(Double.class)
       .when(facts ->
-            facts.getIntVal("Credit Score") >= 700 &&
-            facts.getDblVal("Cash on Hand") >= 25000
+        facts.getIntVal("Credit Score") >= 700 &&
+        facts.getDblVal("Cash on Hand") >= 25000)
       .then((facts, result) -> result.setValue(result.getValue() - 0.25))
       .build());
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(RuleBuilder.create().withFactType(Boolean.class).withResultType(Float.class)
+    addRule(RuleBuilder.create().withFactType(Boolean.class).withResultType(Double.class)
       .when(facts -> facts.getOne())
-      .then((facts, result) -> result.setValue(result.getValue() * 0.80f))
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80))
       .build());
-    }
+  }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
     RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
-      .withDefaultResult(4.5)
-      .build();
+     .withDefaultResult(4.5)
+     .build();
 
     NameValueReferableMap facts = new FactMap();
-    facts.set("Credit Score", 650);
-    facts.set("Cash on Hand", 20000);
-    facts.set("First Time Homebuyer", true)
+    facts.setValue("Credit Score", 650);
+    facts.setValue("Cash on Hand", 20000);
+    facts.setValue("First Time Homebuyer", true);
 
     homeLoanRateRuleBook.run(facts);
 
     homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
-  }
+    }
 }
 ```
 
