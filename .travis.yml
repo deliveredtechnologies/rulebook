@@ -13,8 +13,4 @@ cache:
 jdk:
   - oraclejdk8
 script:
-  - ./gradlew check
-  - ./gradlew jacocoRootReport
-  - ./gradlew copySource
-  - ./gradlew coveralls
   - ./travis/deploy.sh
