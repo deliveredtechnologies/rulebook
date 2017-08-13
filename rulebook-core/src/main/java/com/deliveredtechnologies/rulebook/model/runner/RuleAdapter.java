@@ -187,7 +187,7 @@ public class RuleAdapter implements Rule {
           .ifPresent(field -> {
             field.setAccessible(true);
             try {
-              if (result.getValue() != null) {
+              if (field.getType().isAssignableFrom((result.getValue().getClass()))) {
                 field.set(_pojoRule, result.getValue());
               }
             } catch (Exception ex) {
