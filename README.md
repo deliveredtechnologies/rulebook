@@ -377,25 +377,25 @@ public class HelloWorld {
 
   @When
   public boolean when() {
-    return true;
+      return true;
   }
 
   @Then
   public RuleState then() {
-    helloworld = hello + " " + world;
-    return RuleState.BREAK;
+      helloworld = hello + " " + world;
+      return RuleState.BREAK;
   }
 }
 ```
 ```java
 
 public static void main(String args[]) {
-  RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules");
-  NameValueReferrable facts = new FactMap();
+  RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+  NameValueReferableMap facts = new FactMap();
   facts.setValue("hello", "Hello");
   facts.setValue("world", "World");
   ruleBook.run(facts);
-  ruleBook.getResult().ifPresent(System.out::println) //prints "Hello World"
+  ruleBook.getResult().ifPresent(System.out::println); //prints "Hello World"
 }
 ```
 
