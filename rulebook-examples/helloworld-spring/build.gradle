@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+dependencies {
+    //for some reason the 0.8-SNAPSHOT wasn't updating in the tests; so a push was done to 0.8.1-SNAPSHOT
+    compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
+    compile 'org.springframework.boot:spring-boot-starter'
+}
+

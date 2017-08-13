@@ -25,6 +25,9 @@ import java.util.function.Consumer;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.CONTINUE_ON_FAILURE;
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.STOP_ON_FAILURE;
+
 /**
  * A standard implementation of {@link Rule}.
  * @param <T> the fact type
@@ -41,9 +44,15 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   private Map<Integer, List<String>> _factNames = new HashMap<>();
   private RuleState _ruleState = RuleState.NEXT;
   private Class<T> _factType;
+  private RuleChainActionType _actionType = CONTINUE_ON_FAILURE;
 
   public GoldenRule(Class<T> factType) {
     _factType = factType;
+  }
+
+  public GoldenRule(Class<T> factType, RuleChainActionType actionType) {
+    this(factType);
+    _actionType = actionType;
   }
 
   @Override
@@ -173,6 +182,11 @@ public class GoldenRule<T, U> implements Rule<T, U> {
           facts.putAll(usingFacts);
         }
 
+        //stopping the rule chain only happens when the rule fails if _stopOnRuleFailure == true
+        if (_actionType.equals(STOP_ON_FAILURE)) {
+          this._ruleState = RuleState.NEXT;
+        }
+
         return true;
       }
     } catch (Exception ex) {
@@ -180,14 +194,12 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //eventually, we'll have to resolve that kind of issue ahead of time
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
-    return false;
+    return _actionType.equals(STOP_ON_FAILURE);
   }
 
   @Override
   public void setResult(Result<U> result) {
-    if (result != null) {
-      _result = result;
-    }
+    _result = result;
   }
 
   @Override

@@ -1,12 +1,14 @@
 package com.deliveredtechnologies.rulebook.lang;
 
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
-import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class RuleBuilderTest {
   @Test
   @SuppressWarnings("unchecked")
-  public void ruleBuilderShouldCreateGwtRules() {
+  public void ruleBuilderCreatesGwtRules() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
             (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
     Rule rule = RuleBuilder.create()
@@ -42,7 +44,25 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderUsingMethodShouldRestrictThenFacts() {
+  public void ruleBuilderCreatesRuleWithClassAndBooleanConstructor() {
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
+        (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
+    Rule rule = RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
+        .withFactType(String.class)
+        .when(facts -> false)
+        .then(consumer)
+        .stop()
+        .build();
+    boolean result = rule.invoke();
+
+    verify(consumer, times(0)).accept(any(NameValueReferableTypeConvertibleMap.class));
+
+    Assert.assertEquals(true, result);
+    Assert.assertEquals(RuleState.BREAK, rule.getRuleState());
+  }
+
+  @Test
+  public void ruleBuilderUsingMethodRestrictsThenFacts() {
     FactMap<String> factMap = new FactMap<>();
     Rule rule = RuleBuilder.create()
             .withFactType(String.class)
@@ -62,7 +82,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderThenWithResultAfterUsingMethodShouldRestrictThenFacts() {
+  public void ruleBuilderThenWithResultAfterUsingMethodRestrictsThenFacts() {
     Rule<String, String> rule = RuleBuilder.create()
             .withFactType(String.class)
             .withResultType(String.class)
@@ -79,7 +99,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldAllowThenMethodAfterCreate() {
+  public void ruleBuilderAllowsThenMethodAfterCreate() {
     Consumer<NameValueReferableTypeConvertibleMap<Object>> consumer = mock(Consumer.class);
     BiConsumer<NameValueReferableTypeConvertibleMap<Object>, Result<Object>> biConsumer = mock(BiConsumer.class);
 
@@ -93,7 +113,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldAllowWhenMethodAfterCreate() {
+  public void ruleBuilderAllowsWhenMethodAfterCreate() {
     Consumer<NameValueReferableTypeConvertibleMap<Object>> consumer = mock(Consumer.class);
     Predicate<NameValueReferableTypeConvertibleMap<Object>> condition = mock(Predicate.class);
     when(condition.test(any(NameValueReferableTypeConvertibleMap.class))).thenReturn(true);
@@ -106,7 +126,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldAllowGivenMethodAfterCreate() {
+  public void ruleBuilderAllowsGivenMethodAfterCreate() {
     NameValueReferableMap<Object> factMap = new FactMap<>();
     factMap.setValue("fact1", "Fact1");
     Consumer<NameValueReferableTypeConvertibleMap<Object>> consumer = mock(Consumer.class);
@@ -131,7 +151,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldAllowForChainedThenMethods() {
+  public void ruleBuilderAllowsForChainedThenMethods() {
     Rule<String, String> rule = RuleBuilder.create()
             .withFactType(String.class)
             .withResultType(String.class)
@@ -148,7 +168,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldAllowThenWithResultsToFollowGiven() {
+  public void ruleBuilderAllowsThenWithResultsToFollowGiven() {
     Rule<String, String> rule = RuleBuilder.create()
             .withFactType(String.class)
             .withResultType(String.class)
@@ -161,7 +181,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldAllowUsingToFollowGiven() {
+  public void ruleBuilderAllowsUsingToFollowGiven() {
     FactMap<String> factMap = new FactMap<>();
     Rule rule = RuleBuilder.create()
             .withFactType(String.class)
@@ -176,7 +196,7 @@ public class RuleBuilderTest {
   }
 
   @Test
-  public void ruleBuilderShouldBuildRulesWithConstructorsHavingTwoOrFewerArgs() {
+  public void ruleBuilderBuildsRulesWithConstructorsHavingTwoOrFewerArgs() {
     Rule rule1 = RuleBuilder.create(SampleRuleDefaultConstructor.class).build();
     Rule rule2 = RuleBuilder.create(SampleRuleWithFactAndResultTypes.class).build();
     Rule rule3 = RuleBuilder.create(SampleRuleWithThreeArgConstructor.class).build();
@@ -189,40 +209,40 @@ public class RuleBuilderTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBuilderShouldThrowAnExceptionWhenGivenNameValueIsCalledOnInvalidRule() {
+  public void ruleBuilderThrowsAnExceptionWhenGivenNameValueIsCalledOnInvalidRule() {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .withFactType(String.class)
             .given("fact", "Fact");
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBuilderShouldThrowAnExceptionWhenGivenFactIsCalledOnInvalidRule() {
+  public void ruleBuilderThrowsAnExceptionWhenGivenFactIsCalledOnInvalidRule() {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .withFactType(String.class)
             .given(new Fact<String>("fact", "Fact"));
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBuilderShouldThrowAnExceptionWhenGivenFactMapIsCalledOnInvalidRule() {
+  public void ruleBuilderThrowsAnExceptionWhenGivenFactMapIsCalledOnInvalidRule() {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .withFactType(String.class)
             .given(new FactMap());
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBuilderShouldThrowAnExceptionOnWhenMethodCallWithInvalidRule() {
+  public void ruleBuilderThrowsAnExceptionOnWhenMethodCallWithInvalidRule() {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .when(facts -> true);
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBuilderShouldThrowAnExceptionOnThenMethodCallWithInvalidRule() {
+  public void ruleBuilderThrowsAnExceptionOnThenMethodCallWithInvalidRule() {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .then(facts -> facts.setValue("fact", "Fact"));
   }
 
   @Test(expected = IllegalStateException.class)
-  public void ruleBuilderShouldThrowAnExceptionOnThenMethodCallWithResultWithInvalidRule() {
+  public void ruleBuilderThrowsAnExceptionOnThenMethodCallWithResultWithInvalidRule() {
     RuleBuilder.create(SampleRuleWithThreeArgConstructor.class)
             .then((facts, result) -> facts.setValue("fact", "Fact"));
   }

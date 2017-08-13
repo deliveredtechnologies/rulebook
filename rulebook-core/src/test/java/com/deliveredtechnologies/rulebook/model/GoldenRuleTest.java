@@ -9,6 +9,7 @@ import com.deliveredtechnologies.rulebook.Fact;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -91,5 +92,32 @@ public class GoldenRuleTest {
     Assert.assertFalse(rule.getResult().isPresent());
     rule.setResult(new Result<String>("My Result"));
     Assert.assertEquals("My Result", rule.getResult().get().getValue());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void addingDuplicateActionsFindsOnlyOneActionAdded() {
+    Rule<String, String> rule = new GoldenRule<>(String.class);
+    Result<String> result = new Result<>("result value");
+
+    rule.setResult(result);
+    rule.setCondition(whatever -> true);
+
+    Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
+    rule.addAction(consumer);
+    rule.addAction(consumer);
+
+    BiConsumer<NameValueReferableTypeConvertibleMap<String>, Result<String>> biConsumer =
+        Mockito.mock(BiConsumer.class);
+    rule.addAction(biConsumer);
+    rule.addAction(biConsumer);
+    rule.addAction(consumer);
+
+    rule.invoke(new FactMap<>());
+
+    Mockito.verify(consumer, Mockito.times(1))
+        .accept(Mockito.any(NameValueReferableTypeConvertibleMap.class));
+    Mockito.verify(biConsumer, Mockito.times(1))
+        .accept(Mockito.any(NameValueReferableTypeConvertibleMap.class), Mockito.any(Result.class));
   }
 }

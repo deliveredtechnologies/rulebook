@@ -187,7 +187,10 @@ public class RuleAdapter implements Rule {
           .ifPresent(field -> {
             field.setAccessible(true);
             try {
-              field.set(_pojoRule, result.getValue());
+              if (result.getValue().getClass() != Object.class
+                  || field.getType().isAssignableFrom(result.getValue().getClass())) {
+                field.set(_pojoRule, result.getValue());
+              }
             } catch (Exception ex) {
               LOGGER.error("Unable to set @Result field in " + _pojoRule.getClass(), ex);
             }

@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.7-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=master&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.7-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -46,12 +46,11 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
-  * [5.1 Adding RuleBook Spring Support to Your Maven Project](#51-adding-rulebook-spring-support-to-your-maven-project)
-  * [5.2 Adding RuleBook Spring Support to Your Gradle Project](#52-adding-rulebook-spring-support-to-your-gradle-project)
-  * [5.3 Creating a Spring Enabled POJO Rule](#53-creating-pojo-rules)
-  * [5.4 Configuring a RuleBook in Spring](#54-configuring-a-rulebook-in-spring)
-  * [5.5 Using a Spring Enabled RuleBook](#55-using-a-spring-enabled-rulebook)
-  * [5.6 Ordering Rules With Spring](#56-ordering-rules-with-spring)
+  * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
+  * [5.2 Creating Spring Enabled POJO Rules](#52-creating-spring-enabled-pojo-rules)
+  * [5.3 Configuring a RuleBook in Spring](#53-configuring-a-rulebook-in-spring)
+  * [5.4 Using a Spring Enabled RuleBook](#54-using-a-spring-enabled-rulebook)
+  * [5.5 Ordering Rules With Spring](#55-ordering-rules-with-spring)
 * **[6 How to Contribute](#6-how-to-contribute)**
   * [6.1 Developer Guidelines](#61-developer-guidelines)
 
@@ -72,8 +71,8 @@ cd RuleBook
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.8-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.8-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.8.1-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.8.1-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 
@@ -133,16 +132,16 @@ RuleBook ruleBook = RuleBookBuilder.create()
 **..or it could be a single rule**
 ```java
 RuleBook ruleBook = RuleBookBuilder.create()
-    .addRule(rule -> rule.withFactType(String.class)
-      .when(f -> f.containsKey("hello") && f.containsKey("world")
-      .using("hello").then(System.out::print))
-      .using("world").then(System.out::println))
-    .build();
+  .addRule(rule -> rule.withFactType(String.class)
+    .when(f -> f.containsKey("hello") && f.containsKey("world"))
+    .using("hello").then(System.out::print)
+    .using("world").then(System.out::println))
+  .build();
 ```
 **now, run it!**
 ```java
 NameValueReferableMap factMap = new FactMap();
-factMap.setValue("hello", "Hello");
+factMap.setValue("hello", "Hello ");
 factMap.setValue("world", " World");
 ruleBook.run(factMap);
 ```
@@ -236,7 +235,7 @@ public class ExampleSolution {
 ```
 **...or nix the ApplicantBean and just use independent Facts**
 ```java
-public class HomeLoanRateRuleBook extends RuleBook<Double> {
+public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
   @Override
   public void defineRules() {
     //credit score under 600 gets a 4x rate increase
@@ -253,37 +252,37 @@ public class HomeLoanRateRuleBook extends RuleBook<Double> {
       .build());
 
     //credit score is 700 and they have at least $25,000 cash on hand
-    addRule(RuleBuilder.create().withResultType(Float.class)
+    addRule(RuleBuilder.create().withResultType(Double.class)
       .when(facts ->
-            facts.getIntVal("Credit Score") >= 700 &&
-            facts.getDblVal("Cash on Hand") >= 25000
+        facts.getIntVal("Credit Score") >= 700 &&
+        facts.getDblVal("Cash on Hand") >= 25000)
       .then((facts, result) -> result.setValue(result.getValue() - 0.25))
       .build());
 
     //first time homebuyers get 20% off their rate (except if they have a creditScore < 600)
-    addRule(RuleBuilder.create().withFactType(Boolean.class).withResultType(Float.class)
+    addRule(RuleBuilder.create().withFactType(Boolean.class).withResultType(Double.class)
       .when(facts -> facts.getOne())
-      .then((facts, result) -> result.setValue(result.getValue() * 0.80f))
+      .then((facts, result) -> result.setValue(result.getValue() * 0.80))
       .build());
-    }
+  }
 }
 ```
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
     RuleBook homeLoanRateRuleBook = RuleBookBuilder.create(HomeLoanRateRuleBook.class).withResultType(Double.class)
-      .withDefaultResult(4.5)
-      .build();
+     .withDefaultResult(4.5)
+     .build();
 
     NameValueReferableMap facts = new FactMap();
-    facts.set("Credit Score", 650);
-    facts.set("Cash on Hand", 20000);
-    facts.set("First Time Homebuyer", true)
+    facts.setValue("Credit Score", 650);
+    facts.setValue("Cash on Hand", 20000);
+    facts.setValue("First Time Homebuyer", true);
 
     homeLoanRateRuleBook.run(facts);
 
     homeLoanRateRuleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
-  }
+    }
 }
 ```
 
@@ -358,7 +357,7 @@ As of RuleBook v0.2, POJO rules are supported. Simply define your rules as annot
 ### 4.1 A Hello World Example
 
 ```java
-package com.example.pojorules;
+package com.example.rulebook.helloworld;
 
 import com.deliveredtechnologies.rulebook.annotations.*;
 import com.deliveredtechnologies.rulebook.RuleState;
@@ -377,25 +376,25 @@ public class HelloWorld {
 
   @When
   public boolean when() {
-    return true;
+      return true;
   }
 
   @Then
   public RuleState then() {
-    helloworld = hello + " " + world;
-    return RuleState.BREAK;
+      helloworld = hello + " " + world;
+      return RuleState.BREAK;
   }
 }
 ```
 ```java
 
 public static void main(String args[]) {
-  RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules");
-  NameValueReferrable facts = new FactMap();
+  RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+  NameValueReferableMap facts = new FactMap();
   facts.setValue("hello", "Hello");
   facts.setValue("world", "World");
   ruleBook.run(facts);
-  ruleBook.getResult().ifPresent(System.out::println) //prints "Hello World"
+  ruleBook.getResult().ifPresent(System.out::println); //prints "Hello World"
 }
 ```
 
@@ -509,16 +508,16 @@ public class FirstTimeHomeBuyerRule {
 ```java
 public class ExampleSolution {
   public static void main(String[] args) {
-    RuleBookRunner ruleBook = new RuleBookRunner("com.example.pojorules.homeloan");
-    NameValueReferrableMap<ApplicantBean> facts = new FactMap<>();
+    RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook.megabank");
+    NameValueReferableMap<ApplicantBean> facts = new FactMap<>();
     ApplicantBean applicant1 = new ApplicantBean(650, 20000, true);
     ApplicantBean applicant2 = new ApplicantBean(620, 30000, true);
-    facts.put(new Fact<>(applicant1);
-    facts.put(new Fact<>(applicant2);
+    facts.put(new Fact<>(applicant1));
+    facts.put(new Fact<>(applicant2));
 
     ruleBook.setDefaultResult(4.5);
     ruleBook.run(facts);
-    ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result);
+    ruleBook.getResult().ifPresent(result -> System.out.println("Applicant qualified for the following rate: " + result));
   }
 }
 ```
@@ -553,39 +552,19 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 ## 5 Using RuleBook with Spring
 
-RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. Instances of RuleBooks can
-even be specified directly using either the Java DSL or POJO Rules or both in combination.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBook's are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
 
-_Note: If you've been using earlier versions of RuleBook with Spring then all of that same stuff still works. All
-the same POJO and Spring annotated Rules still work too - and they are compatible with the new Spring support for RuleBook._
+### 5.1 Adding RuleBook Spring Support to Your Project
 
-### 5.1 Adding RuleBook Spring Support to Your Maven Project
+No additional configuration is needed for RuleBook to work with Spring. If you are using a current version of RuleBook then it works with Spring.
 
-_Add the code below to your pom.xml_
-
-```xml
-<dependency>
-    <groupId>com.deliveredtechnologies</groupId>
-    <artifactId>rulebook-spring</artifactId>
-    <version>0.7</version>
-</dependency>
-```
-
-### 5.2 Adding RuleBook Spring Support to Your Gradle Project
-
-_Add the code below to your build.gradle_
-
-```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.7'
-```
-
-### 5.3 Creating POJO Rules
+### 5.2 Creating Spring Enabled POJO Rules
 
 POJO Rules can be created just like they were created above without Spring.
 
 ```java
 
-package com.example.rulebook.spring;
+package com.example.rulebook.helloworld;
 
 @Rule(order = 1)
 public class HelloSpringRule {
@@ -609,7 +588,7 @@ public class HelloSpringRule {
 
 ```java
 
-package com.example.rulebook.spring;
+package com.example.rulebook.helloworld;
 
 @Rule(order = 2)
 public class WorldSpringRule {
@@ -631,34 +610,35 @@ public class WorldSpringRule {
 }
 ```
 
-### 5.4 Configuring a RuleBook in Spring
+### 5.3 Configuring a RuleBook in Spring
 
 ```java
 @Configuration
 public class SpringConfig {
   @Bean
   public RuleBook ruleBook() {
-    return new RuleBookRunner("com.example.rulebook.spring");
+    RuleBook ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+    return ruleBook;
   }
 }
 ```
 
-### 5.5 Using a Spring Enabled RuleBook
+### 5.4 Using a Spring Enabled RuleBook
 
 ```java
   @Autowired
-  private RuleBook<String> ruleBook;
+  private RuleBook ruleBook;
 
-  public void someMethod() {
+  public void printResult() {
     NameValueReferableMap<String> facts = new FactMap<>();
-    facts.setValue("hello", "Hello");
+    facts.setValue("hello", "Hello ");
     facts.setValue("world", "World");
     ruleBook.run(facts);
     ruleBook.getResult().ifPresent(System.out::println); //prints Hello World
   }
 ```
 
-#### 5.6 Ordering Rules With Spring
+### 5.5 Ordering Rules With Spring
 
 If you were using the RuleBean annotation to create Spring enabled Rules, all of that stuff still works. And there Spring
 enabled POJO Rules can still be configured in RuleBooks in Spring \[using SpringRuleBook\]. But RuleBean doesn't have an

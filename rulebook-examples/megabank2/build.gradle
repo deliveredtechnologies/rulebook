@@ -1,0 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
+}
+
+mainClassName = 'com.example.rulebook.megabank.Application'

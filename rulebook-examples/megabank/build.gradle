@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.7'
+    compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
 }
 
-mainClassName = 'com.example.pojorules.homeloan.ExampleSolution'
+mainClassName = 'com.example.rulebook.megabank.Application'
