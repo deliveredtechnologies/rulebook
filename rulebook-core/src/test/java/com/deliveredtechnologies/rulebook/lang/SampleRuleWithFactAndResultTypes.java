@@ -96,4 +96,6 @@ public class SampleRuleWithFactAndResultTypes<T, U> implements Rule<T, U> {
   public Optional<Result<U>> getResult() {
     return null;
   }
+
+
 }

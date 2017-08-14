@@ -111,8 +111,16 @@ public interface Rule<T, U> {
   void setResult(Result<U> result);
 
   /**
-   * Gets the Result of the Rule
+   * Gets the Result of the Rule.
    * @return  the Optional Result of the Rule, otherwise Optional.empty()
    */
   Optional<Result<U>> getResult();
+
+  /**
+   * Gets the name of the Rule.
+   * @return  the name of the Rule specified; otherwise the class name
+   */
+  default String getName() {
+    return this.getClass().getSimpleName();
+  }
 }

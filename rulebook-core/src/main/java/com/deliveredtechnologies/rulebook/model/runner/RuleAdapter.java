@@ -202,6 +202,12 @@ public class RuleAdapter implements Rule {
     return _rule.getResult();
   }
 
+  @Override
+  public String getName() {
+    //TODO: Get the name of the @Rule attribute first
+    return _pojoRule.getClass().getSimpleName();
+  }
+
   /**
    * Convert the Facts to properties with the @Given annotation in the class.
    * If any matched properties are non-Facts, then the value of the associated Facts are mapped to those
