@@ -19,6 +19,7 @@ import java.util.function.Predicate;
  * Tests for {@link GoldenRule}.
  */
 public class GoldenRuleTest {
+
   @Test
   public void addFactsShouldAddFactsToTheRule() {
     NameValueReferableMap<String> facts = new FactMap<>();
@@ -119,5 +120,19 @@ public class GoldenRuleTest {
         .accept(Mockito.any(NameValueReferableTypeConvertibleMap.class));
     Mockito.verify(biConsumer, Mockito.times(1))
         .accept(Mockito.any(NameValueReferableTypeConvertibleMap.class), Mockito.any(Result.class));
+  }
+
+  @Test
+  public void rulesWithoutNamesDefaultToTheirClassName() {
+    Rule<Object, Object> rule = new GoldenRule<Object, Object>(Object.class);
+
+    Assert.assertEquals("GoldenRule", rule.getName());
+  }
+
+  @Test
+  public void rulesWithNamesReturnTheirNamesOnGetName() {
+    Rule<Object, Object> rule = new GoldenRule<Object, Object>("RuleName", Object.class);
+
+    Assert.assertEquals("RuleName", rule.getName());
   }
 }
