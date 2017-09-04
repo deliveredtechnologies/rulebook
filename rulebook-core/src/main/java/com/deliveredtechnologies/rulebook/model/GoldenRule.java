@@ -45,20 +45,9 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   private RuleState _ruleState = RuleState.NEXT;
   private Class<T> _factType;
   private RuleChainActionType _actionType;
-  private String _name = getClass().getSimpleName();
-
-  public GoldenRule(String name, Class<T> factType) {
-    this(factType);
-    _name = name;
-  }
 
   public GoldenRule(Class<T> factType) {
     this(factType, CONTINUE_ON_FAILURE);
-  }
-
-  public GoldenRule(String name, Class<T> factType, RuleChainActionType actionType) {
-    this(factType, actionType);
-    _name = name;
   }
 
   public GoldenRule(Class<T> factType, RuleChainActionType actionType) {
@@ -205,6 +194,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //eventually, we'll have to resolve that kind of issue ahead of time
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
+
     return _actionType.equals(STOP_ON_FAILURE);
   }
 
@@ -216,10 +206,5 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   @Override
   public Optional<Result<U>> getResult() {
     return Optional.ofNullable(_result);
-  }
-
-  @Override
-  public String getName() {
-    return _name;
   }
 }
