@@ -34,7 +34,7 @@ public class RuleBookRunner implements RuleBook {
   private Class<? extends RuleBook> _prototypeClass;
 
   @SuppressWarnings("unchecked")
-  private Result _result = new Result(new Object());
+  private Result _result = new Result(null);
 
   /**
    * Creates a new RuleBookRunner using the specified package and the default RuleBook.
@@ -62,7 +62,7 @@ public class RuleBookRunner implements RuleBook {
   @Override
   @SuppressWarnings("unchecked")
   public void run(NameValueReferableMap facts) {
-
+    getResult().ifPresent(Result::reset);
     try {
       RuleBook ruleBook = _prototypeClass.newInstance();
       List<Class<?>> classes = findRuleClassesInPackage(_package);
@@ -90,13 +90,13 @@ public class RuleBookRunner implements RuleBook {
   @Override
   @SuppressWarnings("unchecked")
   public void setDefaultResult(Object result) {
-    _result.setValue(result);
+    _result = new Result(result);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public Optional<Result> getResult() {
-    return Optional.of(_result);
+    return _result.getValue() == null ? Optional.empty() : Optional.of(_result);
   }
 
   @Override
