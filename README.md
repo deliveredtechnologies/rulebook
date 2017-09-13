@@ -71,8 +71,8 @@ cd RuleBook
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.9-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.9-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.8.1-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.8.1-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 
