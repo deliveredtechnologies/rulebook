@@ -27,7 +27,7 @@ public class AuditableRule<T, U> implements Rule<T, U>, Auditable {
 
   @Override
   public void addFacts(NameValueReferable... facts) {
-    _rule.addFacts();
+    _rule.addFacts(facts);
   }
 
   @Override
@@ -37,7 +37,7 @@ public class AuditableRule<T, U> implements Rule<T, U>, Auditable {
 
   @Override
   public void setFacts(NameValueReferableMap facts) {
-    _rule.addFacts(facts);
+    _rule.setFacts(facts);
   }
 
   @Override
