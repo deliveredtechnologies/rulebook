@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
  */
 public class RuleBookRunnerTest {
   @Test
-  public void ruleBookRunnerShouldAddRuleClassesInPackage() {
+  public void ruleBookRunnerDoesAddRuleClassesInPackage() {
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
     ruleBookRunner.run(new FactMap());
 
@@ -28,7 +28,7 @@ public class RuleBookRunnerTest {
   }
 
   @Test
-  public void ruleBookRunnerShouldNotLoadClassesIfNotInPackage() {
+  public void ruleBookRunnerDoesNotLoadClassesIfNotInPackage() {
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook");
     ruleBookRunner.run(new FactMap());
 
@@ -36,9 +36,46 @@ public class RuleBookRunnerTest {
   }
 
   @Test
-  public void ruleBookRunnerShouldNotLoadClassesForInvalidPackage() {
+  public void ruleBookRunnerDoesNotLoadClassesForInvalidPackage() {
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.invalid");
     ruleBookRunner.run(new FactMap());
+  }
+
+  @Test
+  public void ruleBookRunnerResultIsNotPresentIfNull() {
+    RuleBookRunner ruleBookRunner =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.noresult");
+    FactMap<String> facts = new FactMap<>();
+    facts.setValue("hello", "Hello");
+    facts.setValue("world", "World");
+
+    ruleBookRunner.run(facts);
+
+    Assert.assertFalse(ruleBookRunner.getResult().isPresent());
+  }
+
+  @Test
+  public void ruleBookRunnerResultIsPresentIfSet() {
+    RuleBookRunner ruleBookRunner =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.result");
+    ruleBookRunner.setDefaultResult(2.02);
+    FactMap facts = new FactMap();
+
+    ruleBookRunner.run(facts);
+
+    Assert.assertTrue(ruleBookRunner.getResult().isPresent());
+  }
+
+  @Test
+  public void ruleBookRunnerResultIsNotPresentIfNotReferenced() {
+    RuleBookRunner ruleBookRunner =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.noresultref");
+    FactMap facts = new FactMap();
+    facts.setValue("aFact", "aFact");
+
+    ruleBookRunner.run(facts);
+
+    Assert.assertFalse(ruleBookRunner.getResult().isPresent());
   }
 
   @Test
