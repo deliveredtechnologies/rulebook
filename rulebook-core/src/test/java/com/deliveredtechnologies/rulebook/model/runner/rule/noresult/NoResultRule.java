@@ -11,26 +11,24 @@ import com.deliveredtechnologies.rulebook.annotation.Then;
  * A rule whose result is null.
  */
 @Rule
-public class NoResultRule
-{
+public class NoResultRule {
   @Given("hello")
-  private String	hello;
+  private String _hello;
 
   @Given("world")
-  private String	world;
+  private String _world;
 
   @Result
-  private String	helloworld = null;
+  private String _helloworld = null;
 
   @When
-  public boolean when()
-  {
-    return hello != null && world != null;
+  public boolean when() {
+    return _hello != null && _world != null;
   }
+
   @Then
-  public RuleState then()
-  {
-    helloworld = String.format("%s %s",hello, world);
+  public RuleState then() {
+    _helloworld = String.format("%s %s", _hello, _world);
     return com.deliveredtechnologies.rulebook.RuleState.BREAK;
   }
 }
