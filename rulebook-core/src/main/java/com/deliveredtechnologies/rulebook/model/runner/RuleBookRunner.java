@@ -9,16 +9,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+
+import java.nio.file.InvalidPathException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
@@ -116,8 +121,23 @@ public class RuleBookRunner implements RuleBook {
     if (pathUrl == null) {
       throw new InvalidPathException("'" + packageName + "' cannot be found by the ClassLoader", packageName);
     }
+    FileSystem fs = null;
+    Path path = null;
     try {
-      Path path = Paths.get(pathUrl.toURI());
+      URI pathUri = pathUrl.toURI();
+      LOGGER.info(String.format("%s URI -> %s", pathName, pathUrl.toURI()));
+
+      if (pathUri.toString().contains("!")) {
+        String[] paths = pathUri.toString().split("!");
+        fs = FileSystems.newFileSystem(URI.create(paths[0]), new HashMap<>());
+        String strPath = Arrays.stream(Arrays.copyOfRange(paths, 1, paths.length))
+            .reduce((item1, item2) -> item1 + item2).get();
+        LOGGER.info(String.format("Updated Path: %s", strPath));
+        path = fs.getPath(strPath);
+      } else {
+        path = Paths.get(pathUri);
+      }
+
       if (!Files.exists(path) || !Files.isDirectory(path)) {
         throw new InvalidPathException("'" + packageName + "' is not a valid path", packageName);
       }
@@ -144,6 +164,10 @@ public class RuleBookRunner implements RuleBook {
       return classes;
     } catch (URISyntaxException ex) {
       throw new InvalidPathException("'" + packageName + "' is not a valid path", ex.getReason());
+    } finally {
+      if (fs != null) {
+        fs.close();
+      }
     }
   }
 }
