@@ -121,20 +121,26 @@ public class RuleBookRunner implements RuleBook {
     if (pathUrl == null) {
       throw new InvalidPathException("'" + packageName + "' cannot be found by the ClassLoader", packageName);
     }
+
     FileSystem fs = null;
-    Path path = null;
+    Path path;
     try {
       URI pathUri = pathUrl.toURI();
-      LOGGER.info(String.format("%s URI -> %s", pathName, pathUrl.toURI()));
+      LOGGER.debug(String.format("%s URI -> %s", pathName, pathUrl.toURI()));
 
       if (pathUri.toString().contains("!")) {
+
+        //if it's inside an archive, reference the archive as the FileSystem and combine the remaining paths
         String[] paths = pathUri.toString().split("!");
         fs = FileSystems.newFileSystem(URI.create(paths[0]), new HashMap<>());
         String strPath = Arrays.stream(Arrays.copyOfRange(paths, 1, paths.length))
             .reduce((item1, item2) -> item1 + item2).get();
-        LOGGER.info(String.format("Updated Path: %s", strPath));
+
+        LOGGER.debug(String.format("Resource Path Inside Archive: %s", strPath));
         path = fs.getPath(strPath);
       } else {
+
+        //if it's not inside an archive, then just use the path based on the current FileSystem
         path = Paths.get(pathUri);
       }
 
