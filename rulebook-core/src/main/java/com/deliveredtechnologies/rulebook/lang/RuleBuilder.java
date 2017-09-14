@@ -158,6 +158,19 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   }
 
   /**
+   * Adds a using constraint in the Rule that restricts the facts supplied to the subsequent 'then' action.
+   * @param factNames the fact names to be supplied to the subsequent 'then' action
+   * @return          a builder the allows for the Rule to be built following the 'using' statement
+   */
+  public UsingRuleBuilder<T, U> using(String... factNames) {
+    Rule<T, U> rule = newRule();
+    if (rule == null) {
+      throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
+    }
+    return new UsingRuleBuilder<T, U>(rule, factNames);
+  }
+
+  /**
    * Adds an action as a Consumer to the Rule.
    * @param action  a Consumer action to be added to the Rule that accepts the facts specified for the Rule
    * @return        a builder for building rules after a 'then' action is specified
