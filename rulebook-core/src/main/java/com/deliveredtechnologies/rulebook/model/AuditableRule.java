@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Created by clong on 9/3/17.
+ * Rule decorator that provides auditing when added to an {@link Auditor}.
  */
 public class AuditableRule<T, U> implements Rule<T, U>, Auditable {
   private Rule<T, U> _rule;
