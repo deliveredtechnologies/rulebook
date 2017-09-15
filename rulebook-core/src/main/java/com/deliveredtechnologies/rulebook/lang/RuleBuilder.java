@@ -5,6 +5,7 @@ import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.model.AuditableRule;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
@@ -34,6 +35,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
   private Class<T> _factType;
   private Class<U> _resultType;
   private RuleChainActionType _actionType = CONTINUE_ON_FAILURE;
+  private Optional<String> _name = Optional.empty();
 
   /**
    * Returns a new RuleBuilder for the specified Rule class.
@@ -75,6 +77,11 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     _actionType = actionType;
   }
 
+  public RuleBuilder<T, U> withName(String name) {
+    _name = Optional.of(name);
+    return this;
+  }
+
   /**
    * Specifies the fact type for the Rule being built.
    * @param factType  the type of facts to be used in the Rule
@@ -109,8 +116,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @param value   the value of the fact
    * @return        a builder for building rules after a 'given' statement
    */
+  @SuppressWarnings("unchecked")
   public GivenRuleBuilder<T, U> given(String name, T value) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(ruleName -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), ruleName)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
@@ -122,9 +130,10 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @param facts the facts to be added to the Rule
    * @return  a builder for building rules after a 'given' statement
    */
+  @SuppressWarnings("unchecked")
   @SafeVarargs
   public final GivenRuleBuilder<T, U> given(NameValueReferable... facts) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(name -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), name)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
@@ -136,8 +145,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @param   facts the facts to be added to the Rule
    * @return  a builder for building rules after a 'given' statement
    */
+  @SuppressWarnings("unchecked")
   public final GivenRuleBuilder<T, U> given(NameValueReferableMap facts) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(name -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), name)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
@@ -149,8 +159,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @param condition the condition for the Rule
    * @return          a builder for building rules after a 'when' statement
    */
+  @SuppressWarnings("unchecked")
   public WhenRuleBuilder<T, U> when(Predicate<NameValueReferableTypeConvertibleMap<T>> condition) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(name -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), name)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
@@ -162,8 +173,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @param factNames the fact names to be supplied to the subsequent 'then' action
    * @return          a builder the allows for the Rule to be built following the 'using' statement
    */
+  @SuppressWarnings("unchecked")
   public UsingRuleBuilder<T, U> using(String... factNames) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(name -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), name)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
@@ -175,8 +187,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @param action  a Consumer action to be added to the Rule that accepts the facts specified for the Rule
    * @return        a builder for building rules after a 'then' action is specified
    */
+  @SuppressWarnings("unchecked")
   public ThenRuleBuilder<T, U> then(Consumer<NameValueReferableTypeConvertibleMap<T>> action) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(name -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), name)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }
@@ -189,8 +202,9 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    *                for the Rule
    * @return        a builder for building rules after a 'then' action is specified
    */
+  @SuppressWarnings("unchecked")
   public ThenRuleBuilder<T, U> then(BiConsumer<NameValueReferableTypeConvertibleMap<T>, Result<U>> action) {
-    Rule<T, U> rule = newRule();
+    Rule<T, U> rule = _name.map(name -> (Rule<T, U>)new AuditableRule<T, U>(newRule(), name)).orElse(newRule());
     if (rule == null) {
       throw new IllegalStateException("No Rule is instantiated; An invalid Rule class may have been provided");
     }

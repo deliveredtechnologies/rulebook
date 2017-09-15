@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.model;
 
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
+import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,9 +19,9 @@ public class RuleBookAuditorTest {
         .addRule(rule -> rule.withName("Rule2").withNoSpecifiedFactType()
             .when(facts -> false)
             .then(facts -> {}))
-        .addRule(rule -> rule.withName("Rule3").withNoSpecifiedFactType()
+        .addRule(RuleBuilder.create().withName("Rule3")
             .when(facts -> true)
-            .then(facts -> {}))
+            .then(facts -> {}).build())
         .build();
 
     rulebook.run(new FactMap());
