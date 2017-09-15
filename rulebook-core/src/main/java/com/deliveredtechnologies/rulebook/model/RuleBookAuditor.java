@@ -70,6 +70,11 @@ public class RuleBookAuditor<T> implements RuleBook<T>, Auditor {
 
   @Override
   public void addRule(Rule rule) {
+    if (rule instanceof Auditable) {
+      Auditable auditableRule = (Auditable)rule;
+      registerRule(auditableRule);
+      auditableRule.setAuditor(this);
+    }
     _ruleBook.addRule(rule);
   }
 

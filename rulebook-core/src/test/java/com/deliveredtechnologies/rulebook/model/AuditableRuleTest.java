@@ -15,7 +15,8 @@ import java.util.function.Predicate;
 /**
  * Tests for {@link AuditableRule}.
  */
-public class AuditableRuleTest {
+public class
+AuditableRuleTest {
   @Test
   @SuppressWarnings("unchecked")
   public void auditableRulesSetRuleNames() {
