@@ -1,6 +1,12 @@
 package com.deliveredtechnologies.rulebook.model;
 
-import com.deliveredtechnologies.rulebook.*;
+import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Fact;
+import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.RuleState;
+import com.deliveredtechnologies.rulebook.Result;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -15,8 +21,7 @@ import java.util.function.Predicate;
 /**
  * Tests for {@link AuditableRule}.
  */
-public class
-AuditableRuleTest {
+public class AuditableRuleTest {
   @Test
   @SuppressWarnings("unchecked")
   public void auditableRulesSetRuleNames() {
@@ -121,7 +126,8 @@ AuditableRuleTest {
   public void auditableRulesDelegateActionsToTheirRule() {
     Rule<String, String> rule = Mockito.mock(Rule.class);
     AuditableRule auditableRule = new AuditableRule<String, String>(rule);
-    BiConsumer<NameValueReferableTypeConvertibleMap<String>, Result<String>> biConsumer = Mockito.mock(BiConsumer.class);
+    BiConsumer<NameValueReferableTypeConvertibleMap<String>, Result<String>> biConsumer =
+        Mockito.mock(BiConsumer.class);
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer = Mockito.mock(Consumer.class);
     Object[] array = {consumer, biConsumer};
     List<Object> list = Arrays.asList(array);

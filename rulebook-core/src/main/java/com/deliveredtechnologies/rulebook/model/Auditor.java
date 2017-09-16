@@ -6,12 +6,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
- * Created by clong on 9/2/17.
+ * Auditors are used for auditing rules. They maintain a record of each Rule and their state.
  */
 public abstract class Auditor {
   private Map<String, Map<Long, RuleStatus>> _auditMap = new HashMap<>();
   private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
 
+  /**
+   * Registers a rule to be audited.
+   * @param rule  and {@link Auditable} rule
+   */
   public void registerRule(Auditable rule) {
     _lock.writeLock().lock();
     try {
@@ -21,6 +25,11 @@ public abstract class Auditor {
     }
   }
 
+  /**
+   * Updates the status of the rule & stores the status with the Auditor.
+   * @param rule    the rule in question
+   * @param status  the status of the rule
+   */
   public void updateRuleStatus(Auditable rule, RuleStatus status) {
     _lock.readLock().lock();
     try {
@@ -39,10 +48,19 @@ public abstract class Auditor {
     }
   }
 
+  /**
+   * Gets the status of the rule with the given name.
+   * @param name  the name of the rule
+   * @return      the status of the rule
+   */
   public RuleStatus getRuleStatus(String name) {
     return getRuleStatusMap().getOrDefault(name, RuleStatus.NONE);
   }
 
+  /**
+   * Gets a map of each rule name with its associated status.
+   * @return  a map of rule names and their associated status
+   */
   public Map<String, RuleStatus> getRuleStatusMap() {
     _lock.readLock().lock();
     try {

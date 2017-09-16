@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for {@link RuleBookAuditor}
+ * Tests for {@link RuleBookAuditor}.
  */
 public class RuleBookAuditorTest {
   @Test
@@ -15,13 +15,13 @@ public class RuleBookAuditorTest {
     RuleBook rulebook = RuleBookBuilder.create().asAuditor()
         .addRule(rule -> rule.withName("Rule1").withNoSpecifiedFactType()
           .when(facts -> true)
-          .then(facts -> {}))
+          .then(facts -> { } ))
         .addRule(rule -> rule.withName("Rule2").withNoSpecifiedFactType()
             .when(facts -> false)
-            .then(facts -> {}))
+            .then(facts -> { } ))
         .addRule(RuleBuilder.create().withName("Rule3")
             .when(facts -> true)
-            .then(facts -> {}).build())
+            .then(facts -> { } ).build())
         .build();
 
     rulebook.run(new FactMap());

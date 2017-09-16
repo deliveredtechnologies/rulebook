@@ -2,7 +2,11 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.model.*;
+import com.deliveredtechnologies.rulebook.model.Auditor;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.Auditable;
+import com.deliveredtechnologies.rulebook.model.AuditableRule;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -18,6 +18,15 @@ public class FactMap<T> implements NameValueReferableMap<T> {
     _facts = facts;
   }
 
+  @SafeVarargs
+  public FactMap(NameValueReferable<T>... facts) {
+    this();
+
+    for (NameValueReferable<T> fact : facts) {
+      this.put(fact);
+    }
+  }
+
   public FactMap() {
     _facts = new HashMap<>();
   }
