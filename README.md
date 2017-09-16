@@ -38,6 +38,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
   * [3.4 Working With Facts](#34-working-with-facts)
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
+  * [3.5 Auditing Rules] (#35-auditing-rules)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
@@ -347,6 +348,37 @@ The following methods are part of the NameValueReferrableTypeConvertible interfa
 **getBigDeciVal(String)** gets the value of the Fact by name as a BigDecimal
 
 **getBoolVal(String)** gets the value of the Fact by name as a Boolean
+
+### 3.5 Auditing Rules
+Rules auditing can be enabled when constructing a RuleBook by specifying _asAuditor()_ as follows.
+
+```java
+ RuleBook rulebook = RuleBookBuilder.create().asAuditor()
+   .addRule(rule -> rule.withName("Rule1").withNoSpecifiedFactType()
+     .when(facts -> true)
+     .then(facts -> { } ))
+   .addRule(rule -> rule.withName("Rule2").withNoSpecifiedFactType()
+     .when(facts -> false)
+     .then(facts -> { } )).build();
+     
+ rulebook.run(new FactMap());
+```
+
+By using _asAuditor()_ each rule in the RuleBook registers itself as an _Auditable Rule_ and its state is recorded in the RuleBook. At the time when rules are registered as auditable in the RuleBook, their RuleStatus is _NONE_. After the RuleBook is run, their RuleStatus is changed to _SKIPPED_ for all rules that fail or whose conditions do not evaluate to true. For rules whose conditions do evaluate to true and whose then() action completes successfully, their RuleStatus is changed to _EXECUTED_.
+
+Retrieving the status of a rule can be done as follows.
+
+```java
+ Auditor auditor = (Auditor)rulebook;
+ System.out.println(auditor.getRuleStatus("Rule1")); //prints EXECUTED
+ System.out.println(auditor.getRuleStatus("Rule2")); //prints SKIPPED
+```
+
+A map of all rule names and their corresponding status can be retrieved as follows.
+
+```java
+ Map<String, RuleStatus> auditMap = auditor.getRuleStatusMap();
+```
 
 <sub>[Top](#contents)</sub>
 
