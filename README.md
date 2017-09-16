@@ -583,10 +583,10 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 #### 4.3.4 Auditing POJO Rules
 
-Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is automatically audited. If a name is specified in the @Rule attribute, then that name is used for auditing. Otherwise, the class name of the POJO rule is used. For example, assuming that there is a POJO rule named "My Rule" that was run by the RuleBookRunner, ruleBookRunner, the status of that rule's execution can be retrieved as follows.
+Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is automatically audited. If a name is specified in the @Rule attribute, then that name is used for auditing. Otherwise, the class name of the POJO rule is used. For example, assuming that there is a POJO rule named "My Rule" that was run by the RuleBookRunner, rulebookRunner, the status of that rule's execution can be retrieved as follows.
 
 ```java
- Auditor auditor = (Auditor)rulebook;
+ Auditor auditor = (Auditor)rulebookRunner;
  RuleStatus myRuleStatus = auditor.getRuleStatus("My Rule");
 ```
 
