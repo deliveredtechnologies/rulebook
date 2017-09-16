@@ -30,7 +30,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-core:0.9-SNAPSHOT'
     // tag::undertow[]
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
