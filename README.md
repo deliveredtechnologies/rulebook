@@ -580,6 +580,15 @@ If the following conditions are met then the objects contained in all Facts of g
 
 As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That means if you have a subclass, whose parent is annotated with RuleBook annotations (i.e. @Given, @When, @Then, @Result) then the subclass will inherit the parent’s annotations. @Given and @Result attributes injected in the parent, will be available to the subclass. @Then and @When methods defined in the parent will be visible in the subclass.
 
+#### 4.3.4 Auditing POJO Rules
+
+Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is automatically audited. If a name is specified in the @Rule attribute, then that name is used for auditing. Otherwise, the class name of the POJO rule is used. For example, assuming that there is a POJO rule named "My Rule" that was run by the RuleBookRunner, ruleBookRunner, the status of that rule's execution can be retrieved as follows.
+
+```java
+ Auditor auditor = (Auditor)rulebook;
+ RuleStatus myRuleStatus = auditor.getRuleStatus("My Rule");
+```
+
 <sub>[[Top](#contents)]</sub>
 
 ## 5 Using RuleBook with Spring
