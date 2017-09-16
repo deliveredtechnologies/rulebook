@@ -12,60 +12,11 @@ import java.util.stream.Collectors;
 /**
  * Created by clong on 9/3/17.
  */
-public class RuleBookAuditor<T> implements RuleBook<T>, Auditor {
-  private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
   private RuleBook<T> _ruleBook;
-  private Map<String, Map<Long, RuleStatus>> _auditMap = new HashMap<>();
 
   public RuleBookAuditor(RuleBook<T> ruleBook) {
     _ruleBook = ruleBook;
-  }
-
-  @Override
-  public void registerRule(Auditable rule) {
-    _lock.writeLock().lock();
-    try {
-      _auditMap.put(rule.getName(), new HashMap<>());
-    } finally {
-      _lock.writeLock().unlock();
-    }
-  }
-
-  @Override
-  public void updateRuleStatus(Auditable rule, RuleStatus status) {
-    _lock.readLock().lock();
-    try {
-      if (_auditMap.containsKey(rule.getName())) {
-        _lock.readLock().unlock();
-        _lock.writeLock().lock();
-        try {
-          _auditMap.get(rule.getName()).put(Thread.currentThread().getId(), status);
-          _lock.readLock().lock();
-        } finally {
-          _lock.writeLock().unlock();
-        }
-      }
-    } finally {
-      _lock.readLock().unlock();
-    }
-  }
-
-  @Override
-  public RuleStatus getRuleStatus(String name) {
-    return getRuleStatusMap().getOrDefault(name, RuleStatus.UNKNOWN);
-  }
-
-  @Override
-  public Map<String, RuleStatus> getRuleStatusMap() {
-    _lock.readLock().lock();
-    try {
-      return _auditMap.keySet().stream()
-          .collect(
-              Collectors.toMap(key -> key,
-                  key -> _auditMap.get(key).getOrDefault(Thread.currentThread().getId(), RuleStatus.PENDING)));
-    } finally {
-      _lock.readLock().unlock();
-    }
   }
 
   @Override

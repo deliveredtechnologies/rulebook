@@ -58,7 +58,7 @@ public class RuleBookRunnerTest {
     Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = UnsupportedOperationException.class)
   public void rulesCanNotBeAddedByCallingAddRule() {
     Rule rule = mock(Rule.class);
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
