@@ -71,13 +71,11 @@ public class RuleBookRunner extends Auditor implements RuleBook {
           );
           String name = getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rule).name();
           if (name.equals("None")) {
-            ruleBook.addRule(new RuleAdapter(rule.newInstance()));
-          } else {
-            Rule ruleInstance = new AuditableRule(new RuleAdapter(rule.newInstance()), name);
-            ruleBook.addRule(ruleInstance);
-            ((Auditable)ruleInstance).setAuditor(this);
+            name = rule.getSimpleName();
           }
-
+          Rule ruleInstance = new AuditableRule(new RuleAdapter(rule.newInstance()), name);
+          ruleBook.addRule(ruleInstance);
+          ((Auditable)ruleInstance).setAuditor(this);
         } catch (IllegalAccessException | InstantiationException ex) {
           LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
         }

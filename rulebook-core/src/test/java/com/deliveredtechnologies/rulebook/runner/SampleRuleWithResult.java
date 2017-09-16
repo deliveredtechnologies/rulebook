@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * Sample POJO rule with facts and a result.
  */
-@Rule(order = 2)
+@Rule(order = 2, name = "Result Rule")
 public class SampleRuleWithResult {
   @Given("fact1")
   private Fact<String> _fact1;

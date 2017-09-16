@@ -2,8 +2,10 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleStatus;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -101,6 +103,10 @@ public class RuleBookRunnerTest {
         waiter.resume();
         waiter.assertEquals("Equivalence, Bitches!", ruleBook.getResult().get().toString());
         waiter.resume();
+        waiter.assertEquals(4, ((Auditor)ruleBook).getRuleStatusMap().size());
+        waiter.resume();
+        waiter.assertEquals(RuleStatus.EXECUTED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
+        waiter.resume();
       });
 
       service.execute(() -> {
@@ -108,6 +114,8 @@ public class RuleBookRunnerTest {
         waiter.assertEquals("Some", unequalFacts2.getValue("fact1"));
         waiter.resume();
         waiter.assertEquals("Value", unequalFacts2.getValue("fact2"));
+        waiter.resume();
+        waiter.assertEquals(RuleStatus.SKIPPED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
         waiter.resume();
       });
 
