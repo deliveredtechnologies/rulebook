@@ -38,6 +38,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
   * [3.4 Working With Facts](#34-working-with-facts)
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
+  * [3.5 Auditing Rules](#35-auditing-rules)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
@@ -45,6 +46,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.1 Ordering POJO Rules](#431-ordering-pojo-rules)
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
+    * [4.3.4 Auditing POJO Rules](#434-auditing-pojo-rules)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
   * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
   * [5.2 Creating Spring Enabled POJO Rules](#52-creating-spring-enabled-pojo-rules)
@@ -348,6 +350,37 @@ The following methods are part of the NameValueReferrableTypeConvertible interfa
 
 **getBoolVal(String)** gets the value of the Fact by name as a Boolean
 
+### 3.5 Auditing Rules
+Rules auditing can be enabled when constructing a RuleBook by specifying _asAuditor()_ as follows.
+
+```java
+ RuleBook rulebook = RuleBookBuilder.create().asAuditor()
+   .addRule(rule -> rule.withName("Rule1").withNoSpecifiedFactType()
+     .when(facts -> true)
+     .then(facts -> { } ))
+   .addRule(rule -> rule.withName("Rule2").withNoSpecifiedFactType()
+     .when(facts -> false)
+     .then(facts -> { } )).build();
+     
+ rulebook.run(new FactMap());
+```
+
+By using _asAuditor()_ each rule in the RuleBook registers itself as an _Auditable Rule_ and its state is recorded in the RuleBook. At the time when rules are registered as auditable in the RuleBook, their RuleStatus is _NONE_. After the RuleBook is run, their RuleStatus is changed to _SKIPPED_ for all rules that fail or whose conditions do not evaluate to true. For rules whose conditions do evaluate to true and whose then() action completes successfully, their RuleStatus is changed to _EXECUTED_.
+
+Retrieving the status of a rule can be done as follows.
+
+```java
+ Auditor auditor = (Auditor)rulebook;
+ System.out.println(auditor.getRuleStatus("Rule1")); //prints EXECUTED
+ System.out.println(auditor.getRuleStatus("Rule2")); //prints SKIPPED
+```
+
+A map of all rule names and their corresponding status can be retrieved as follows.
+
+```java
+ Map<String, RuleStatus> auditMap = auditor.getRuleStatusMap();
+```
+
 <sub>[Top](#contents)</sub>
 
 ## 4 POJO Rules
@@ -547,6 +580,15 @@ If the following conditions are met then the objects contained in all Facts of g
 #### 4.3.3 POJO Rule Annotation Inheritance
 
 As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That means if you have a subclass, whose parent is annotated with RuleBook annotations (i.e. @Given, @When, @Then, @Result) then the subclass will inherit the parent’s annotations. @Given and @Result attributes injected in the parent, will be available to the subclass. @Then and @When methods defined in the parent will be visible in the subclass.
+
+#### 4.3.4 Auditing POJO Rules
+
+Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is automatically audited. If a name is specified in the @Rule attribute, then that name is used for auditing. Otherwise, the class name of the POJO rule is used. For example, assuming that there is a POJO rule named "My Rule" that was run by the RuleBookRunner, rulebookRunner, the status of that rule's execution can be retrieved as follows.
+
+```java
+ Auditor auditor = (Auditor)rulebookRunner;
+ RuleStatus myRuleStatus = auditor.getRuleStatus("My Rule");
+```
 
 <sub>[[Top](#contents)]</sub>
 
