@@ -9,7 +9,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
-import com.deliveredtechnologies.rulebook.model.runner.rule.ResultRule;
+import com.deliveredtechnologies.rulebook.model.runner.rule.result.ResultRule;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutRuleAnnotation;
