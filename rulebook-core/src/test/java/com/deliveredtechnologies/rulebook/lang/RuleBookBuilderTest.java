@@ -102,6 +102,24 @@ public class RuleBookBuilderTest {
   }
 
   @Test
+  public void ruleBookBuilderAddsRulesWithNoSpecifiedFactType() {
+    FactMap factMap = new FactMap();
+    factMap.setValue("fact1", "value1");
+    factMap.setValue("factInt", 200);
+
+    RuleBook ruleBook = RuleBookBuilder.create().addRule(rule -> rule
+        .withRuleType(GoldenRule.class)
+        .withNoSpecifiedFactType()
+        .when(facts -> facts.containsKey("fact1"))
+        .then(facts -> facts.setValue("fact2", facts.getStrVal("fact1")))
+    ).build();
+
+    ruleBook.run(factMap);
+
+    Assert.assertEquals(factMap.getValue("fact1"), factMap.getValue("fact2"));
+  }
+
+  @Test
   public void ruleBookBuilderStopsOnRuleConditionIsFalseIfSpecified() {
     Consumer<NameValueReferableTypeConvertibleMap<String>> consumer =
         (Consumer<NameValueReferableTypeConvertibleMap<String>>)Mockito.mock(Consumer.class);
