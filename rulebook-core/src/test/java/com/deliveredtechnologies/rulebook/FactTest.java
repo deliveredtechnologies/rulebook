@@ -41,13 +41,21 @@ public class FactTest {
 
   @Test
   public void nonFactObjectsShouldNotEqualFactObjects() {
-    Fact fact = new Fact("another", "fact");
+    Fact<String> fact = new Fact<>("another", "fact");
     NameValueReferable obj = Mockito.mock(NameValueReferable.class);
     Mockito.when(obj.getName()).thenReturn("another");
     Mockito.when(obj.getValue()).thenReturn("fact");
 
     Assert.assertNotEquals(fact, "anotherfact");
     Assert.assertNotEquals(fact, obj);
+  }
+
+  @Test
+  public void factsThatHaveTheSameNameAndDifferentValuesAreNotEqual() {
+    Fact<String> fact1 = new Fact<>("fact", "value1");
+    Fact<String> fact2 = new Fact<>("fact", "value2");
+
+    Assert.assertNotEquals(fact1, fact2);
   }
 }
 
