@@ -1,12 +1,11 @@
-package com.deliveredtechnologies.rulebook.model.runner.rule;
+package com.deliveredtechnologies.rulebook.model.runner.rule.result;
 
 import com.deliveredtechnologies.rulebook.annotation.Result;
 import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;
-import com.deliveredtechnologies.rulebook.annotation.When;
 
 /**
- * Created by clong on 5/22/17.
+ * A rule that uses a result.
  */
 @Rule
 public class ResultRule {

@@ -188,8 +188,8 @@ project('rulebook-core') {
                     name 'abhineet27'
                     url 'https://github.com/abhineet27'
                     roles {
-                        role 'raised toString bug in TypeConvertibleFactMap for v0.6.1'
-                        role 'raised POJO result chaining on read bug for v0.6.2'
+                        role 'raised bug for v0.6.1'
+                        role 'raised bug for v0.6.2'
                     }
                 }
                 contributor {
@@ -197,6 +197,20 @@ project('rulebook-core') {
                     url 'https://github.com/darrellme'
                     roles {
                         role 'raised rule chain enhancement for v0.8'
+                    }
+                }
+                contributor {
+                    name 'Kent Jones'
+                    url 'https://github.com/kentjones'
+                    roles {
+                        role 'raised bug for v0.8.1'
+                    }
+                }
+                contributor {
+                    name 'Ivan Portugal'
+                    url 'https://github.com/ivanbportugal'
+                    roles {
+                        role 'raised bug for v0.8.1'
                     }
                 }
             }
