@@ -365,7 +365,7 @@ Rules auditing can be enabled when constructing a RuleBook by specifying _asAudi
  rulebook.run(new FactMap());
 ```
 
-By using _asAuditor()_ each rule in the RuleBook registers itself as an _Auditable Rule_ and its state is recorded in the RuleBook. At the time when rules are registered as auditable in the RuleBook, their RuleStatus is _NONE_. After the RuleBook is run, their RuleStatus is changed to _SKIPPED_ for all rules that fail or whose conditions do not evaluate to true. For rules whose conditions do evaluate to true and whose then() action completes successfully, their RuleStatus is changed to _EXECUTED_.
+By using _asAuditor()_ each rule in the RuleBook can register itself as an _Auditable Rule_ if its name is sepcified. Each _Auditable Rule_ added to a RuleBook _Auditor_ has its state is recorded in the RuleBook. At the time when rules are registered as auditable in the RuleBook, their RuleStatus is _NONE_. After the RuleBook is run, their RuleStatus is changed to _SKIPPED_ for all rules that fail or whose conditions do not evaluate to true. For rules whose conditions do evaluate to true and whose then() action completes successfully, their RuleStatus is changed to _EXECUTED_.
 
 Retrieving the status of a rule can be done as follows.
 
