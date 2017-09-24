@@ -7,4 +7,5 @@ include 'helloworld-pojo'
 include 'megabank-pojo'
 include 'helloworld-spring'
 include 'helloworld-spring-web'
+include 'megabank-guice'
 
