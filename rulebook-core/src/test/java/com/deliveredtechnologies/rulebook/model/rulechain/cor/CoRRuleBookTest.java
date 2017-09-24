@@ -99,4 +99,12 @@ public class CoRRuleBookTest {
       }
     }
   }
+
+  @Test
+  public void coRRuleBookDoesntAcceptNullRules() {
+    RuleBook ruleBook = new CoRRuleBook();
+    ruleBook.addRule(null);
+
+    Assert.assertFalse(ruleBook.hasRules());
+  }
 }
