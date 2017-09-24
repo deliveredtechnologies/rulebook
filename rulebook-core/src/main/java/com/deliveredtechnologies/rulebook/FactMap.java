@@ -18,6 +18,10 @@ public class FactMap<T> implements NameValueReferableMap<T> {
     _facts = facts;
   }
 
+  /**
+   * Constructor allows a FactMap to be created by specifying NameValueReferable facts.
+   * @param facts an array of NameValueReferable facts
+   */
   @SafeVarargs
   public FactMap(NameValueReferable<T>... facts) {
     this();

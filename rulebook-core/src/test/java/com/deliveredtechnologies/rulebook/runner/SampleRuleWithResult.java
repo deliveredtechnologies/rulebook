@@ -11,6 +11,7 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -18,6 +19,10 @@ import java.util.Set;
  */
 @Rule(order = 2, name = "Result Rule")
 public class SampleRuleWithResult {
+
+  @Given
+  private Queue<String> _queue;
+
   @Given("fact1")
   private Fact<String> _fact1;
 
@@ -110,5 +115,9 @@ public class SampleRuleWithResult {
 
   public String getResult() {
     return _result;
+  }
+
+  public Queue<String> getQueue() {
+    return _queue;
   }
 }

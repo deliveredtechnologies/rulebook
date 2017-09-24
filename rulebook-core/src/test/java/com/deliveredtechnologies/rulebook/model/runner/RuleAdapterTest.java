@@ -9,6 +9,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.runner.rule.noresult.NoResultRule;
 import com.deliveredtechnologies.rulebook.model.runner.rule.result.ResultRule;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
 import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
@@ -102,6 +103,7 @@ public class RuleAdapterTest {
     Assert.assertEquals("Fact1", pojo.getFact1());
     Assert.assertEquals("Fact2", pojo.getFact2());
     Assert.assertEquals(5100, pojo.getValue1());
+    Assert.assertNull(pojo.getQueue());
   }
 
   @Test
