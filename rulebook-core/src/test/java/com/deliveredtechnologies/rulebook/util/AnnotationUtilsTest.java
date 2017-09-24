@@ -32,7 +32,7 @@ public class AnnotationUtilsTest {
   public void getAnnotatedFieldsShouldFindAnnotatedFields() {
     List<Field> givenFields = getAnnotatedFields(Given.class, SampleRuleWithResult.class);
     List<Field> resultFields = getAnnotatedFields(Result.class, SampleRuleWithResult.class);
-    Assert.assertEquals(10, givenFields.size());
+    Assert.assertEquals(11, givenFields.size());
     Assert.assertEquals(1, resultFields.size());
   }
 
@@ -40,7 +40,7 @@ public class AnnotationUtilsTest {
   public void getAnnotatedFieldsShouldFindAnnotatedFieldsInParentClasses() {
     List<Field> givenFields = getAnnotatedFields(Given.class, SubRuleWithResult.class);
     List<Field> resultFields = getAnnotatedFields(Result.class, SubRuleWithResult.class);
-    Assert.assertEquals(11, givenFields.size());
+    Assert.assertEquals(12, givenFields.size());
     Assert.assertEquals(1, resultFields.size());
   }
 

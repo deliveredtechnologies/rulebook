@@ -20,9 +20,6 @@ import java.util.Set;
 @Rule(order = 2, name = "Result Rule")
 public class SampleRuleWithResult {
 
-  @Given
-  private Queue<String> _queue;
-
   @Given("fact1")
   private Fact<String> _fact1;
 
@@ -37,6 +34,9 @@ public class SampleRuleWithResult {
 
   @Given
   private Set<String> _strSet;
+
+  @Given
+  private Queue<String> _queue;
 
   @Given
   private FactMap<String> _factMap;
