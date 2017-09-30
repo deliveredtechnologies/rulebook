@@ -2,6 +2,7 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
@@ -102,6 +103,28 @@ public class RuleBookRunnerTest {
     Rule rule = mock(Rule.class);
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
     ruleBookRunner.addRule(rule);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void ruleBookRunnerResetsToDefaultResult() {
+    RuleBook<String> ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    ruleBook.setDefaultResult("default");
+
+    FactMap<String> facts = new FactMap<>();
+    facts.setValue("fact1", "Fact");
+    facts.setValue("fact2", "Fact");
+
+    ruleBook.run(facts);
+    Assert.assertEquals("Equivalence Default", ruleBook.getResult().get().getValue());
+    ruleBook.getResult().ifPresent(Result::reset);
+    Assert.assertEquals("default", ruleBook.getResult().get().getValue());
+    facts.setValue("fact1", "Fact");
+    facts.setValue("fact2", "Fact");
+    ruleBook.run(facts);
+    Assert.assertEquals("Equivalence Default", ruleBook.getResult().get().getValue());
+    ruleBook.getResult().ifPresent(Result::reset);
+    Assert.assertEquals("default", ruleBook.getResult().get().getValue());
   }
 
   @Test

@@ -69,7 +69,8 @@ public class SampleRuleWithResult {
   public RuleState then() {
     _fact2.setValue("So Factual Too!");
     _fact1.setValue("So Factual Too!");
-    _result = "Equivalence, Bitches!";
+    _result = _result.equals("default") || _result.equals("Equivalence Default") ?
+        "Equivalence Default" : "Equivalence, Bitches!";
     return RuleState.NEXT;
   }
 
