@@ -1,7 +1,9 @@
 package com.deliveredtechnologies.rulebook.lang;
 
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleBookAuditor;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +44,19 @@ public class RuleBookBuilder<T> implements TerminatingRuleBookBuilder<T> {
     _ruleBookClass = ruleBookClass;
   }
 
+  @SuppressWarnings("unchecked")
   private RuleBookBuilder(RuleBookBuilder ruleBookBuilder) {
     _resultType = ruleBookBuilder._resultType;
     _ruleBookClass = ruleBookBuilder._ruleBookClass;
     newRuleBook();
+  }
+
+  /**
+   * Decorates the RuleBook with {@link Auditor} functionality for rules auditing.
+   * @return  a builder that can add rules
+   */
+  public RuleBookAddRuleBuilder<T> asAuditor() {
+    return new RuleBookAddRuleBuilder<>(new RuleBookAuditor<>(newRuleBook()));
   }
 
   /**

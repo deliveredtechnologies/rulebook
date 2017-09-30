@@ -1,0 +1,13 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.deliveredtechnologies:rulebook-core:0.8.1'
+    compile 'com.google.inject:guice:4.1.0'
+}
+
+mainClassName = 'com.example.rulebook.megabank.Application'

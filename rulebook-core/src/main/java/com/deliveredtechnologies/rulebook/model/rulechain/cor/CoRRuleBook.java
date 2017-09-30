@@ -1,6 +1,5 @@
 package com.deliveredtechnologies.rulebook.model.rulechain.cor;
 
-import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;

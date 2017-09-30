@@ -26,12 +26,17 @@ public class RuleBookRuleBuilder<U> {
     return this;
   }
 
+  public RuleBookAuditableRuleBuilder<U> withName(String ruleName) {
+    return new RuleBookAuditableRuleBuilder<>(_ruleBook, _ruleClass, ruleName);
+  }
+
   /**
    * Specifies the fact type
    * @param factType  the type of object that facts are restricted to in the Rule.
    * @param <T>       the generic fact type
    * @return          RuleBookRuleWithFactTypeBuilder for building RuleBook Rules with a specific fact type
    */
+  @SuppressWarnings("unchecked")
   public <T> RuleBookRuleWithFactTypeBuilder<T, U> withFactType(Class<T> factType) {
     Rule<T, U> rule = (Rule<T, U>)RuleBuilder.create(_ruleClass).withFactType(factType).build();
     _ruleBook.addRule(rule);
