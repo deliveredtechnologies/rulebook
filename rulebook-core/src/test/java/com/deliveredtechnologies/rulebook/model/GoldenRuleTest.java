@@ -19,6 +19,7 @@ import java.util.function.Predicate;
  * Tests for {@link GoldenRule}.
  */
 public class GoldenRuleTest {
+
   @Test
   public void addFactsShouldAddFactsToTheRule() {
     NameValueReferableMap<String> facts = new FactMap<>();

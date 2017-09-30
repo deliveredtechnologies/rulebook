@@ -11,13 +11,15 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 /**
  * Sample POJO rule with facts and a result.
  */
-@Rule(order = 2)
+@Rule(order = 2, name = "Result Rule")
 public class SampleRuleWithResult {
+
   @Given("fact1")
   private Fact<String> _fact1;
 
@@ -32,6 +34,9 @@ public class SampleRuleWithResult {
 
   @Given
   private Set<String> _strSet;
+
+  @Given
+  private Queue<String> _queue;
 
   @Given
   private FactMap<String> _factMap;
@@ -64,7 +69,8 @@ public class SampleRuleWithResult {
   public RuleState then() {
     _fact2.setValue("So Factual Too!");
     _fact1.setValue("So Factual Too!");
-    _result = "Equivalence, Bitches!";
+    _result = _result != null && (_result.equals("default") || _result.equals("Equivalence Default"))
+        ? "Equivalence Default" : "Equivalence, Bitches!";
     return RuleState.NEXT;
   }
 
@@ -110,5 +116,9 @@ public class SampleRuleWithResult {
 
   public String getResult() {
     return _result;
+  }
+
+  public Queue<String> getQueue() {
+    return _queue;
   }
 }

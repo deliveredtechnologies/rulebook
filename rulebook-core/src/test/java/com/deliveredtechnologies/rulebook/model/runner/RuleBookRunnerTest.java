@@ -2,8 +2,11 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleStatus;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -95,11 +97,33 @@ public class RuleBookRunnerTest {
     Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = UnsupportedOperationException.class)
   public void rulesCanNotBeAddedByCallingAddRule() {
     Rule rule = mock(Rule.class);
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
     ruleBookRunner.addRule(rule);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void ruleBookRunnerResetsToDefaultResult() {
+    RuleBook<String> ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    ruleBook.setDefaultResult("default");
+
+    FactMap<String> facts = new FactMap<>();
+    facts.setValue("fact1", "Fact");
+    facts.setValue("fact2", "Fact");
+
+    ruleBook.run(facts);
+    Assert.assertEquals("Equivalence Default", ruleBook.getResult().get().getValue());
+    ruleBook.getResult().ifPresent(Result::reset);
+    Assert.assertEquals("default", ruleBook.getResult().get().getValue());
+    facts.setValue("fact1", "Fact");
+    facts.setValue("fact2", "Fact");
+    ruleBook.run(facts);
+    Assert.assertEquals("Equivalence Default", ruleBook.getResult().get().getValue());
+    ruleBook.getResult().ifPresent(Result::reset);
+    Assert.assertEquals("default", ruleBook.getResult().get().getValue());
   }
 
   @Test
@@ -138,6 +162,10 @@ public class RuleBookRunnerTest {
         waiter.resume();
         waiter.assertEquals("Equivalence, Bitches!", ruleBook.getResult().get().toString());
         waiter.resume();
+        waiter.assertEquals(4, ((Auditor)ruleBook).getRuleStatusMap().size());
+        waiter.resume();
+        waiter.assertEquals(RuleStatus.EXECUTED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
+        waiter.resume();
       });
 
       service.execute(() -> {
@@ -145,6 +173,8 @@ public class RuleBookRunnerTest {
         waiter.assertEquals("Some", unequalFacts2.getValue("fact1"));
         waiter.resume();
         waiter.assertEquals("Value", unequalFacts2.getValue("fact2"));
+        waiter.resume();
+        waiter.assertEquals(RuleStatus.SKIPPED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
         waiter.resume();
       });
 

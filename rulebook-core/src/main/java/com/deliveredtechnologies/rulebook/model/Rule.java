@@ -111,7 +111,7 @@ public interface Rule<T, U> {
   void setResult(Result<U> result);
 
   /**
-   * Gets the Result of the Rule
+   * Gets the Result of the Rule.
    * @return  the Optional Result of the Rule, otherwise Optional.empty()
    */
   Optional<Result<U>> getResult();

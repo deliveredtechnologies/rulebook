@@ -44,14 +44,14 @@ public class GoldenRule<T, U> implements Rule<T, U> {
   private Map<Integer, List<String>> _factNames = new HashMap<>();
   private RuleState _ruleState = RuleState.NEXT;
   private Class<T> _factType;
-  private RuleChainActionType _actionType = CONTINUE_ON_FAILURE;
+  private RuleChainActionType _actionType;
 
   public GoldenRule(Class<T> factType) {
-    _factType = factType;
+    this(factType, CONTINUE_ON_FAILURE);
   }
 
   public GoldenRule(Class<T> factType, RuleChainActionType actionType) {
-    this(factType);
+    _factType = factType;
     _actionType = actionType;
   }
 
@@ -194,6 +194,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //eventually, we'll have to resolve that kind of issue ahead of time
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
+
     return _actionType.equals(STOP_ON_FAILURE);
   }
 

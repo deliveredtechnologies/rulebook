@@ -1,33 +1,22 @@
 package com.deliveredtechnologies.rulebook.lang;
 
+import com.deliveredtechnologies.rulebook.model.AuditableRule;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 
 /**
- * Chains building of a Rule onto a RuleBookBuilder.
- * @param <U> the type of the Result
+ * A chained builder for building a Rule in the context of a RuleBook that can be audited.
  */
-public class RuleBookRuleBuilder<U> {
+public class RuleBookAuditableRuleBuilder<U> {
   private RuleBook<U> _ruleBook;
-  private Class<? extends Rule> _ruleClass = GoldenRule.class;
+  private Class<? extends Rule> _ruleClass;
+  private String _ruleName;
 
-  RuleBookRuleBuilder(RuleBook<U> ruleBook) {
+  RuleBookAuditableRuleBuilder(RuleBook<U> ruleBook, Class<? extends Rule> ruleClass, String ruleName) {
     _ruleBook = ruleBook;
-  }
-
-  /**
-   * Specifies the Rule type.
-   * @param ruleType  the type (class) of Rule to build
-   * @return          RuleBookRuleBuilder using the Rule type specified
-   */
-  public RuleBookRuleBuilder<U> withRuleType(Class<? extends Rule> ruleType) {
-    _ruleClass = ruleType;
-    return this;
-  }
-
-  public RuleBookAuditableRuleBuilder<U> withName(String ruleName) {
-    return new RuleBookAuditableRuleBuilder<>(_ruleBook, _ruleClass, ruleName);
+    _ruleClass = ruleClass;
+    _ruleName = ruleName;
   }
 
   /**
@@ -38,7 +27,8 @@ public class RuleBookRuleBuilder<U> {
    */
   @SuppressWarnings("unchecked")
   public <T> RuleBookRuleWithFactTypeBuilder<T, U> withFactType(Class<T> factType) {
-    Rule<T, U> rule = (Rule<T, U>)RuleBuilder.create(_ruleClass).withFactType(factType).build();
+    Rule<T, U> rule =
+        new AuditableRule<T, U>((Rule<T, U>)RuleBuilder.create(_ruleClass).withFactType(factType).build(), _ruleName);
     _ruleBook.addRule(rule);
     return new RuleBookRuleWithFactTypeBuilder<>(rule);
   }

@@ -2,8 +2,11 @@ package com.deliveredtechnologies.rulebook.model.runner;
 
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.Auditable;
+import com.deliveredtechnologies.rulebook.model.AuditableRule;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,7 @@ import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotat
 /**
  * Runs the POJO Rules in a specified package as a RuleBook.
  */
-public class RuleBookRunner implements RuleBook {
+public class RuleBookRunner extends Auditor implements RuleBook {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
@@ -61,7 +64,7 @@ public class RuleBookRunner implements RuleBook {
 
   @Override
   public void addRule(Rule rule) {
-    throw new IllegalStateException("Rules are only added to a RuleBookRunner on run()!");
+    throw new UnsupportedOperationException("Rules are only added to a RuleBookRunner on run()!");
   }
 
   @Override
@@ -76,7 +79,13 @@ public class RuleBookRunner implements RuleBook {
           getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field ->
               ruleBook.setDefaultResult(_result.getValue() == null ? new Object() : _result.getValue())
           );
-          ruleBook.addRule(new RuleAdapter(rule.newInstance()));
+          String name = getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rule).name();
+          if (name.equals("None")) {
+            name = rule.getSimpleName();
+          }
+          Rule ruleInstance = new AuditableRule(new RuleAdapter(rule.newInstance()), name);
+          ruleBook.addRule(ruleInstance);
+          ((Auditable)ruleInstance).setAuditor(this);
         } catch (IllegalAccessException | InstantiationException ex) {
           LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
         }
