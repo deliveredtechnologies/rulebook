@@ -1,0 +1,108 @@
+modifyPom {
+    project {
+        name 'RuleBook'
+        description 'A simple and intuitive rules abstraction for Java'
+        url "${projectUrl}"
+        inceptionYear "${projectYear}"
+
+        scm {
+            url "${projectScmUrl}"
+            connection "${projectScmConnection}"
+            developerConnection "${projectScmConnection}"
+        }
+
+        distributionManagement {
+            site {
+                id "${projectDistMgmtId}"
+                url "${projectDistMgmtUrl}"
+            }
+        }
+
+        issueManagement {
+            system "${projectIssueMgmtSystem}"
+            url "${projectIssueMgmtUrl}"
+        }
+
+        licenses {
+            license {
+                name "${projectLicenseName}"
+                url "${projectLicenseUrl}"
+                distribution "${projectLicenseDistro}"
+            }
+        }
+
+        developers {
+            developer {
+                id 'Clayton7510'
+                name 'Clayton Long'
+                url 'https://github.com/Clayton7510'
+                email 'Clayton7510@gmail.com'
+                roles {
+                    role 'Author'
+                }
+            }
+        }
+
+        contributors {
+            contributor {
+                name 'Nicholas Lambert'
+                url 'https://github.com/NicolasLambert'
+                roles {
+                    role 'code contributor for v0.2.1'
+                    role 'raised dsl enhancement for v0.8'
+                }
+            }
+            contributor {
+                name 'wheezymustafa'
+                url 'https://github.com/wheezymustafa'
+                roles {
+                    role 'raised bugs and enhancement suggestions for v0.3 and v0.3.1'
+                }
+            }
+            contributor {
+                name 'Alessandro Torrisi'
+                url 'https://github.com/typhoon1978'
+                roles {
+                    role 'raised bug for v0.5.1'
+                }
+            }
+            contributor {
+                name 'Marc Seeger'
+                url 'https://github.com/Gersee'
+                roles {
+                    role 'raised bug for v0.5.1'
+                }
+            }
+            contributor {
+                name 'abhineet27'
+                url 'https://github.com/abhineet27'
+                roles {
+                    role 'raised bug for v0.6.1'
+                    role 'raised bug for v0.6.2'
+                }
+            }
+            contributor {
+                name 'Darrell Merryweather'
+                url 'https://github.com/darrellme'
+                roles {
+                    role 'raised rule chain enhancement for v0.8'
+                }
+            }
+            contributor {
+                name 'Kent Jones'
+                url 'https://github.com/kentjones'
+                roles {
+                    role 'raised bug for v0.8.1'
+                }
+            }
+            contributor {
+                name 'Ivan Portugal'
+                url 'https://github.com/ivanbportugal'
+                roles {
+                    role 'raised bug for v0.8.1'
+                }
+            }
+        }
+    }
+}
+
