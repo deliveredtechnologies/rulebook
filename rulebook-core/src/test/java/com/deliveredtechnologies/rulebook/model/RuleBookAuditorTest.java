@@ -1,6 +1,7 @@
 package com.deliveredtechnologies.rulebook.model;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import org.junit.Assert;
@@ -30,5 +31,28 @@ public class RuleBookAuditorTest {
     Assert.assertEquals(auditor.getRuleStatus("Rule1"), RuleStatus.EXECUTED);
     Assert.assertEquals(auditor.getRuleStatus("Rule2"), RuleStatus.SKIPPED);
     Assert.assertEquals(auditor.getRuleStatus("Rule3"), RuleStatus.EXECUTED);
+  }
+
+  @Test
+  public void ruleBookAuditorCanHaveDefaultResult() {
+    RuleBook rulebook = RuleBookBuilder.create().withResultType(String.class).withDefaultResult("foo").asAuditor()
+        .addRule(rule -> rule.withName("Rule1").withFactType(String.class)
+            .when(facts -> true)
+            .then(facts -> { } ))
+        .addRule(rule -> rule.withName("Rule2").withNoSpecifiedFactType()
+            .when(facts -> false)
+            .then(facts -> { } ))
+        .addRule(rule -> rule.withName("Rule3").withFactType(String.class)
+            .when(facts -> true)
+            .then(facts -> { } ).build())
+        .build();
+
+    rulebook.run(new FactMap());
+    Auditor auditor = (Auditor)rulebook;
+
+    Assert.assertEquals(auditor.getRuleStatus("Rule1"), RuleStatus.EXECUTED);
+    Assert.assertEquals(auditor.getRuleStatus("Rule2"), RuleStatus.SKIPPED);
+    Assert.assertEquals(auditor.getRuleStatus("Rule3"), RuleStatus.EXECUTED);
+    Assert.assertEquals("foo", ((Result<String>)rulebook.getResult().get()).getValue());
   }
 }
