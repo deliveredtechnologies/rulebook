@@ -1,1 +1,9 @@
+def springVersion = properties['spring.version']
 
+dependencies {
+    compile project(":rulebook-core")
+
+    //spring dependencies
+    compile("org.springframework:spring-context:${springVersion}")
+    testCompile("org.springframework:spring-test:${springVersion}")
+}

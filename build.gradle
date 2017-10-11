@@ -213,22 +213,19 @@ project("rulebook-core") {
                         role 'raised bug for v0.8.1'
                     }
                 }
+                contributor {
+                    name 'Brad Egler'
+                    url 'https://github.com/bradegler'
+                    roles {
+                        rule 'upgraded gradle build for v0.9.1'
+                    }
+                }
             }
         }
     }
 }
 
 project("rulebook-spring") {
-    def springVersion = properties['spring.version']
-
-    dependencies {
-        compile project(":rulebook-core")
-
-        //spring dependencies
-        compile("org.springframework:spring-context:${springVersion}")
-        testCompile("org.springframework:spring-test:${springVersion}")
-    }
-
     modifyPom {
         project {
             name 'RuleBook Spring'
