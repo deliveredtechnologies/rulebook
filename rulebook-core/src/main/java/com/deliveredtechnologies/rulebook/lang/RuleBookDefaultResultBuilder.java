@@ -1,7 +1,9 @@
 package com.deliveredtechnologies.rulebook.lang;
 
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleBookAuditor;
 
 import java.util.function.Consumer;
 
@@ -33,6 +35,14 @@ public class RuleBookDefaultResultBuilder<T> implements TerminatingRuleBookBuild
    */
   public <U> RuleBookAddRuleBuilder<T> addRule(Rule<U, T> rule) {
     return new RuleBookAddRuleBuilder<>(_ruleBook, rule);
+  }
+
+  /**
+   * Decorates the RuleBook with {@link Auditor} functionality for rules auditing.
+   * @return  a builder that can add rules
+   */
+  public RuleBookAddRuleBuilder<T> asAuditor() {
+    return new RuleBookAddRuleBuilder<>(new RuleBookAuditor<>(_ruleBook));
   }
 
   @Override
