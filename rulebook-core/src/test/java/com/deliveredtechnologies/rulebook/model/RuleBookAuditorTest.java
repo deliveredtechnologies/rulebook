@@ -37,6 +37,9 @@ public class RuleBookAuditorTest {
     Assert.assertEquals(auditor.getRuleStatus("Rule3"), RuleStatus.EXECUTED);
   }
 
+  /**
+   * Test to ensure that rules invoked using null facts don't error just because that facts are null.
+   */
   @Test
   @SuppressWarnings("unchecked")
   public void rulesAreStillExecutedWithNullFacts() {
