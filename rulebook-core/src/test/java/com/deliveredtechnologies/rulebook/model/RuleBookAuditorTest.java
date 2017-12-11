@@ -41,10 +41,12 @@ public class RuleBookAuditorTest {
   @SuppressWarnings("unchecked")
   public void rulesAreStillExecutedWithNullFacts() {
     Rule rule = new GoldenRule(Object.class);
-    BiConsumer<NameValueReferableMap, Result> action = (facts, result) -> result.setValue("Rule was triggered with status=" + facts.get("status") + " and object=" + facts.get("object"));
+    BiConsumer<NameValueReferableMap, Result> action = (facts, result)
+        -> result.setValue("Rule was triggered with status=" + facts.get("status")
+        + " and object=" + facts.get("object"));
     rule.addAction(action);
 
-    AuditableRule aRule = new AuditableRule(rule, "SimpleRule");
+    AuditableRule auditableRule = new AuditableRule(rule, "SimpleRule");
 
     FactMap facts = new FactMap();
     facts.setValue("status", 1);
@@ -53,7 +55,7 @@ public class RuleBookAuditorTest {
     RuleBook ruleBook = new CoRRuleBook();
 
     RuleBookAuditor auditor = new RuleBookAuditor(ruleBook);
-    auditor.addRule(aRule);
+    auditor.addRule(auditableRule);
     ruleBook.run(facts);
 
     Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatus("SimpleRule"));
