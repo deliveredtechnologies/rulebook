@@ -134,7 +134,8 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //only use facts of the specified type
       NameValueReferableMap<T> typeFilteredFacts =
               new FactMap<T>((Map<String, NameValueReferable<T>>) facts.values().stream()
-              .filter((Object fact) -> _factType.isAssignableFrom(((NameValueReferable) fact).getValue().getClass()))
+              .filter((Object fact) -> ((NameValueReferable)fact).getValue() == null
+                  || _factType.isAssignableFrom(((NameValueReferable) fact).getValue().getClass()))
               .collect(Collectors.toMap(fact ->
                       ((NameValueReferable<Object>) fact).getName(), fact -> (NameValueReferable<T>) fact)));
 
