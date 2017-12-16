@@ -217,7 +217,14 @@ project("rulebook-core") {
                     name 'Brad Egler'
                     url 'https://github.com/bradegler'
                     roles {
-                        rule 'upgraded gradle build for v0.9.1'
+                        role 'upgraded gradle build for v0.9.1'
+                    }
+                }
+                contributor {
+                    name 'pjotre86'
+                    url 'https://github.com/pjotre86'
+                    roles {
+                        role 'raised bug for v0.9.1'
                     }
                 }
             }
