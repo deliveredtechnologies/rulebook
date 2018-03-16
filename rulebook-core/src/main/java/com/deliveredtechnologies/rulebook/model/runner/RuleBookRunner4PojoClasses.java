@@ -4,60 +4,48 @@ import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
-import static java.util.Comparator.comparingInt;
 
 /**
- * Runs the POJO Rules in a specified package as a RuleBook.
+ * Runs a List of POJO Rules as a RuleBook.
  */
 public class RuleBookRunner4PojoClasses extends AbstractRuleBookRunner {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
-  private String _package;
+  private List<Class<?>> _pojoRules;
   private Class<? extends RuleBook> _prototypeClass;
 
   @SuppressWarnings("unchecked")
   private Result _result = new Result(null);
 
   /**
-   * Creates a new RuleBookRunner using the specified package and the default RuleBook.
-   * @param rulePackage a package to scan for POJO Rules
+   * Creates a new RuleBookRunner using the specified POJO Rules and the default RuleBook.
+   * @param pojoRules the POJO Rule classes used in the RuleBook
    */
-  public RuleBookRunner4PojoClasses(String rulePackage) {
-    this(CoRRuleBook.class, rulePackage);
+  public RuleBookRunner4PojoClasses(List<Class<?>> pojoRules) {
+    this(CoRRuleBook.class, pojoRules);
   }
 
   /**
-   * Creates a new RuleBookRunner using the specified package and the supplied RuleBook.
+   * Creates a new RuleBookRunner using the specified POJO Rules and the supplied RuleBook.
    * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner
-   * @param rulePackage   the package to scan for POJO rules
+   * @param pojoRules     the package to scan for POJO rules
    */
-  public RuleBookRunner4PojoClasses(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
+  public RuleBookRunner4PojoClasses(Class<? extends RuleBook> ruleBookClass, List<Class<?>> pojoRules) {
     super(ruleBookClass);
     _prototypeClass = ruleBookClass;
-    _package = rulePackage;
+    _pojoRules = pojoRules;
   }
 
+  /**
+   * Gets the POJO rules to be used in the RuleBook.
+   * @return  The List of the supplied POJO Rules
+   */
   protected List<Class<?>> getPojoRules() {
-    Reflections reflections = new Reflections(_package);
-
-    List<Class<?>> rules = reflections
-        .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
-        .filter(rule -> _package.equals(rule.getPackage().getName())) // Search only within package, not subpackages
-        .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
-        .collect(Collectors.toList());
-
-    rules.sort(comparingInt(aClass ->
-        getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, aClass).order()));
-
-    return rules;
+    return _pojoRules;
   }
 }

@@ -38,8 +38,8 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
 
   /**
    * Creates a new RuleBookRunner using the specified package and the supplied RuleBook.
-   * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner
-   * @param rulePackage   the package to scan for POJO rules
+   * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner.
+   * @param rulePackage   the package to scan for POJO rules.
    */
   public RuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
     super(ruleBookClass);
@@ -47,6 +47,10 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
     _package = rulePackage;
   }
 
+  /**
+   * Gets the POJO Rules to be used by the RuleBook via reflection of the specified package.
+   * @return  a List of POJO Rules
+   */
   protected List<Class<?>> getPojoRules() {
     Reflections reflections = new Reflections(_package);
 

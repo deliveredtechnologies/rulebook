@@ -19,6 +19,9 @@ import java.util.Optional;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 
+/**
+ * Declares an abstract class for creating RuleBookRunner derived classes using the template method pattern.
+ */
 public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook {
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
@@ -27,6 +30,10 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
   @SuppressWarnings("unchecked")
   private Result _result = new Result(null);
 
+  /**
+   * Creates a new RuleBookRunner using the RuleBook class.
+   * @param prototypeClass a RuleBook class that determines how the RuleBook is run
+   */
   public AbstractRuleBookRunner(Class<? extends RuleBook> prototypeClass) {
     _prototypeClass = prototypeClass;
   }
@@ -92,5 +99,9 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
     }
   }
 
+  /**
+   * Gets the POJO Rules used in the RuleBook.
+   * @return  A List of the POJO Rules used in a RuleBook.
+   */
   protected abstract List<Class<?>> getPojoRules();
 }
