@@ -1,0 +1,96 @@
+package com.deliveredtechnologies.rulebook.model.runner;
+
+import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.Auditor;
+import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.AuditableRule;
+import com.deliveredtechnologies.rulebook.model.Auditable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.util.List;
+import java.util.Optional;
+
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
+import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
+
+public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook {
+  private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
+
+  private Class<? extends RuleBook> _prototypeClass;
+
+  @SuppressWarnings("unchecked")
+  private Result _result = new Result(null);
+
+  public AbstractRuleBookRunner(Class<? extends RuleBook> prototypeClass) {
+    _prototypeClass = prototypeClass;
+  }
+
+  @Override
+  public void addRule(Rule rule) {
+    throw new UnsupportedOperationException("Rules are only added to a RuleBookRunner on run()!");
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public void run(NameValueReferableMap facts) {
+    getResult().ifPresent(Result::reset);
+    try {
+      RuleBook ruleBook = _prototypeClass.newInstance();
+      List<Class<?>> classes = getPojoRules();
+      for (Class<?> rule : classes) {
+        try {
+          getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field ->
+              ruleBook.setDefaultResult(_result.getValue() == null ? new Object() : _result.getValue())
+          );
+          String name = getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rule).name();
+          if (name.equals("None")) {
+            name = rule.getSimpleName();
+          }
+          Rule ruleInstance = new AuditableRule(new RuleAdapter(rule.newInstance()), name);
+          ruleBook.addRule(ruleInstance);
+          ((Auditable)ruleInstance).setAuditor(this);
+        } catch (IllegalAccessException | InstantiationException ex) {
+          LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
+        }
+      }
+      ruleBook.run(facts);
+      Optional<Result> result = ruleBook.getResult();
+      result.ifPresent(res -> _result.setValue(res.getValue()));
+    } catch (IOException | InvalidPathException ex) {
+      LOGGER.error("Unable to find rule classes", ex);
+    } catch (InstantiationException | IllegalAccessException ex) {
+      LOGGER.error("Unable to create an instance of '" + _prototypeClass.getName()
+          + "' with the default constructor", ex);
+    }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public void setDefaultResult(Object result) {
+    _result = new Result(result);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public Optional<Result> getResult() {
+    return _result.getValue() == null ? Optional.empty() : Optional.of(_result);
+  }
+
+  @Override
+  public boolean hasRules() {
+    try {
+      return getPojoRules().size() > 0;
+    } catch (InvalidPathException e) {
+      LOGGER.error("Unable to find rule classes", e);
+      return false;
+    }
+  }
+
+  protected abstract List<Class<?>> getPojoRules();
+}

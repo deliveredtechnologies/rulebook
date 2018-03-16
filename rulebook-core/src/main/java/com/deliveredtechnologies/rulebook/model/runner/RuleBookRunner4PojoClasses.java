@@ -8,7 +8,6 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,7 @@ import static java.util.Comparator.comparingInt;
 /**
  * Runs the POJO Rules in a specified package as a RuleBook.
  */
-public class RuleBookRunner extends AbstractRuleBookRunner {
+public class RuleBookRunner4PojoClasses extends AbstractRuleBookRunner {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
@@ -32,7 +31,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
    * Creates a new RuleBookRunner using the specified package and the default RuleBook.
    * @param rulePackage a package to scan for POJO Rules
    */
-  public RuleBookRunner(String rulePackage) {
+  public RuleBookRunner4PojoClasses(String rulePackage) {
     this(CoRRuleBook.class, rulePackage);
   }
 
@@ -41,7 +40,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
    * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner
    * @param rulePackage   the package to scan for POJO rules
    */
-  public RuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
+  public RuleBookRunner4PojoClasses(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
     super(ruleBookClass);
     _prototypeClass = ruleBookClass;
     _package = rulePackage;
