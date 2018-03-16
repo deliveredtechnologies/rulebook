@@ -8,12 +8,12 @@ import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
+
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.InvalidPathException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +35,8 @@ public class RuleBookRunner extends Auditor implements RuleBook {
   @SuppressWarnings("unchecked")
   private Result _result = new Result(null);
 
+  private List<Class<?>> _pojoClassesList;
+
   /**
    * Creates a new RuleBookRunner using the specified package and the default RuleBook.
    * @param rulePackage a package to scan for POJO Rules
@@ -52,6 +54,17 @@ public class RuleBookRunner extends Auditor implements RuleBook {
     _prototypeClass = ruleBookClass;
     _package = rulePackage;
   }
+
+  /**
+   * Creates a new RuleBookRunner using specified pojo Rule classes.
+   *
+   * @param pojoClassesList the list of pojo classes.
+   */
+  public RuleBookRunner(List<Class<?>> pojoClassesList) {
+    this(CoRRuleBook.class, null);
+    _pojoClassesList = pojoClassesList;
+  }
+
 
   @Override
   public void addRule(Rule rule) {
@@ -85,7 +98,7 @@ public class RuleBookRunner extends Auditor implements RuleBook {
       Optional<Result> result = ruleBook.getResult();
       result.ifPresent(res -> _result.setValue(res.getValue()));
     } catch (IOException | InvalidPathException ex) {
-      LOGGER.error("Unable to find rule classes in package '" + _package + "'", ex);
+      LOGGER.error("Unable to find rule classes", ex);
     } catch (InstantiationException | IllegalAccessException ex) {
       LOGGER.error("Unable to create an instance of '" + _prototypeClass.getName()
           + "' with the default constructor", ex);
@@ -109,7 +122,7 @@ public class RuleBookRunner extends Auditor implements RuleBook {
     try {
       return findRuleClassesInPackage(_package).size() > 0;
     } catch (IOException | InvalidPathException e) {
-      LOGGER.error("Unable to find rule classes in package '" + _package + "'", e);
+      LOGGER.error("Unable to find rule classes", e);
       return false;
     }
   }
@@ -128,5 +141,4 @@ public class RuleBookRunner extends Auditor implements RuleBook {
 
     return rules;
   }
-
 }

@@ -7,10 +7,17 @@ import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.RuleStatus;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutResult;
+import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
@@ -97,6 +104,69 @@ public class RuleBookRunnerTest {
     Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
   }
 
+  @Test
+  @SuppressWarnings("unchecked")
+  public void ruleBookRunnerOrdersTheExecutionOfRulesForOnePojoClass() {
+    Fact<String> fact1 = new Fact("fact1", "Fact");
+    Fact<String> fact2 = new Fact("fact2", "Fact");
+    FactMap<String> factMap = new FactMap<>();
+
+    List<Class<?>> pojoClasses = new ArrayList<>();
+    pojoClasses.add(SampleRuleWithResult.class);
+    RuleBookRunner ruleBookRunner = new RuleBookRunner(pojoClasses);
+    factMap.put(fact1);
+    factMap.put(fact2);
+    ruleBookRunner.run(factMap);
+
+    Assert.assertEquals("So Factual Too!", fact1.getValue());
+    Assert.assertEquals("So Factual Too!", fact2.getValue());
+    Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void ruleBookRunnerOrdersTheExecutionOfRulesForMultiplePojoClass() {
+    Fact<String> fact1 = new Fact("fact1", "Fact");
+    Fact<String> fact2 = new Fact("fact2", "Fact");
+    FactMap<String> factMap = new FactMap<>();
+    factMap.put(fact1);
+    factMap.put(fact2);
+
+    List<Class<?>> pojoClasses = new ArrayList<>();
+    pojoClasses.add(SampleRuleWithResult.class);
+    pojoClasses.add(SampleRuleWithoutAnnotations.class);
+    pojoClasses.add(SampleRuleWithoutResult.class);
+    pojoClasses.add(SubRuleWithResult.class);
+    RuleBookRunner ruleBookRunner = new RuleBookRunner(pojoClasses);
+
+    ruleBookRunner.run(factMap);
+
+    Assert.assertEquals("So Factual Too!", fact1.getValue());
+    Assert.assertEquals("So Factual!", fact2.getValue());
+    Assert.assertEquals("Equivalence, Bitches!", ruleBookRunner.getResult().get().toString());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void ruleBookRunnerOrdersTheExecutionOfRulesNoAnnotation() {
+    Fact<String> fact1 = new Fact("fact1", "Fact");
+    Fact<String> fact2 = new Fact("fact2", "Fact");
+    FactMap<String> factMap = new FactMap<>();
+
+    List<Class<?>> pojoClasses = new ArrayList<>();
+    pojoClasses.add(SampleRuleWithoutAnnotations.class);
+    RuleBookRunner ruleBookRunner = new RuleBookRunner(pojoClasses);
+    factMap.put(fact1);
+    factMap.put(fact2);
+    ruleBookRunner.run(factMap);
+
+    Assert.assertEquals("Fact", fact1.getValue());
+    Assert.assertEquals("Fact", fact2.getValue());
+    Optional<Result> result = ruleBookRunner.getResult();
+    Assert.assertFalse("Expected Result annotation to be not defined", result.isPresent());
+  }
+
+
   @Test(expected = UnsupportedOperationException.class)
   public void rulesCanNotBeAddedByCallingAddRule() {
     Rule rule = mock(Rule.class);
@@ -162,9 +232,9 @@ public class RuleBookRunnerTest {
         waiter.resume();
         waiter.assertEquals("Equivalence, Bitches!", ruleBook.getResult().get().toString());
         waiter.resume();
-        waiter.assertEquals(4, ((Auditor)ruleBook).getRuleStatusMap().size());
+        waiter.assertEquals(4, ((Auditor) ruleBook).getRuleStatusMap().size());
         waiter.resume();
-        waiter.assertEquals(RuleStatus.EXECUTED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
+        waiter.assertEquals(RuleStatus.EXECUTED, ((Auditor) ruleBook).getRuleStatus("Result Rule"));
         waiter.resume();
       });
 
@@ -174,7 +244,7 @@ public class RuleBookRunnerTest {
         waiter.resume();
         waiter.assertEquals("Value", unequalFacts2.getValue("fact2"));
         waiter.resume();
-        waiter.assertEquals(RuleStatus.SKIPPED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
+        waiter.assertEquals(RuleStatus.SKIPPED, ((Auditor) ruleBook).getRuleStatus("Result Rule"));
         waiter.resume();
       });
 
