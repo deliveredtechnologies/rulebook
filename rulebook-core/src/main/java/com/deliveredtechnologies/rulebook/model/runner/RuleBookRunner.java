@@ -8,27 +8,19 @@ import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
+
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
+import static java.util.Comparator.comparingInt;
 
 /**
  * Runs the POJO Rules in a specified package as a RuleBook.
@@ -136,70 +128,17 @@ public class RuleBookRunner extends Auditor implements RuleBook {
   }
 
   private List<Class<?>> findRuleClassesInPackage(String packageName) throws InvalidPathException, IOException {
-    if (packageName != null && !packageName.isEmpty()) {
-      String pathName = packageName.replace(".", "/");
-      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-      URL pathUrl = classLoader.getResource(pathName);
-      if (pathUrl == null) {
-        throw new InvalidPathException("'" + packageName + "' cannot be found by the ClassLoader", packageName);
-      }
+    Reflections reflections = new Reflections(packageName);
 
-      FileSystem fs = null;
-      Path path;
-      try {
-        URI pathUri = pathUrl.toURI();
-        LOGGER.debug(String.format("%s URI -> %s", pathName, pathUrl.toURI()));
+    List<Class<?>> rules = reflections
+        .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
+        .filter(rule -> packageName.equals(rule.getPackage().getName())) // Search only within package, not subpackages
+        .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
+        .collect(Collectors.toList());
 
-        if (pathUri.toString().contains("!")) {
+    rules.sort(comparingInt(aClass ->
+        getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, aClass).order()));
 
-          //if it's inside an archive, reference the archive as the FileSystem and combine the remaining paths
-          String[] paths = pathUri.toString().split("!");
-          fs = FileSystems.newFileSystem(URI.create(paths[0]), new HashMap<>());
-          String strPath = Arrays.stream(Arrays.copyOfRange(paths, 1, paths.length))
-              .reduce((item1, item2) -> item1 + item2).get();
-
-          LOGGER.debug(String.format("Resource Path Inside Archive: %s", strPath));
-          path = fs.getPath(strPath);
-        } else {
-
-          //if it's not inside an archive, then just use the path based on the current FileSystem
-          path = Paths.get(pathUri);
-        }
-
-        if (!Files.exists(path) || !Files.isDirectory(path)) {
-          throw new InvalidPathException("'" + packageName + "' is not a valid path", packageName);
-        }
-
-        List<Class<?>> classes = new ArrayList<>();
-        Files.walk(path, 1)
-            .filter(p -> !Files.isDirectory(p))
-            .forEach(p -> {
-              String fileName = p.getFileName().toString();
-              String className = fileName.substring(0, fileName.length() - 6);
-              try {
-                Class<?> ruleClass = Class.forName(packageName + "." + className);
-                if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, ruleClass) != null) {
-                  classes.add(ruleClass);
-                }
-              } catch (ClassNotFoundException e) {
-                LOGGER.error("Unable to resolve class for '" + packageName + "." + className + "'", e);
-              }
-            });
-        classes.sort((class1, class2) ->
-            getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class1).order()
-                - getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, class2).order());
-
-        return classes;
-      } catch (URISyntaxException ex) {
-        throw new InvalidPathException("'" + packageName + "' is not a valid path", ex.getReason());
-      } finally {
-        if (fs != null) {
-          fs.close();
-        }
-      }
-    } else if (_pojoClassesList != null && !_pojoClassesList.isEmpty()) {
-      return _pojoClassesList;
-    }
-    return new ArrayList<>();
+    return rules;
   }
 }
