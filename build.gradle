@@ -229,6 +229,27 @@ project("rulebook-core") {
                         role 'raised bug for v0.9.1'
                     }
                 }
+                contributor {
+                    name 'Tomek Bielaszewski'
+                    url 'https://github.com/tomekbielaszewski'
+                    roles {
+                        role 'corrected some errata in the README'
+                    }
+                }
+                contributor {
+                    name 'Abhijeet Joshi'
+                    url 'https://github.com/jabhijeet'
+                    roles {
+                        role 'code contributor for v0.10'
+                    }
+                }
+                contributor {
+                    name 'Riz Joj'
+                    url 'https://github.com/rizjoj'
+                    roles {
+                        role 'code contributor for v0.10'
+                    }
+                }
             }
         }
     }
