@@ -594,7 +594,7 @@ Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is a
 
 ## 5 Using RuleBook with Spring
 
-RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBook's are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBooks are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
 
 ### 5.1 Adding RuleBook Spring Support to Your Project
 
