@@ -133,6 +133,7 @@ public class RuleAdapter implements Decision {
             try {
               return (Boolean) method.invoke(_rulePojo);
             } catch (InvocationTargetException | IllegalAccessException ex) {
+              LOGGER.error("Unable to validate condition due to an exception. Condition will be interpreted as false", ex);
               return false;
             }
           })
@@ -265,7 +266,7 @@ public class RuleAdapter implements Decision {
         }
       } catch (Exception ex) {
         LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
-            + _rulePojo.getClass() + "'");
+            + _rulePojo.getClass() + "'", ex);
       }
     }
   }
