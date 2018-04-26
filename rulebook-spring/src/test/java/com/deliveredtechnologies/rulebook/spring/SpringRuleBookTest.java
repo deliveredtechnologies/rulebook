@@ -1,9 +1,13 @@
 package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.FactMap;
+import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleStatus;
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.junit.Assert;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.io.InvalidClassException;
 
 import static org.mockito.Mockito.verify;
@@ -32,6 +37,9 @@ public class SpringRuleBookTest {
 
   @Autowired
   SpringRuleWithResult _ruleWithResult;
+
+  @Resource(name = "text3")
+  RuleBook _auditableRuleBook;
 
   /**
    * Setup the RuleBook and the facts to be used in testing.
@@ -70,5 +78,20 @@ public class SpringRuleBookTest {
     SpringRuleBook<String> ruleBook = new SpringRuleBook<>(_ruleBook);
 
     Assert.assertFalse(ruleBook.hasRules());
+  }
+
+  @Test
+  public void springRuleBookRunnersShouldBeAuditable() {
+    Auditor auditor = (Auditor)_auditableRuleBook;
+    NameValueReferableMap<String> facts = new FactMap<String>();
+    facts.setValue("value1", "value2");
+    facts.setValue("value2", "value2");
+    _auditableRuleBook.run(facts);
+    Assert.assertEquals(2, auditor.getRuleStatusMap().size());
+    for (String key : auditor.getRuleStatusMap().keySet()) {
+      Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatusMap().get(key));
+    }
+    Assert.assertTrue(_auditableRuleBook.getResult().isPresent());
+    _auditableRuleBook.getResult().ifPresent(result -> Assert.assertEquals("firstRule", result.toString()));
   }
 }

@@ -9,6 +9,8 @@ import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
@@ -62,5 +64,27 @@ public class RuleBookAuditorTest {
     ruleBook.run(facts);
 
     Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatus("SimpleRule"));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void namedRulesInRuleBookAuditorBuiltByRuleBookBuilderAreAudited() {
+    RuleBookAuditor ruleBookAuditor = (RuleBookAuditor) RuleBookBuilder.create()
+        .withResultType(Integer.class).withDefaultResult(0)
+        .asAuditor()
+        .addRule(rule -> rule.withName("jaRule")
+            .withFactType(String.class)
+            .when(facts -> facts.getOne().equals("Fact Value"))
+            .then((facts, result) -> result.setValue(100)).build()).build();
+
+    // run facts
+    FactMap facts = new FactMap();
+    facts.setValue("fact", "Fact Value");
+
+    ruleBookAuditor.run(facts);
+    Assert.assertTrue(ruleBookAuditor.getResult().isPresent());
+    Assert.assertEquals(100, ruleBookAuditor.getResult().map(result -> ((Result)result).getValue()).orElse(null));
+    Assert.assertEquals(1, ruleBookAuditor.getRuleStatusMap().size());
+    Assert.assertEquals(RuleStatus.EXECUTED, ruleBookAuditor.getRuleStatus("jaRule"));
   }
 }

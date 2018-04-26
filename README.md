@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.9.1-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=master&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=master&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=master)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.10-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -314,13 +314,13 @@ Much like the Given-When-Then language for defining tests that was popularized b
 invoked in the order they are specified if the when() condition evaluates to true.
 
 ### 3.2 The Using Method
-**Using** methods reduce the set of facts available to a then() method. Mutiple using() methods can also be chained together if so desired. The aggregate of the facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
+**Using** methods reduce the set of facts available to a then() method. Multiple using() methods can also be chained together if so desired. The aggregate of the facts with the names specified in all using() methods immediately preceeding a then() method will be made available to that then() method. An example of how using() works [is shown above](#22-the-above-example-using-facts).
 
 ### 3.3 The Stop Method
 **Stop** methods break the rule chain. If a stop() method is specified when defining a rule, it means that if the when() condition evaluates to true, following the completion of the then() action(s), the rule chain should be broken and no more rules in that chain should be evaluated.
 
 ### 3.4 Working With Facts
-Facts can provided to Rules using the given() method. In RuleBooks, facts are provided to Rules when the RuleBook is run. The facts available to Rules and RuleBooks are contained in a NameValueReferableMap (the base implementation being FactMap), which is a special kind of Map that allows for easy access to the underlying objects contained in facts. The reason why facts exist is so that there is always a reference to the objects that Rules work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to a representative object.
+Facts can be provided to Rules using the given() method. In RuleBooks, facts are provided to Rules when the RuleBook is run. The facts available to Rules and RuleBooks are contained in a NameValueReferableMap (the base implementation being FactMap), which is a special kind of Map that allows for easy access to the underlying objects contained in facts. The reason why facts exist is so that there is always a reference to the objects that Rules work with - even if say, an immutable object is replaced, the perception is that the Fact still exists and provides a named reference to a representative object.
 
 #### 3.4.1 The Single Fact Convenience Method
 Facts really only have a single convenience method. Since the NameValueReferableMap (e.g. FactMap) is what is passed into when() and then() methods, most of the convenience methods around facts are made available in the Map. However, there is one convenience method included in the Fact class... the constructor. Facts consist of a name value pair. But in some cases, the name of the Fact should just be the string value of the object it contains. In those cases, a constructor with a single argument of the type of the object contained in the fact can be used.
@@ -365,7 +365,7 @@ Rules auditing can be enabled when constructing a RuleBook by specifying _asAudi
  rulebook.run(new FactMap());
 ```
 
-By using _asAuditor()_ each rule in the RuleBook can register itself as an _Auditable Rule_ if its name is sepcified. Each _Auditable Rule_ added to a RuleBook _Auditor_ has its state is recorded in the RuleBook. At the time when rules are registered as auditable in the RuleBook, their RuleStatus is _NONE_. After the RuleBook is run, their RuleStatus is changed to _SKIPPED_ for all rules that fail or whose conditions do not evaluate to true. For rules whose conditions do evaluate to true and whose then() action completes successfully, their RuleStatus is changed to _EXECUTED_.
+By using _asAuditor()_ each rule in the RuleBook can register itself as an _Auditable Rule_ if its name is specified. Each _Auditable Rule_ added to a RuleBook _Auditor_ has its state recorded in the RuleBook. At the time when rules are registered as auditable in the RuleBook, their RuleStatus is _NONE_. After the RuleBook is run, their RuleStatus is changed to _SKIPPED_ for all rules that fail or whose conditions do not evaluate to true. For rules whose conditions do evaluate to true and whose then() action completes successfully, their RuleStatus is changed to _EXECUTED_.
 
 Retrieving the status of a rule can be done as follows.
 
@@ -432,7 +432,7 @@ public static void main(String args[]) {
 ```
 
 ### 4.2 A New MegaBank Example With POJO Rules
-_MegaBank changed their rate adjustment policy. They also now accept loan applications that include up to 3 applicants. If all of the applicants' credit scores are below 600, then they must pay 4x the current rate. However, if all of the applicants have a credit score of less than 700, but at least one applicant has a credit score greater than 600, then they must pay an additional point on top the rate. Also, if any of the applicants have a credit score of 700 or more and the sum of the cash on hand available from all applicants is greater than or equal to $50,000, then they get a quarter point reduction in their rate. And if at least one applicant is a first time home buyer and at least one applicant has a credit score of over 600, then they get a 20% reduction in their calculated rate after all other adjustments are made._
+_MegaBank changed their rate adjustment policy. They also now accept loan applications that include up to 3 applicants. If all of the applicants credit scores are below 600, then they must pay 4x the current rate. However, if all of the applicants have a credit score of less than 700, but at least one applicant has a credit score greater than 600, then they must pay an additional point on top the rate. Also, if any of the applicants have a credit score of 700 or more and the sum of the cash on hand available from all applicants is greater than or equal to $50,000, then they get a quarter point reduction in their rate. And if at least one applicant is a first time home buyer and at least one applicant has a credit score of over 600, then they get a 20% reduction in their calculated rate after all other adjustments are made._
 
 **...using the ApplicantBean defined above**
 ```java
@@ -557,7 +557,7 @@ public class ExampleSolution {
 
 ### 4.3 POJO Rules Explained
 
-POJO Rules are annotated with @Rule at the class level. This lets the RuleBookRunner know that the class you defined is really a Rule. Facts are injected into POJO Rules using @Given annotations. The value passed into the @Given annotation is the name of the Fact given to the RuleBookRunner. The types annotated by @Given can either be the generic type of the matching Fact or the Fact type as seen above. The big difference between the two is that changes applied to immutable objects are not propigated down the rule chain if the Fact’s generic object is changed (because it would then be a new object). However, if you set the value on a Fact object, those changes will be persisted down the rule chain.
+POJO Rules are annotated with @Rule at the class level. This lets the RuleBookRunner know that the class you defined is really a Rule. Facts are injected into POJO Rules using @Given annotations. The value passed into the @Given annotation is the name of the Fact given to the RuleBookRunner. The types annotated by @Given can either be the generic type of the matching Fact or the Fact type as seen above. The big difference between the two is that changes applied to immutable objects are not propagated down the rule chain if the Fact’s generic object is changed (because it would then be a new object). However, if you set the value on a Fact object, those changes will be persisted down the rule chain.
 
 The @When annotation denotes the method that is used as the condition for executing the ‘then’ action. The method annotated with @When should accept no arguments and it should return a boolean result.
 
@@ -567,7 +567,7 @@ The @Result annotation denotes the result of the Rule. Of course, some Rules may
 
 #### 4.3.1 Ordering POJO Rules
 
-The ‘order’ property can \[optionally\] be used with the @Rule annoataion to specify the orner in which POJO Rules will execute [as seen above](#42-a-new-megabank-example-with-pojo-rules). If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same order, which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group is ordered among other rules, but the execution of the rules within that group doesn’t matter.
+The ‘order’ property can \[optionally\] be used with the @Rule annoataion to specify the order in which POJO Rules will execute [as seen above](#42-a-new-megabank-example-with-pojo-rules). If the order property is not specified, then Rules may execute in any order. Similarly, more than one Rule may have the same order, which would mean that the Rules with a matching order can fire in any order - order would then denote a group of rules, where the execution of the group is ordered among other rules, but the execution of the rules within that group doesn’t matter.
 
 #### 4.3.2 Injecting Collections into POJO Rules
 
@@ -583,7 +583,7 @@ As of v.0.3.2, RuleBook supports annotation inheritance on POJO Rules. That mean
 
 #### 4.3.4 Auditing POJO Rules
 
-Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is automatically audited. If a name is specified in the @Rule attribute, then that name is used for auditing. Otherwise, the class name of the POJO rule is used. For example, assuming that there is a POJO rule named "My Rule" that was run by the RuleBookRunner, rulebookRunner, the status of that rule's execution can be retrieved as follows.
+Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is automatically audited. If a name is specified in the @Rule attribute, then that name is used for auditing. Otherwise, the class name of the POJO rule is used. For example, assuming that there is a POJO rule named "My Rule" that was run by the RuleBookRunner, the status of that rule execution can be retrieved as follows.
 
 ```java
  Auditor auditor = (Auditor)rulebookRunner;
@@ -594,7 +594,7 @@ Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is a
 
 ## 5 Using RuleBook with Spring
 
-RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBook's are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBooks are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
 
 ### 5.1 Adding RuleBook Spring Support to Your Project
 

@@ -133,11 +133,14 @@ public class GoldenRule<T, U> implements Rule<T, U> {
     try {
       //only use facts of the specified type
       NameValueReferableMap<T> typeFilteredFacts =
-              new FactMap<T>((Map<String, NameValueReferable<T>>) facts.values().stream()
-              .filter((Object fact) -> ((NameValueReferable)fact).getValue() == null
-                  || _factType.isAssignableFrom(((NameValueReferable) fact).getValue().getClass()))
-              .collect(Collectors.toMap(fact ->
-                      ((NameValueReferable<Object>) fact).getName(), fact -> (NameValueReferable<T>) fact)));
+              new FactMap<T>((Map<String, NameValueReferable<T>>) facts.keySet().stream()
+              .filter((Object key) -> {
+                NameValueReferable fact = ((NameValueReferable)facts.get(key));
+                return fact.getValue() == null || _factType.isAssignableFrom(fact.getValue().getClass());
+              })
+              .collect(Collectors.toMap(
+                  key -> key,
+                  key -> ((NameValueReferable<T>) facts.get(key)))));
 
       //invoke then() action(s) if when() is true or if when() was never specified
       if (getCondition() == null || getCondition().test(new TypeConvertibleFactMap<T>(typeFilteredFacts))) {
@@ -191,8 +194,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
         return true;
       }
     } catch (Exception ex) {
-      //catch errors in case something like one rule was chained expecting a Fact that doesn't exist
-      //eventually, we'll have to resolve that kind of issue ahead of time
+      //catch errors in case the 'when' condition fails; in that case, log the error and just move on
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
 

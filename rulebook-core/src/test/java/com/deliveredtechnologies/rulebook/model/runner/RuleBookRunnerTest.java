@@ -7,10 +7,17 @@ import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.RuleStatus;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
+import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutResult;
+import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
@@ -162,9 +169,9 @@ public class RuleBookRunnerTest {
         waiter.resume();
         waiter.assertEquals("Equivalence, Bitches!", ruleBook.getResult().get().toString());
         waiter.resume();
-        waiter.assertEquals(4, ((Auditor)ruleBook).getRuleStatusMap().size());
+        waiter.assertEquals(4, ((Auditor) ruleBook).getRuleStatusMap().size());
         waiter.resume();
-        waiter.assertEquals(RuleStatus.EXECUTED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
+        waiter.assertEquals(RuleStatus.EXECUTED, ((Auditor) ruleBook).getRuleStatus("Result Rule"));
         waiter.resume();
       });
 
@@ -174,7 +181,7 @@ public class RuleBookRunnerTest {
         waiter.resume();
         waiter.assertEquals("Value", unequalFacts2.getValue("fact2"));
         waiter.resume();
-        waiter.assertEquals(RuleStatus.SKIPPED, ((Auditor)ruleBook).getRuleStatus("Result Rule"));
+        waiter.assertEquals(RuleStatus.SKIPPED, ((Auditor) ruleBook).getRuleStatus("Result Rule"));
         waiter.resume();
       });
 
