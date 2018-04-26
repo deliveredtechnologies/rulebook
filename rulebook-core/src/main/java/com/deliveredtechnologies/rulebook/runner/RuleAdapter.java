@@ -133,7 +133,8 @@ public class RuleAdapter implements Decision {
             try {
               return (Boolean) method.invoke(_rulePojo);
             } catch (InvocationTargetException | IllegalAccessException ex) {
-              LOGGER.error("Unable to validate condition due to an exception. Condition will be interpreted as false", ex);
+              LOGGER.error(
+                  "Unable to validate condition due to an exception. Condition will be interpreted as false", ex);
               return false;
             }
           })
