@@ -133,11 +133,14 @@ public class GoldenRule<T, U> implements Rule<T, U> {
     try {
       //only use facts of the specified type
       NameValueReferableMap<T> typeFilteredFacts =
-              new FactMap<T>((Map<String, NameValueReferable<T>>) facts.values().stream()
-              .filter((Object fact) -> ((NameValueReferable)fact).getValue() == null
-                  || _factType.isAssignableFrom(((NameValueReferable) fact).getValue().getClass()))
-              .collect(Collectors.toMap(fact ->
-                      ((NameValueReferable<Object>) fact).getName(), fact -> (NameValueReferable<T>) fact)));
+              new FactMap<T>((Map<String, NameValueReferable<T>>) facts.keySet().stream()
+              .filter((Object key) -> {
+                NameValueReferable fact = ((NameValueReferable)facts.get(key));
+                return fact.getValue() == null || _factType.isAssignableFrom(fact.getValue().getClass());
+              })
+              .collect(Collectors.toMap(
+                  key -> key,
+                  key -> ((NameValueReferable<T>) facts.get(key)))));
 
       //invoke then() action(s) if when() is true or if when() was never specified
       if (getCondition() == null || getCondition().test(new TypeConvertibleFactMap<T>(typeFilteredFacts))) {
