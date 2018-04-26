@@ -84,7 +84,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-core</artifactId>
-    <version>0.9.1</version>
+    <version>0.10</version>
 </dependency>
 ```
 
@@ -93,7 +93,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-core:0.9.1'
+compile 'com.deliveredtechnologies:rulebook-core:0.10'
 ```
 
 <sub>[[Top](#contents)]</sub>
