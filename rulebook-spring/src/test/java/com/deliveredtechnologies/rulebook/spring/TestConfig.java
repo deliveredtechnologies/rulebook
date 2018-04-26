@@ -1,6 +1,8 @@
 package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.StandardDecision;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -49,5 +51,10 @@ public class TestConfig {
   @Bean
   public RuleBookFactoryBean ruleBookFactoryWithResult() {
     return new RuleBookFactoryBean("com.deliveredtechnologies.rulebook.spring");
+  }
+
+  @Bean("text3")
+  public RuleBook ruleBook3() {
+    return new RuleBookRunner("com.deliveredtechnologies.rulebook.spring");
   }
 }
