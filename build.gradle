@@ -250,6 +250,13 @@ project("rulebook-core") {
                         role 'code contributor for v0.10'
                     }
                 }
+                contributor {
+                    name 'xPlutox'
+                    url 'https://github.com/xPlutox'
+                    roles {
+                        role 'code contributor for v0.10'
+                    }
+                }
             }
         }
     }
