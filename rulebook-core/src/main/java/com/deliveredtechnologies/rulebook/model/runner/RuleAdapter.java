@@ -139,6 +139,7 @@ public class RuleAdapter implements Rule {
               try {
                 return (Boolean) method.invoke(_pojoRule);
               } catch (InvocationTargetException | IllegalAccessException ex) {
+                LOGGER.error("Unable to validate condition due to an exception. Condition will be interpreted as false", ex);
                 return false;
               }
             })
@@ -257,7 +258,7 @@ public class RuleAdapter implements Rule {
         }
       } catch (Exception ex) {
         LOGGER.error("Unable to update field '" + field.getName() + "' in rule object '"
-                + _pojoRule.getClass() + "'");
+                + _pojoRule.getClass() + "'", ex);
       }
     }
   }
