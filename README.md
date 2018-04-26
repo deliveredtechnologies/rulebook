@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.9.1-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.10-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -73,8 +73,8 @@ cd RuleBook
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.10-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.10-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.9.2-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.9.2-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 

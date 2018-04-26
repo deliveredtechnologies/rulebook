@@ -194,8 +194,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
         return true;
       }
     } catch (Exception ex) {
-      //catch errors in case something like one rule was chained expecting a Fact that doesn't exist
-      //eventually, we'll have to resolve that kind of issue ahead of time
+      //catch errors in case the 'when' condition fails; in that case, log the error and just move on
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
     }
 
