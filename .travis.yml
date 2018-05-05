@@ -19,8 +19,7 @@ jdk:
 script:
   - |
     if cat gradle.properties | grep -q SNAPSHOT; then
-      ./gradlew clean build alljavadoc uploadArchives -PnexusUsername="${OSSRH_USERNAME}" -PnexusPassword="${OSSRH_PASSWORD}" -Psigning.keyId="" -Psigning.password=""
+      ./gradlew clean build alljavadoc uploadArchives jacocoRootReport copySource coveralls -PnexusUsername="${OSSRH_USERNAME}" -PnexusPassword="${OSSRH_PASSWORD}" -Psigning.keyId="" -Psigning.password=""
+    else
+      ./gradlew check jacocoRootReport copySource coveralls
     fi
-  - ./gradlew jacocoRootReport
-  - ./gradlew copySource
-  - ./gradlew coveralls
