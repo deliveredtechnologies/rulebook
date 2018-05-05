@@ -54,6 +54,9 @@ subprojects {
         compile("org.slf4j:slf4j-api:1.7.22")
         //reflection
         compile("org.reflections:reflections:0.9.10")
+        //spring context awareness
+        compile("org.springframework:spring-core:4.3.9.RELEASE")
+        compile("org.springframework:spring-context:4.3.6.RELEASE")
         //unit testing
         testCompile("junit:junit:4.12")
         testCompile("net.jodah:concurrentunit:0.4.2")
