@@ -17,8 +17,7 @@ cache:
 jdk:
   - oraclejdk8
 script:
-  - ./gradlew check
+  - if cat gradle.properties | grep -q SNAPSHOT; then ./gradlew clean build alljavadoc uploadArchives -PnexusUsername="${OSSRH_USERNAME}" -PnexusPassword="${OSSRH_PASSWORD}" -Psigning.keyId="" -Psigning.password="" fi
   - ./gradlew jacocoRootReport
   - ./gradlew copySource
   - ./gradlew coveralls
-  - ./travis/deploy.sh
