@@ -231,5 +231,6 @@ public class StandardRuleTest {
     Assert.assertEquals(2, captor2.getValue().size());
     Assert.assertEquals("First Fact", captor2.getValue().getValue("fact1"));
     Assert.assertEquals("Second Fact", captor2.getValue().getValue("fact2"));
+    Assert.assertTrue(false);
   }
 }
