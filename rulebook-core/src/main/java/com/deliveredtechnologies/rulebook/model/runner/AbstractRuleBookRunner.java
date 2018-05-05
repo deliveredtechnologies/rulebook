@@ -33,7 +33,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
   @SuppressWarnings("unchecked")
   private Result _result = new Result(null);
 
-  private ApplicationContext applicationContext;
+  private ApplicationContext _applicationContext;
 
   /**
    * Creates a new RuleBookRunner using the RuleBook class.
@@ -45,7 +45,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
 
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
+    this._applicationContext = applicationContext;
   }
 
   @Override
@@ -111,13 +111,13 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
 
   private Object getRuleInstance(Class<?> rule) throws IllegalAccessException, InstantiationException {
     // For backwards compatibility, if not within a Spring project
-    if (applicationContext == null) {
+    if (_applicationContext == null) {
       return rule.newInstance();
     }
 
     try {
       // Spring bean POJO rule found
-      return applicationContext.getBean(rule);
+      return _applicationContext.getBean(rule);
     } catch (BeansException e) {
       // POJO rule isn't a Spring bean
       return rule.newInstance();
