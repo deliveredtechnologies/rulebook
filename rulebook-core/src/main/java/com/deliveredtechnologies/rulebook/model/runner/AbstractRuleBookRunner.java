@@ -60,7 +60,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
         }
         Object ruleInstance = getRuleInstance(rule);
         if (ruleInstance == null) {
-          break;
+          continue;
         }
         Rule auditableRule = new AuditableRule(new RuleAdapter(ruleInstance), name);
         ruleBook.addRule(auditableRule);
