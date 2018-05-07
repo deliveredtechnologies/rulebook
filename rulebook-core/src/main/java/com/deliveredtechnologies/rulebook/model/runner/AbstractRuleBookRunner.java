@@ -51,20 +51,20 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
       RuleBook ruleBook = _prototypeClass.newInstance();
       List<Class<?>> classes = getPojoRules();
       for (Class<?> rule : classes) {
-        try {
-          getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field ->
-              ruleBook.setDefaultResult(_result.getValue())
-          );
-          String name = getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rule).name();
-          if (name.equals("None")) {
-            name = rule.getSimpleName();
-          }
-          Rule ruleInstance = new AuditableRule(new RuleAdapter(rule.newInstance()), name);
-          ruleBook.addRule(ruleInstance);
-          ((Auditable)ruleInstance).setAuditor(this);
-        } catch (IllegalAccessException | InstantiationException ex) {
-          LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
+        getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field ->
+            ruleBook.setDefaultResult(_result.getValue())
+        );
+        String name = getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rule).name();
+        if (name.equals("None")) {
+          name = rule.getSimpleName();
         }
+        Object ruleInstance = getRuleInstance(rule);
+        if (ruleInstance == null) {
+          return;
+        }
+        Rule auditableRule = new AuditableRule(new RuleAdapter(ruleInstance), name);
+        ruleBook.addRule(auditableRule);
+        ((Auditable)auditableRule).setAuditor(this);
       }
       ruleBook.run(facts);
       Optional<Result> result = ruleBook.getResult();
@@ -97,6 +97,15 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
       LOGGER.error("Unable to find rule classes", e);
       return false;
     }
+  }
+
+  protected Object getRuleInstance(Class<?> rule) {
+    try {
+      rule.newInstance();
+    } catch (InstantiationException | IllegalAccessException ex) {
+      LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
+    }
+    return null;
   }
 
   /**
