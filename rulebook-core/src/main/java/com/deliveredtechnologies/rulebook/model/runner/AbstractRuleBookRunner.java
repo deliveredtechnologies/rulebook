@@ -60,7 +60,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
         }
         Object ruleInstance = getRuleInstance(rule);
         if (ruleInstance == null) {
-          return;
+          break;
         }
         Rule auditableRule = new AuditableRule(new RuleAdapter(ruleInstance), name);
         ruleBook.addRule(auditableRule);
@@ -101,7 +101,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
 
   protected Object getRuleInstance(Class<?> rule) {
     try {
-      rule.newInstance();
+      return rule.newInstance();
     } catch (InstantiationException | IllegalAccessException ex) {
       LOGGER.warn("Unable to create instance of rule using '" + rule + "'", ex);
     }
