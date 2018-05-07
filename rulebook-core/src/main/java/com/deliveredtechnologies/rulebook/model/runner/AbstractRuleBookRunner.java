@@ -10,6 +10,9 @@ import com.deliveredtechnologies.rulebook.model.Auditable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
@@ -22,7 +25,7 @@ import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotat
 /**
  * Declares an abstract class for creating RuleBookRunner derived classes using the template method pattern.
  */
-public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook {
+public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook, ApplicationContextAware {
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
   private Class<? extends RuleBook> _prototypeClass;
@@ -30,12 +33,19 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
   @SuppressWarnings("unchecked")
   private Result _result = new Result(null);
 
+  private ApplicationContext _applicationContext;
+
   /**
    * Creates a new RuleBookRunner using the RuleBook class.
    * @param prototypeClass a RuleBook class that determines how the RuleBook is run
    */
   public AbstractRuleBookRunner(Class<? extends RuleBook> prototypeClass) {
     _prototypeClass = prototypeClass;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this._applicationContext = applicationContext;
   }
 
   @Override
@@ -59,7 +69,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
           if (name.equals("None")) {
             name = rule.getSimpleName();
           }
-          Rule ruleInstance = new AuditableRule(new RuleAdapter(rule.newInstance()), name);
+          Rule ruleInstance = new AuditableRule(new RuleAdapter(getRuleInstance(rule)), name);
           ruleBook.addRule(ruleInstance);
           ((Auditable)ruleInstance).setAuditor(this);
         } catch (IllegalAccessException | InstantiationException ex) {
@@ -96,6 +106,21 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
     } catch (InvalidPathException e) {
       LOGGER.error("Unable to find rule classes", e);
       return false;
+    }
+  }
+
+  private Object getRuleInstance(Class<?> rule) throws IllegalAccessException, InstantiationException {
+    // For backwards compatibility, if not within a Spring project
+    if (_applicationContext == null) {
+      return rule.newInstance();
+    }
+
+    try {
+      // Spring bean POJO rule found
+      return _applicationContext.getBean(rule);
+    } catch (BeansException e) {
+      // POJO rule isn't a Spring bean
+      return rule.newInstance();
     }
   }
 
