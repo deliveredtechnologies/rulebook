@@ -53,7 +53,7 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
       for (Class<?> rule : classes) {
         try {
           getAnnotatedField(com.deliveredtechnologies.rulebook.annotation.Result.class, rule).ifPresent(field ->
-              ruleBook.setDefaultResult(_result.getValue() == null ? new Object() : _result.getValue())
+              ruleBook.setDefaultResult(_result.getValue())
           );
           String name = getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, rule).name();
           if (name.equals("None")) {

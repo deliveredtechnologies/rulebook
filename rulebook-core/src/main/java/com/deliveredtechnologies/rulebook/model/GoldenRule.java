@@ -27,6 +27,8 @@ import java.util.function.Predicate;
 
 import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.CONTINUE_ON_FAILURE;
 import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.STOP_ON_FAILURE;
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.ERROR_ON_FAILURE;
+
 
 /**
  * A standard implementation of {@link Rule}.
@@ -181,6 +183,9 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                         }
                       } catch (IllegalAccessException | InvocationTargetException err) {
                         LOGGER.error("Error invoking action on " + action.getClass(), err);
+                        if (_actionType.equals(ERROR_ON_FAILURE)) {
+                          throw new RuleException(err);
+                        }
                       }
                     });
           facts.putAll(usingFacts);
@@ -190,12 +195,14 @@ public class GoldenRule<T, U> implements Rule<T, U> {
         if (_actionType.equals(STOP_ON_FAILURE)) {
           this._ruleState = RuleState.NEXT;
         }
-
         return true;
       }
     } catch (Exception ex) {
-      //catch errors from the 'when' condition; if it fails, just continue along
+      //catch errors from the 'when' condition; if it fails, just continue along unless ERROR_ON_FAILURE is set
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
+      if (_actionType.equals(ERROR_ON_FAILURE)) {
+        throw new RuleException(ex);
+      }
     }
 
     return _actionType.equals(STOP_ON_FAILURE);
