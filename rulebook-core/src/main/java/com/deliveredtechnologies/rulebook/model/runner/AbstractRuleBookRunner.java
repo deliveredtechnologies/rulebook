@@ -99,6 +99,14 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
     }
   }
 
+  /**
+   * Returns a rule instance
+   *
+   * <p>For container aware contexts (like Spring, Guice, Weld, etc.) override this method and instantiate the rule
+   * via the container.
+   * @param rule The rule class
+   * @return The rule instance
+   */
   protected Object getRuleInstance(Class<?> rule) {
     try {
       return rule.newInstance();

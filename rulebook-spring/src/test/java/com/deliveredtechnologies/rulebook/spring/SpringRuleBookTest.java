@@ -87,10 +87,11 @@ public class SpringRuleBookTest {
     facts.setValue("value1", "value2");
     facts.setValue("value2", "value2");
     _auditableRuleBook.run(facts);
-    Assert.assertEquals(2, auditor.getRuleStatusMap().size());
-    for (String key : auditor.getRuleStatusMap().keySet()) {
-      Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatusMap().get(key));
-    }
+    Assert.assertEquals(3, auditor.getRuleStatusMap().size());
+    // If you add a new rule, increment the number above and add an assertion for that rule below!
+    Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatusMap().get("SpringRuleWithResult"));
+    Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatusMap().get("SpringRuleWithoutResult"));
+    Assert.assertEquals(RuleStatus.SKIPPED, auditor.getRuleStatusMap().get("SpringAwareRuleWithoutResult"));
     Assert.assertTrue(_auditableRuleBook.getResult().isPresent());
     _auditableRuleBook.getResult().ifPresent(result -> Assert.assertEquals("firstRule", result.toString()));
   }
