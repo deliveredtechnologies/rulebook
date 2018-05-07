@@ -9,8 +9,8 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Runs the POJO Rules that can be Spring aware beans in a specified package as a RuleBook.
- * <p>
- * POJO rule classes in the package may or may not have the @Component/@Service/etc. annotation. If they
+ *
+ * <p>POJO rule classes in the package may or may not have the @Component/@Service/etc. annotation. If they
  * do, the bean will be fetched and @Autowired variables will be populated. If not, an instance of the
  * POJO rule will be created and used.
  */
@@ -31,9 +31,9 @@ public class SpringAwareRuleBookRunner extends RuleBookRunner implements Applica
 
   @Override
   protected Object getRuleInstance(Class<?> rule) {
-    // For backwards compatibility, if not within a Spring project
     if (_applicationContext == null) {
-      return super.getRuleInstance(rule);
+      throw new IllegalStateException("Cannot instantiate RuleBookRunner because "
+              + "Spring application context is not available.");
     }
 
     try {
