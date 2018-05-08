@@ -57,4 +57,9 @@ public class TestConfig {
   public RuleBook ruleBook3() {
     return new RuleBookRunner("com.deliveredtechnologies.rulebook.spring");
   }
+
+  @Bean
+  public SpringAwareRuleBookRunner springAwareRuleBookRunner() {
+    return new SpringAwareRuleBookRunner("com.deliveredtechnologies.rulebook.spring");
+  }
 }
