@@ -31,4 +31,10 @@ public class SpringAwareRuleBookRunnerTest {
     _ruleBook.run(_facts);
     Assert.assertEquals(EXPECTED_RESULT, _facts.getValue("value2"));
   }
+
+  @Test
+  public void ruleRunnerShouldReturnNullRuleClassIsInvalid() {
+    Class clazz = Class.class;
+    Assert.assertNull(_ruleBook.getRuleInstance(clazz));
+  }
 }
