@@ -45,11 +45,10 @@ public class RuleBookAuditorTest {
   @Test
   @SuppressWarnings("unchecked")
   public void rulesAreStillExecutedWithNullFacts() {
-    Rule rule = new GoldenRule(Object.class);
-    BiConsumer<NameValueReferableMap, Result> action = (facts, result)
+    Rule<Object, Object> rule = new GoldenRule(Object.class);
+    rule.addAction((facts, result)
         -> result.setValue("Rule was triggered with status=" + facts.get("status")
-        + " and object=" + facts.get("object"));
-    rule.addAction(action);
+        + " and object=" + facts.get("object")));
 
     AuditableRule auditableRule = new AuditableRule(rule, "SimpleRule");
 
@@ -61,11 +60,52 @@ public class RuleBookAuditorTest {
 
     RuleBookAuditor auditor = new RuleBookAuditor(ruleBook);
     auditor.addRule(auditableRule);
-    ruleBook.run(facts);
+    auditor.run(new FactMap());
 
     Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatus("SimpleRule"));
   }
 
+  /**
+   * Test to ensure that rules that error on a failure are shown in a PENDING status.
+   */
+  @Test
+  @SuppressWarnings("unchecked")
+  public void errorOnFailureRulesResultInPendingStatus() {
+    Rule<Object, Object> rule1 = new GoldenRule(Object.class);
+    rule1.addAction((facts, result)
+        -> result.setValue("Rule was triggered with status=" + facts.get("status")
+        + " and object=" + facts.get("object")));
+
+    Rule<Object, Object> rule2 = new GoldenRule(Object.class, RuleChainActionType.ERROR_ON_FAILURE);
+    rule2.setCondition(stuff -> stuff.getValue("invalid").equals("something"));
+
+    AuditableRule auditableRule1 = new AuditableRule(rule1, "SimpleRule");
+    AuditableRule auditableRule2 = new AuditableRule(rule2, "ErrorRule");
+
+    FactMap facts = new FactMap();
+    facts.setValue("status", 1);
+    facts.setValue("object", null);
+
+    RuleBook ruleBook = new CoRRuleBook();
+
+    RuleBookAuditor auditor = new RuleBookAuditor(ruleBook);
+    auditor.addRule(auditableRule1);
+    auditor.addRule(auditableRule2);
+
+    try {
+      ruleBook.run(facts);
+    } catch (Exception e) {
+      Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatus("SimpleRule"));
+      Assert.assertEquals(RuleStatus.PENDING, auditor.getRuleStatus("ErrorRule"));
+      Assert.assertTrue(e instanceof RuleException);
+      return;
+    }
+    Assert.fail();
+  }
+
+  /**
+   * Test to confirm audited named rules built by RuleBook's builder.
+   */
   @Test
   @SuppressWarnings("unchecked")
   public void namedRulesInRuleBookAuditorBuiltByRuleBookBuilderAreAudited() {
