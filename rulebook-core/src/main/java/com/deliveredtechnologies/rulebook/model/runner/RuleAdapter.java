@@ -11,6 +11,8 @@ import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
+import com.deliveredtechnologies.rulebook.model.RuleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ public class RuleAdapter implements Rule {
 
   private Rule _rule;
   private Object _pojoRule;
+  private RuleChainActionType _actionType;
 
   /**
    * Adapts a POJO to a Rule given a POJO and a Rule.
@@ -54,10 +57,15 @@ public class RuleAdapter implements Rule {
    * @throws InvalidClassException  if the @Rule annotation is missing from the POJO
    */
   public RuleAdapter(Object pojoRule, Rule rule) throws InvalidClassException {
-    if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, pojoRule.getClass()) == null) {
+    com.deliveredtechnologies.rulebook.annotation.Rule ruleAnnotation =
+        getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, pojoRule.getClass());
+
+    if (ruleAnnotation == null) {
       throw new InvalidClassException(pojoRule.getClass() + " is not a Rule; missing @Rule annotation");
     }
-    _rule = rule;
+
+    _actionType = ruleAnnotation.ruleChainAction();
+    _rule = rule == null ? new GoldenRule(Object.class, _actionType) : rule;
     _pojoRule = pojoRule;
   }
 
@@ -68,7 +76,7 @@ public class RuleAdapter implements Rule {
    */
   @SuppressWarnings("unchecked")
   public RuleAdapter(Object pojoRule) throws InvalidClassException {
-    this(pojoRule, new GoldenRule(Object.class));
+    this(pojoRule, null);
   }
 
   @Override
@@ -139,8 +147,11 @@ public class RuleAdapter implements Rule {
               try {
                 return (Boolean) method.invoke(_pojoRule);
               } catch (InvocationTargetException | IllegalAccessException ex) {
+                if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
+                  throw new RuleException(ex);
+                }
                 LOGGER.error(
-                    "Unable to validate condition due to an exception. Condition will be interpreted as false", ex);
+                    "Unable to validate condition due to an exception. It will be evaluated as false", ex);
                 return false;
               }
             })

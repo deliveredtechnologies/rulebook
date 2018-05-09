@@ -3,21 +3,11 @@ package com.deliveredtechnologies.rulebook.model.runner;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.model.Auditor;
-import com.deliveredtechnologies.rulebook.model.Rule;
-import com.deliveredtechnologies.rulebook.model.RuleBook;
-import com.deliveredtechnologies.rulebook.model.RuleStatus;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutResult;
-import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
+import com.deliveredtechnologies.rulebook.model.*;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
@@ -30,7 +20,7 @@ import static org.mockito.Mockito.mock;
 public class RuleBookRunnerTest {
   @Test
   public void ruleBookRunnerDoesAddRuleClassesInPackage() {
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
     ruleBookRunner.run(new FactMap());
 
     Assert.assertTrue(ruleBookRunner.hasRules());
@@ -94,7 +84,7 @@ public class RuleBookRunnerTest {
     Fact<String> fact2 = new Fact("fact2", "Fact");
     FactMap<String> factMap = new FactMap<>();
 
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
     factMap.put(fact1);
     factMap.put(fact2);
     ruleBookRunner.run(factMap);
@@ -107,14 +97,14 @@ public class RuleBookRunnerTest {
   @Test(expected = UnsupportedOperationException.class)
   public void rulesCanNotBeAddedByCallingAddRule() {
     Rule rule = mock(Rule.class);
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
     ruleBookRunner.addRule(rule);
   }
 
   @Test
   @SuppressWarnings("unchecked")
   public void ruleBookRunnerResetsToDefaultResult() {
-    RuleBook<String> ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    RuleBook<String> ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
     ruleBook.setDefaultResult("default");
 
     FactMap<String> facts = new FactMap<>();
@@ -137,7 +127,7 @@ public class RuleBookRunnerTest {
   public void ruleBookRunnerIsThreadSafe() throws TimeoutException {
     final Waiter waiter = new Waiter();
 
-    RuleBook ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner");
+    RuleBook ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
 
     FactMap<String> equalFacts1 = new FactMap<>();
     equalFacts1.setValue("fact1", "Fact");
@@ -209,5 +199,21 @@ public class RuleBookRunnerTest {
         service.shutdown();
       }
     }
+  }
+
+  @Test
+  public void errorOnFailureRulesThrowErrorsInRuleBookRunners() {
+    RuleBookRunner ruleBook =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error");
+
+    try {
+      ruleBook.run(new FactMap());
+    }
+    catch (RuleException err) {
+      Assert.assertEquals(ruleBook.getRuleStatus("SampleRule"), RuleStatus.EXECUTED);
+      Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.PENDING);
+      return;
+    }
+    Assert.fail();
   }
 }

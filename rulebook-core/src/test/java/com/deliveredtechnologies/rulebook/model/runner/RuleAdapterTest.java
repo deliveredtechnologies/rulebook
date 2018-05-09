@@ -9,13 +9,12 @@ import com.deliveredtechnologies.rulebook.NameValueReferableTypeConvertibleMap;
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
-import com.deliveredtechnologies.rulebook.model.runner.rule.noresult.NoResultRule;
 import com.deliveredtechnologies.rulebook.model.runner.rule.result.ResultRule;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutRuleAnnotation;
-import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutAnnotations;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutRuleAnnotation;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SubRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutResult;
 
 import org.junit.Assert;
 import org.junit.Before;

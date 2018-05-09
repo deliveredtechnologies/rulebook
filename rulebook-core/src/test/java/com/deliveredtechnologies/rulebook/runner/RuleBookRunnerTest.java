@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 public class RuleBookRunnerTest {
   @Test
   public void ruleBookRunnerShouldAddRuleClassesInPackage() {
-    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
+    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks"));
     ruleBookRunner.run();
 
     verify(ruleBookRunner, times(4)).addRule(any(RuleAdapter.class));
@@ -44,7 +44,7 @@ public class RuleBookRunnerTest {
     Fact<String> fact1 = new Fact("fact1", "Fact");
     Fact<String> fact2 = new Fact("fact2", "Fact");
 
-    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner"));
+    RuleBookRunner ruleBookRunner = spy(new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks"));
     ruleBookRunner.given(fact1, fact2).run();
 
     Assert.assertEquals("So Factual Too!", fact1.getValue());
