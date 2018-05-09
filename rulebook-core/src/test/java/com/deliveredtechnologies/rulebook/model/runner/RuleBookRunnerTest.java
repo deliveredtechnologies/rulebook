@@ -3,7 +3,11 @@ package com.deliveredtechnologies.rulebook.model.runner;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.model.*;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleStatus;
+import com.deliveredtechnologies.rulebook.model.Auditor;
+import com.deliveredtechnologies.rulebook.model.RuleException;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -208,8 +212,7 @@ public class RuleBookRunnerTest {
 
     try {
       ruleBook.run(new FactMap());
-    }
-    catch (RuleException err) {
+    } catch (RuleException err) {
       Assert.assertEquals(ruleBook.getRuleStatus("SampleRule"), RuleStatus.EXECUTED);
       Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.PENDING);
       return;
