@@ -1,7 +1,6 @@
-package com.deliveredtechnologies.rulebook.runner;
+package com.deliveredtechnologies.rulebook.runner.test.rulebooks;
 
 import com.deliveredtechnologies.rulebook.annotation.Given;
-import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.When;
 
 /**

@@ -3,10 +3,10 @@ package com.deliveredtechnologies.rulebook.model.runner;
 import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutAnnotations;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutResult;
-import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutAnnotations;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SubRuleWithResult;
 import org.junit.Assert;
 import org.junit.Test;
 

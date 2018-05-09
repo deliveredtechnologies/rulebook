@@ -6,10 +6,10 @@ import com.deliveredtechnologies.rulebook.annotation.Result;
 import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithResult;
-import com.deliveredtechnologies.rulebook.runner.SampleRuleWithoutRuleAnnotation;
-import com.deliveredtechnologies.rulebook.runner.SubRuleAnnotation;
-import com.deliveredtechnologies.rulebook.runner.SubRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithResult;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutRuleAnnotation;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SubRuleAnnotation;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SubRuleWithResult;
 import org.junit.Assert;
 import org.junit.Test;
 
