@@ -41,7 +41,8 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * Returns a new RuleBuilder for the specified Rule class.
    * @param ruleClass   the class of Rule to build
    * @param actionType  if STOP_ON_FAILURE, stops the rule chain if RuleState is BREAK only if the rule fails
-   *                    (for supported rule classes); default is CONTINUE_ON_FAILURE
+   *                    (for supported rule classes); if ERROR_ON_FAILURE, allows exceptions to be thrown from rule;
+   *                    default is CONTINUE_ON_FAILURE
    * @return            a new RuleBuilder
    */
   public static RuleBuilder<Object, Object> create(Class<? extends Rule> ruleClass,
