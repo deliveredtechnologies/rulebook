@@ -181,7 +181,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                         if (result.getValue() != null) {
                           _result = result;
                         }
-                      } catch (IllegalAccessException | InvocationTargetException err) {
+                      } catch (Exception err) {
                         LOGGER.error("Error invoking action on " + action.getClass(), err);
                         if (_actionType.equals(ERROR_ON_FAILURE)) {
                           throw new RuleException(err);
