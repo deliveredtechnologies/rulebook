@@ -58,8 +58,13 @@ public class TestConfig {
     return new RuleBookRunner("com.deliveredtechnologies.rulebook.spring");
   }
 
-  @Bean
+  @Bean(name = "springAwareRuleBookRunner")
   public SpringAwareRuleBookRunner springAwareRuleBookRunner() {
     return new SpringAwareRuleBookRunner("com.deliveredtechnologies.rulebook.spring");
+  }
+
+  @Bean(name = "errorOnFailure")
+  public SpringAwareRuleBookRunner errorOnFailureRuleBook() {
+    return new SpringAwareRuleBookRunner("com.deliveredtechnologies.rulebook.spring.rulebook.erroronfailure");
   }
 }

@@ -2,21 +2,26 @@ package com.deliveredtechnologies.rulebook.spring;
 
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
+import com.deliveredtechnologies.rulebook.model.RuleException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 import static com.deliveredtechnologies.rulebook.spring.SpringTestService.EXPECTED_RESULT;
 
 @ContextConfiguration(classes = TestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SpringAwareRuleBookRunnerTest {
-  @Autowired
+  @Resource(name = "springAwareRuleBookRunner")
   private SpringAwareRuleBookRunner _ruleBook;
+
+  @Resource(name = "errorOnFailure")
+  private SpringAwareRuleBookRunner _errorOnFailureRuleBook;
 
   private NameValueReferableMap<String> _facts = new FactMap<>();
 
@@ -36,5 +41,12 @@ public class SpringAwareRuleBookRunnerTest {
   public void ruleRunnerShouldReturnNullRuleClassIsInvalid() {
     Class clazz = Class.class;
     Assert.assertNull(_ruleBook.getRuleInstance(clazz));
+  }
+
+  @Test(expected = RuleException.class)
+  public void springRulesSetToErrorOnFailureThrowExceptionsInRuleBook() {
+    FactMap facts = new FactMap<>();
+    facts.setValue("doThrowError", true);
+    _errorOnFailureRuleBook.run(facts);
   }
 }
