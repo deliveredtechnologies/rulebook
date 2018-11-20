@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error;
+package com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error.condition;
 
 import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;

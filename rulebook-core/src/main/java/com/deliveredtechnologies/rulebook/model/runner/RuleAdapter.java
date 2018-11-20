@@ -148,7 +148,7 @@ public class RuleAdapter implements Rule {
                 return (Boolean) method.invoke(_pojoRule);
               } catch (InvocationTargetException | IllegalAccessException ex) {
                 if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
-                  throw new RuleException(ex);
+                  throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
                 }
                 LOGGER.error(
                     "Unable to validate condition due to an exception. It will be evaluated as false", ex);
@@ -289,9 +289,12 @@ public class RuleAdapter implements Rule {
                 Object resultVal = resultField.get(_pojoRule);
                 ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
               } catch (IllegalAccessException | InvocationTargetException ex) {
-                LOGGER.error("Unable to access "
-                      + _pojoRule.getClass().getName()
-                      + " when converting then to BiConsumer", ex);
+                if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
+                  throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
+                }
+                LOGGER.error("Unable to invoke "
+                    + _pojoRule.getClass().getName()
+                    + " when converting then to BiConsumer", ex);
               }
             });
   }
@@ -306,9 +309,12 @@ public class RuleAdapter implements Rule {
             _rule.setRuleState(RuleState.BREAK);
           }
         } catch (IllegalAccessException | InvocationTargetException ex) {
-          LOGGER.error("Unable to access "
-                + _pojoRule.getClass().getName()
-                + " when converting then to Consumer", ex);
+          if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
+            throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
+          }
+          LOGGER.error("Unable to invoke "
+                  + _pojoRule.getClass().getName()
+                  + " when converting then to Consumer", ex);
         }
       });
     }

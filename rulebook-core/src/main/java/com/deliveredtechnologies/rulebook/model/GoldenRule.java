@@ -184,7 +184,9 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                       } catch (IllegalAccessException | InvocationTargetException err) {
                         LOGGER.error("Error invoking action on " + action.getClass(), err);
                         if (_actionType.equals(ERROR_ON_FAILURE)) {
-                          throw new RuleException(err);
+                          throw err.getCause() == null ? new RuleException(err) :
+                              err.getCause() instanceof RuleException ? (RuleException)err.getCause() :
+                                  new RuleException(err.getCause());
                         }
                       }
                     });
@@ -201,7 +203,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //catch errors from the 'when' condition; if it fails, just continue along unless ERROR_ON_FAILURE is set
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
       if (_actionType.equals(ERROR_ON_FAILURE)) {
-        throw new RuleException(ex);
+        throw ex instanceof RuleException ? (RuleException)ex : new RuleException(ex);
       }
     }
 
