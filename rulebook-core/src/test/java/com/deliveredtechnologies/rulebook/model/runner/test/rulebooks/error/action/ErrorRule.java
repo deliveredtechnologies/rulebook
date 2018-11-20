@@ -1,4 +1,4 @@
-package com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error;
+package com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error.action;
 
 import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;
@@ -9,13 +9,15 @@ import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.ERROR
 /**
  * Created by clayton.long on 5/8/18.
  */
-@Rule(order = 2, ruleChainAction = ERROR_ON_FAILURE)
+@Rule(ruleChainAction = ERROR_ON_FAILURE)
 public class ErrorRule {
   @When
-  public boolean when() throws Exception {
-    throw new Exception("Sumthin' Broke!");
+  public boolean when() {
+    return true;
   }
 
   @Then
-  public void then() {}
+  public void then() throws Exception {
+    throw new Exception("Sumthin' Broke!");
+  }
 }

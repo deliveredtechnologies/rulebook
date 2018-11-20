@@ -148,7 +148,7 @@ public class RuleAdapter implements Rule {
                 return (Boolean) method.invoke(_pojoRule);
               } catch (InvocationTargetException | IllegalAccessException ex) {
                 if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
-                  throw new RuleException(ex);
+                  throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
                 }
                 LOGGER.error(
                     "Unable to validate condition due to an exception. It will be evaluated as false", ex);

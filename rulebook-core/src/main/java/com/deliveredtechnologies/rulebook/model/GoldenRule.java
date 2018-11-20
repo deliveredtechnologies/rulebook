@@ -201,7 +201,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       //catch errors from the 'when' condition; if it fails, just continue along unless ERROR_ON_FAILURE is set
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
       if (_actionType.equals(ERROR_ON_FAILURE)) {
-        throw new RuleException(ex);
+        throw ex instanceof RuleException ? (RuleException)ex : new RuleException(ex);
       }
     }
 

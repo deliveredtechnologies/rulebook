@@ -8,6 +8,7 @@ import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleStatus;
 import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.RuleException;
+import com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error.action.CustomException;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -206,14 +207,32 @@ public class RuleBookRunnerTest {
   }
 
   @Test
-  public void errorOnFailureRulesThrowErrorsInRuleBookRunners() {
+  public void errorOnConditionFailureRulesThrowErrorsInRuleBookRunners() {
     RuleBookRunner ruleBook =
-        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error");
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error.condition");
 
     try {
       ruleBook.run(new FactMap());
     } catch (RuleException err) {
+      Assert.assertTrue(err.getCause() instanceof Exception);
+      Assert.assertEquals("Sumthin' Broke!", err.getCause().getMessage());
       Assert.assertEquals(ruleBook.getRuleStatus("SampleRule"), RuleStatus.EXECUTED);
+      Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.PENDING);
+      return;
+    }
+    Assert.fail();
+  }
+
+  @Test
+  public void errorOnActionFailureRulesThrowErrorsInRuleBookRunners() {
+    RuleBookRunner ruleBook =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.error.action");
+
+    try {
+      ruleBook.run(new FactMap());
+    } catch (RuleException err) {
+      Assert.assertTrue(err.getCause() instanceof CustomException);
+      Assert.assertEquals("Sumthin' Broke!", err.getCause().getMessage());
       Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.PENDING);
       return;
     }
