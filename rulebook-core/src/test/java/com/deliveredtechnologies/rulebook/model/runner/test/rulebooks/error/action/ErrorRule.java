@@ -18,6 +18,6 @@ public class ErrorRule {
 
   @Then
   public void then() throws Exception {
-    throw new Exception("Sumthin' Broke!");
+    throw new CustomException("Sumthin' Broke!");
   }
 }
