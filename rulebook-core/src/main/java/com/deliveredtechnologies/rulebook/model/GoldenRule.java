@@ -193,11 +193,12 @@ public class GoldenRule<T, U> implements Rule<T, U> {
           facts.putAll(usingFacts);
         }
 
-        //stopping the rule chain only happens when the rule fails if _stopOnRuleFailure == true
+        // the actions were executed, so the rule chain continues
+        // STOP_ON_FAILURE ONLY stops the rule chain if there is a failure
         if (_actionType.equals(STOP_ON_FAILURE)) {
           this._ruleState = RuleState.NEXT;
         }
-        return true;
+        return true; //signifies that the actions were executed
       }
     } catch (Exception ex) {
       //catch errors from the 'when' condition; if it fails, just continue along unless ERROR_ON_FAILURE is set

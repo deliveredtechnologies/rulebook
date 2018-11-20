@@ -381,6 +381,65 @@ A map of all rule names and their corresponding status can be retrieved as follo
  Map<String, RuleStatus> auditMap = auditor.getRuleStatusMap();
 ```
 
+### 3.6 Rule Chain Behavior
+By default, errors found when loading rules or exceptions thrown when running rules, remove
+those rules from the rule chain. In other words, rules that error are just skipped. Additionally,
+by default, a rule can only stop the rule chain if its condition evaluates to
+true and if its actions successfully complete.
+
+However, this behavior can be changed on a per-rule basis.
+
+```java
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(
+        RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .stop()
+            .build())
+    .addRule(
+        RuleBuilder.create()
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .build();
+```
+
+In the above example, the default RuleChainActionType.CONTINUE_ON_FAILURE is changed
+to RuleChainActionType.STOP_ON_FAILURE in the first rule. This will ensure
+that if there is an error in the first rule, the 2nd rule will never be invoked. However,
+no error will be thrown. 
+
+If the desired behavior was to throw any exception that occurred in the first rule and stop the rule chain,
+the following code could be used.
+
+```java
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(
+        RuleBuilder.create(GoldenRule.class, RuleChainActionType.ERROR_ON_FAILURE)
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .addRule(
+        RuleBuilder.create()
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .build();
+```
+
+#### 3.6.1 Rule Chain Action Types Defined
+
+| RuleChainActionType | Description                     |
+| ------------------- | ------------------------------- |
+| CONTINUE_ON_FAILURE | the default RuleChainActionType; false rule conditions and errors effectively 'skip' the rule| 
+| ERROR_ON_FAILURE    | exceptions thrown by rules stop the rule chain and bubble up the exception as a RuleException |
+| STOP_ON_FAILURE     | rules that have their RuleState set to BREAK will stop the RuleChain if the rule's condition is false or if an exception is thrown |
+
 <sub>[Top](#contents)</sub>
 
 ## 4 POJO Rules
