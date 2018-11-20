@@ -48,6 +48,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
     * [4.3.4 Auditing POJO Rules](#434-auditing-pojo-rules)
+    * [4.3.5 POJO Rule Chain Behavior](#435-pojo-rule-chain-behavior)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
   * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
   * [5.2 Creating Spring Enabled POJO Rules](#52-creating-spring-enabled-pojo-rules)
@@ -649,6 +650,27 @@ Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is a
  Auditor auditor = (Auditor)rulebookRunner;
  RuleStatus myRuleStatus = auditor.getRuleStatus("My Rule");
 ```
+
+#### 4.3.5 POJO Rule Chain Behavior
+
+```java
+@Rule(ruleChainAction = ERROR_ON_FAILURE)
+public class ErrorRule {
+  @When
+  public boolean when() {
+    return true;
+  }
+
+  @Then
+  public void then() throws Exception {
+    throw new CustomException("Sumthin' Broke!");
+  }
+}
+```
+
+As seen in the example directly above, the ruleChainAction Rule parameter
+can be use to change the rule chain behavior for specific rules as detailed
+in [3.6 Rule Chain Behavior](#36-rule-chain-behavior).
 
 <sub>[[Top](#contents)]</sub>
 
