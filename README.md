@@ -39,6 +39,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
   * [3.5 Auditing Rules](#35-auditing-rules)
+  * [3.6 Rule Chain Behavior](#36-rule-chain-behavior)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
