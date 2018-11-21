@@ -3,6 +3,7 @@ package com.example.rulebook.megabank;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
+import com.deliveredtechnologies.rulebook.model.Auditor;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 
 public class Application {

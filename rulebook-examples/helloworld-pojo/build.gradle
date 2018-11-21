@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.8'
+    compile 'com.deliveredtechnologies:rulebook-core:0.10'
 }
 
 mainClassName = 'com.example.rulebook.helloworld.HelloWorldExample'
