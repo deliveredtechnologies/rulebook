@@ -39,6 +39,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
   * [3.5 Auditing Rules](#35-auditing-rules)
+  * [3.6 Rule Chain Behavior](#36-rule-chain-behavior)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
@@ -47,6 +48,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
     * [4.3.4 Auditing POJO Rules](#434-auditing-pojo-rules)
+    * [4.3.5 POJO Rule Chain Behavior](#435-pojo-rule-chain-behavior)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
   * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
   * [5.2 Creating Spring Enabled POJO Rules](#52-creating-spring-enabled-pojo-rules)
@@ -381,6 +383,65 @@ A map of all rule names and their corresponding status can be retrieved as follo
  Map<String, RuleStatus> auditMap = auditor.getRuleStatusMap();
 ```
 
+### 3.6 Rule Chain Behavior
+By default, errors found when loading rules or exceptions thrown when running rules, remove
+those rules from the rule chain. In other words, rules that error are just skipped. Additionally,
+by default, a rule can only stop the rule chain if its condition evaluates to
+true and if its actions successfully complete.
+
+However, this behavior can be changed on a per-rule basis.
+
+```java
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(
+        RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .stop()
+            .build())
+    .addRule(
+        RuleBuilder.create()
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .build();
+```
+
+In the above example, the default RuleChainActionType.CONTINUE_ON_FAILURE is changed
+to RuleChainActionType.STOP_ON_FAILURE in the first rule. This will ensure
+that if there is an error in the first rule, the 2nd rule will never be invoked. However,
+no error will be thrown. 
+
+If the desired behavior was to throw any exception that occurred in the first rule and stop the rule chain,
+the following code could be used.
+
+```java
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(
+        RuleBuilder.create(GoldenRule.class, RuleChainActionType.ERROR_ON_FAILURE)
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .addRule(
+        RuleBuilder.create()
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .build();
+```
+
+#### 3.6.1 Rule Chain Action Types Defined
+
+| RuleChainActionType | Description                     |
+| ------------------- | ------------------------------- |
+| CONTINUE_ON_FAILURE | the default RuleChainActionType; false rule conditions and errors effectively 'skip' the rule| 
+| ERROR_ON_FAILURE    | exceptions thrown by rules stop the rule chain and bubble up the exception as a RuleException |
+| STOP_ON_FAILURE     | rules that have their RuleState set to BREAK will stop the RuleChain if the rule's condition is false or if an exception is thrown |
+
 <sub>[Top](#contents)</sub>
 
 ## 4 POJO Rules
@@ -589,6 +650,27 @@ Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is a
  Auditor auditor = (Auditor)rulebookRunner;
  RuleStatus myRuleStatus = auditor.getRuleStatus("My Rule");
 ```
+
+#### 4.3.5 POJO Rule Chain Behavior
+
+```java
+@Rule(ruleChainAction = ERROR_ON_FAILURE)
+public class ErrorRule {
+  @When
+  public boolean when() {
+    return true;
+  }
+
+  @Then
+  public void then() throws Exception {
+    throw new CustomException("Sumthin' Broke!");
+  }
+}
+```
+
+As seen in the example directly above, the ruleChainAction Rule parameter
+can be use to change the rule chain behavior for specific rules as detailed
+in [3.6 Rule Chain Behavior](#36-rule-chain-behavior).
 
 <sub>[[Top](#contents)]</sub>
 
