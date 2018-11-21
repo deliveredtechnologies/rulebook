@@ -27,6 +27,9 @@ public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
 
   @Override
   public void run(NameValueReferableMap facts) {
+    if (!hasRules()) {
+      defineRules();
+    }
     _ruleBook.run(facts);
   }
 
