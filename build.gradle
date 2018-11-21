@@ -248,6 +248,7 @@ project("rulebook-core") {
                     url 'https://github.com/rizjoj'
                     roles {
                         role 'code contributor for v0.10'
+                        role 'raised bug and helped resolve bugs for v0.11'
                     }
                 }
                 contributor {
@@ -255,6 +256,14 @@ project("rulebook-core") {
                     url 'https://github.com/xPlutox'
                     roles {
                         role 'code contributor for v0.10'
+                        role 'raised bug and helped resolve bugs for v0.11'
+                    }
+                }
+                contributor {
+                    name 'Mikhail Grushinskiy'
+                    url 'https://github.com/mgrouch'
+                    roles {
+                        role 'raised bug for v0.11'
                     }
                 }
             }
@@ -301,6 +310,16 @@ project("rulebook-spring") {
                     id 'Clayton7510'
                     name 'Clayton Long'
                     email 'Clayton7510@gmail.com'
+                }
+            }
+
+            contributors {
+                contributor {
+                    name 'Riz Joj'
+                    url 'https://github.com/rizjoj'
+                    roles {
+                        role 'code contributor for v0.11'
+                    }
                 }
             }
         }

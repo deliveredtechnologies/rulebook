@@ -8,7 +8,7 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@RuleBean
 @Rule(order = 3)
 public class SpringAwareRuleWithoutResult {
   @Autowired

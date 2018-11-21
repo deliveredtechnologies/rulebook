@@ -676,20 +676,41 @@ in [3.6 Rule Chain Behavior](#36-rule-chain-behavior).
 
 ## 5 Using RuleBook with Spring
 
-RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBooks are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. 
+RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBooks are threadsafe, they can be 
+used as Singeltons, Spring's default for injecting beans. Additionally, POJO Rules can now be made Spring Aware, so
+you can inject Spring components using @Autowire.
 
 ### 5.1 Adding RuleBook Spring Support to Your Project
 
-No additional configuration is needed for RuleBook to work with Spring. If you are using a current version of RuleBook then it works with Spring.
+The preferred way to use RuleBook with Spring is to configure a SpringAwareRuleBookRunner. Then,
+simply add the @RuleBean annotation to any POJO Rules that you would like to work with Spring. If you omit
+the @RuleBean annotation then the @POJO Rule(s) without @RuleBean can still be loaded and run, they
+just will not be managed by or scoped properly for Spring and @Autowired will not work within the Rule.
 
 ### 5.2 Creating Spring Enabled POJO Rules
 
-POJO Rules can be created just like they were created above without Spring.
+POJO Rules can be created just like they were created above without Spring, but with some extra Spring goodness!
+The trivial example below demonstates the basic functionality.
+
+```java
+
+package com.exampl.rulebook.helloworld.component;
+
+@Component
+public class HelloWorldComponent {
+  public String getHelloWorld(String hello, String world) {
+    return hello + " " + world + "!";
+  }
+}
+
+```
 
 ```java
 
 package com.example.rulebook.helloworld;
 
+@RuleBean
 @Rule(order = 1)
 public class HelloSpringRule {
   @Given("hello")
@@ -705,7 +726,7 @@ public class HelloSpringRule {
 
   @Then
   public void then() {
-    result = hello + " ";
+    result = hello;
   }
 }
 ```
@@ -714,8 +735,12 @@ public class HelloSpringRule {
 
 package com.example.rulebook.helloworld;
 
+@RuleBean
 @Rule(order = 2)
 public class WorldSpringRule {
+  @Autowired
+  HelloWorldComponent helloWorldComponent;
+  
   @Given("world")
   private String world;
 
@@ -729,7 +754,7 @@ public class WorldSpringRule {
 
   @Then
   public void then() {
-    result += world;
+    result = helloWorldComponent.getHelloWorld(result, world);
   }
 }
 ```
@@ -738,10 +763,11 @@ public class WorldSpringRule {
 
 ```java
 @Configuration
+@ComponentScan("com.example.rulebook.helloworld")
 public class SpringConfig {
   @Bean
   public RuleBook ruleBook() {
-    RuleBook ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+    RuleBook ruleBook = new SpringAwareRuleBookRunner("com.example.rulebook.helloworld");
     return ruleBook;
   }
 }
@@ -758,7 +784,7 @@ public class SpringConfig {
     facts.setValue("hello", "Hello ");
     facts.setValue("world", "World");
     ruleBook.run(facts);
-    ruleBook.getResult().ifPresent(System.out::println); //prints Hello World
+    ruleBook.getResult().ifPresent(System.out::println); //prints Hello World!
   }
 ```
 

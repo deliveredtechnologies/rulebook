@@ -1,5 +1,6 @@
 package com.deliveredtechnologies.rulebook.spring;
 
+import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,10 @@ public class SpringAwareRuleBookRunner extends RuleBookRunner implements Applica
 
   public SpringAwareRuleBookRunner(String rulePackage) {
     super(rulePackage);
+  }
+
+  public SpringAwareRuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
+    super(ruleBookClass, rulePackage);
   }
 
   @Override

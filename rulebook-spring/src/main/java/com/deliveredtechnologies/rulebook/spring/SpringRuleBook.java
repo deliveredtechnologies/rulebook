@@ -13,6 +13,7 @@ import java.util.Optional;
  * RuleBook decorator for Spring that allows Rules to be created from either Spring annotated POJO Rules or
  * by building Rules.
  */
+@Deprecated
 public class SpringRuleBook<T> implements RuleBook<T> {
 
   private RuleBook<T> _ruleBook;

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.FactoryBean;
 /**
  * Spring FactoryBean for RuleBooks.
  */
+@Deprecated
 public class RuleBookFactoryBean implements FactoryBean<RuleBook> {
 
   private Class<? extends RuleBook> _ruleBookType;
