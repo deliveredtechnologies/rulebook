@@ -1,9 +1,12 @@
 package com.example.rulebook.megabank;
 
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
+import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleBookAuditor;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 
 public class HomeLoanRateRuleBook extends CoRRuleBook<Double> {
+
   @Override
   public void defineRules() {
     //credit score under 600 gets a 4x rate increase
