@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.11-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-core:0.11'
     compile 'com.google.inject:guice:4.1.0'
 }
 
