@@ -691,6 +691,27 @@ just will not be managed by or scoped properly for Spring and @Autowired will no
 ### 5.2 Creating Spring Enabled POJO Rules
 
 POJO Rules can be created just like they were created above without Spring, but with some extra Spring goodness!
+To create Spring enabled POJO Rules, first add rulebook-spring as a dependency.
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.deliveredtechnologies</groupId>
+    <artifactId>rulebook-spring</artifactId>
+    <version>0.11-SNAPSHOT</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+compile 'com.deliveredtechnologies:rulebook-spring:0.11-SNAPSHOT'
+```
+
+_Note: 0.11-SNAPSHOT is currently the only version of rulebook-spring that provides
+SpringAwareRuleBookRunner, which is what allows Rules to @Autowire Spring components._
+
 The trivial example below demonstates the basic functionality.
 
 ```java
