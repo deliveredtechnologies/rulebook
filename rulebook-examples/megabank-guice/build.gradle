@@ -3,15 +3,13 @@ apply plugin: 'application'
 
 repositories {
     mavenCentral()
-    repositories {
-        maven {
+    maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
     }
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.11'
+    compile 'com.deliveredtechnologies:rulebook-core:0.11-SNAPSHOT'
     compile 'com.google.inject:guice:4.1.0'
 }
 
