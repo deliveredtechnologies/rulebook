@@ -1,8 +1,10 @@
 rootProject.name = 'rulebook-examples'
 
+include 'megabank-exception-breaks-rulechain'
 include 'megabank'
 include 'helloworld'
 include 'megabank2'
+include 'megabank2-audit'
 include 'helloworld-pojo'
 include 'megabank-pojo'
 include 'helloworld-spring'

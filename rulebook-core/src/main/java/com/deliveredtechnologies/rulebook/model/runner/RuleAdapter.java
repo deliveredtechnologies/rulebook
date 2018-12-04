@@ -11,6 +11,8 @@ import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
+import com.deliveredtechnologies.rulebook.model.RuleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ public class RuleAdapter implements Rule {
 
   private Rule _rule;
   private Object _pojoRule;
+  private RuleChainActionType _actionType;
 
   /**
    * Adapts a POJO to a Rule given a POJO and a Rule.
@@ -54,10 +57,15 @@ public class RuleAdapter implements Rule {
    * @throws InvalidClassException  if the @Rule annotation is missing from the POJO
    */
   public RuleAdapter(Object pojoRule, Rule rule) throws InvalidClassException {
-    if (getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, pojoRule.getClass()) == null) {
+    com.deliveredtechnologies.rulebook.annotation.Rule ruleAnnotation =
+        getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, pojoRule.getClass());
+
+    if (ruleAnnotation == null) {
       throw new InvalidClassException(pojoRule.getClass() + " is not a Rule; missing @Rule annotation");
     }
-    _rule = rule;
+
+    _actionType = ruleAnnotation.ruleChainAction();
+    _rule = rule == null ? new GoldenRule(Object.class, _actionType) : rule;
     _pojoRule = pojoRule;
   }
 
@@ -68,7 +76,7 @@ public class RuleAdapter implements Rule {
    */
   @SuppressWarnings("unchecked")
   public RuleAdapter(Object pojoRule) throws InvalidClassException {
-    this(pojoRule, new GoldenRule(Object.class));
+    this(pojoRule, null);
   }
 
   @Override
@@ -139,8 +147,11 @@ public class RuleAdapter implements Rule {
               try {
                 return (Boolean) method.invoke(_pojoRule);
               } catch (InvocationTargetException | IllegalAccessException ex) {
+                if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
+                  throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
+                }
                 LOGGER.error(
-                    "Unable to validate condition due to an exception. Condition will be interpreted as false", ex);
+                    "Unable to validate condition due to an exception. It will be evaluated as false", ex);
                 return false;
               }
             })
@@ -189,8 +200,9 @@ public class RuleAdapter implements Rule {
           .ifPresent(field -> {
             field.setAccessible(true);
             try {
-              if (result.getValue().getClass() != Object.class
-                  || field.getType().isAssignableFrom(result.getValue().getClass())) {
+              if (result.getValue() != null
+                  && (result.getValue().getClass() != Object.class
+                  || field.getType().isAssignableFrom(result.getValue().getClass()))) {
                 field.set(_pojoRule, result.getValue());
               }
             } catch (Exception ex) {
@@ -277,9 +289,12 @@ public class RuleAdapter implements Rule {
                 Object resultVal = resultField.get(_pojoRule);
                 ((com.deliveredtechnologies.rulebook.Result) result).setValue(resultVal);
               } catch (IllegalAccessException | InvocationTargetException ex) {
-                LOGGER.error("Unable to access "
-                      + _pojoRule.getClass().getName()
-                      + " when converting then to BiConsumer", ex);
+                if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
+                  throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
+                }
+                LOGGER.error("Unable to invoke "
+                    + _pojoRule.getClass().getName()
+                    + " when converting then to BiConsumer", ex);
               }
             });
   }
@@ -294,9 +309,12 @@ public class RuleAdapter implements Rule {
             _rule.setRuleState(RuleState.BREAK);
           }
         } catch (IllegalAccessException | InvocationTargetException ex) {
-          LOGGER.error("Unable to access "
-                + _pojoRule.getClass().getName()
-                + " when converting then to Consumer", ex);
+          if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
+            throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
+          }
+          LOGGER.error("Unable to invoke "
+                  + _pojoRule.getClass().getName()
+                  + " when converting then to Consumer", ex);
         }
       });
     }

@@ -11,16 +11,15 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 repositories {
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-        mavenCentral()
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-core:0.11-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-spring:0.11-SNAPSHOT'
     compile 'org.springframework.boot:spring-boot-starter'
 }
 

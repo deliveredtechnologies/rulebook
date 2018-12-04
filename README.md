@@ -1,5 +1,5 @@
-[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.10|
-[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.10|
+[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.11|
+[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.11|
 [Apache 2.0 License]:https://opensource.org/licenses/Apache-2.0
 
 # RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
@@ -7,7 +7,7 @@
 
 ---
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.10-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)][Apache 2.0 License] [![Maven Central](https://img.shields.io/badge/maven%20central-0.11-brightgreen.svg)][RuleBook-Core Maven Central] [![Build Status](https://travis-ci.org/rulebook-rules/rulebook.svg?branch=develop&maxAge=600)](https://travis-ci.org/rulebook-rules/rulebook) [![Coverage Status](https://coveralls.io/repos/github/rulebook-rules/rulebook/badge.svg?branch=develop&maxAge=600)](https://coveralls.io/github/rulebook-rules/rulebook?branch=develop)  [![Gitter](https://badges.gitter.im/RuleBook.svg)](https://gitter.im/RuleBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Paypal](https://img.shields.io/badge/donate-PayPal-blue.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C6EM6HRN45L72)
 
 ## Why RuleBook?
 RuleBook rules are built in the way that Java developers think: Java code. And they are executed in the way that programmers expect: In order. RuleBook also allows you to specify rules using an easy to use Lambda enabled Domain Specific Language or using POJOs that you define!
@@ -39,6 +39,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [3.4.1 The Single Fact Convenience Method](#341-the-single-fact-convenience-method)
     * [3.4.2 The FactMap Convenience Methods](#342-the-factmap-convenience-methods)
   * [3.5 Auditing Rules](#35-auditing-rules)
+  * [3.6 Rule Chain Behavior](#36-rule-chain-behavior)
 * **[4 POJO Rules](#4-pojo-rules)**
   * [4.1 A POJO Rules Example](#41-a-hello-world-example)
   * [4.2 A \[Slightly\] More Complex POJO Rules Example](#42-a-new-megabank-example-with-pojo-rules)
@@ -47,6 +48,7 @@ _**<sub>Still not finding what you are looking for? Try the [Wiki](https://githu
     * [4.3.2 Injecting Collections into POJO Rules](#432-injecting-collections-into-pojo-rules)
     * [4.3.3 POJO Rule Annotation Inheritance](#433-pojo-rule-annotation-inheritance)
     * [4.3.4 Auditing POJO Rules](#434-auditing-pojo-rules)
+    * [4.3.5 POJO Rule Chain Behavior](#435-pojo-rule-chain-behavior)
 * **[5 Using RuleBook with Spring](#5-using-rulebook-with-spring)**
   * [5.1 Adding RuleBook Spring Support to Your Project](#51-adding-rulebook-spring-support-to-your-project)
   * [5.2 Creating Spring Enabled POJO Rules](#52-creating-spring-enabled-pojo-rules)
@@ -68,13 +70,13 @@ cd RuleBook
 
 ### 1.2 Maven Central Releases
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.10-brightgreen.svg)][RuleBook-Core Maven Central]
-* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.10-brightgreen.svg)][RuleBook-Spring Maven Central]
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Maven Central](https://img.shields.io/badge/maven%20central-0.11-brightgreen.svg)][RuleBook-Core Maven Central]
+* rulebook-spring [![Maven Central](https://img.shields.io/badge/maven%20central-0.11-brightgreen.svg)][RuleBook-Spring Maven Central]
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.10-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.10-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.11-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.11-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 
@@ -84,7 +86,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-core</artifactId>
-    <version>0.10</version>
+    <version>0.11</version>
 </dependency>
 ```
 
@@ -93,7 +95,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-core:0.10'
+compile 'com.deliveredtechnologies:rulebook-core:0.11'
 ```
 
 <sub>[[Top](#contents)]</sub>
@@ -381,6 +383,65 @@ A map of all rule names and their corresponding status can be retrieved as follo
  Map<String, RuleStatus> auditMap = auditor.getRuleStatusMap();
 ```
 
+### 3.6 Rule Chain Behavior
+By default, errors found when loading rules or exceptions thrown when running rules, remove
+those rules from the rule chain. In other words, rules that error are just skipped. Additionally,
+by default, a rule can only stop the rule chain if its condition evaluates to
+true and if its actions successfully complete.
+
+However, this behavior can be changed on a per-rule basis.
+
+```java
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(
+        RuleBuilder.create(GoldenRule.class, RuleChainActionType.STOP_ON_FAILURE)
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .stop()
+            .build())
+    .addRule(
+        RuleBuilder.create()
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .build();
+```
+
+In the above example, the default RuleChainActionType.CONTINUE_ON_FAILURE is changed
+to RuleChainActionType.STOP_ON_FAILURE in the first rule. This will ensure
+that if there is an error in the first rule, the 2nd rule will never be invoked. However,
+no error will be thrown. 
+
+If the desired behavior was to throw any exception that occurred in the first rule and stop the rule chain,
+the following code could be used.
+
+```java
+RuleBook ruleBook = RuleBookBuilder.create()
+    .addRule(
+        RuleBuilder.create(GoldenRule.class, RuleChainActionType.ERROR_ON_FAILURE)
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .addRule(
+        RuleBuilder.create()
+            .withFactType(String.class)
+            .when(facts -> true)
+            .then(consumer)
+            .build())
+    .build();
+```
+
+#### 3.6.1 Rule Chain Action Types Defined
+
+| RuleChainActionType | Description                     |
+| ------------------- | ------------------------------- |
+| CONTINUE_ON_FAILURE | the default RuleChainActionType; false rule conditions and errors effectively 'skip' the rule| 
+| ERROR_ON_FAILURE    | exceptions thrown by rules stop the rule chain and bubble up the exception as a RuleException |
+| STOP_ON_FAILURE     | rules that have their RuleState set to BREAK will stop the RuleChain if the rule's condition is false or if an exception is thrown |
+
 <sub>[Top](#contents)</sub>
 
 ## 4 POJO Rules
@@ -590,24 +651,87 @@ Auditing is built into POJO Rules via the RuleBookRunner and each POJO Rule is a
  RuleStatus myRuleStatus = auditor.getRuleStatus("My Rule");
 ```
 
+#### 4.3.5 POJO Rule Chain Behavior
+
+```java
+@Rule(ruleChainAction = ERROR_ON_FAILURE)
+public class ErrorRule {
+  @When
+  public boolean when() {
+    return true;
+  }
+
+  @Then
+  public void then() throws Exception {
+    throw new CustomException("Sumthin' Broke!");
+  }
+}
+```
+
+As seen in the example directly above, the ruleChainAction Rule parameter
+can be use to change the rule chain behavior for specific rules as detailed
+in [3.6 Rule Chain Behavior](#36-rule-chain-behavior).
+
 <sub>[[Top](#contents)]</sub>
 
 ## 5 Using RuleBook with Spring
 
-RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBooks are threadsafe, they can be used as Singeltons, Spring's default for injecting beans.
+RuleBook can be integrated with Spring to inject instances of RuleBooks that are created from POJOs in a package. 
+RuleBooks can be specified using either the Java DSL or POJO Rules. And since RuleBooks are threadsafe, they can be 
+used as Singeltons, Spring's default for injecting beans. Additionally, POJO Rules can now be made Spring Aware, so
+you can inject Spring components using @Autowire.
 
 ### 5.1 Adding RuleBook Spring Support to Your Project
 
-No additional configuration is needed for RuleBook to work with Spring. If you are using a current version of RuleBook then it works with Spring.
+The preferred way to use RuleBook with Spring is to configure a SpringAwareRuleBookRunner. Then,
+simply add the @RuleBean annotation to any POJO Rules that you would like to work with Spring. If you omit
+the @RuleBean annotation then the @POJO Rule(s) without @RuleBean can still be loaded and run, they
+just will not be managed by or scoped properly for Spring and @Autowired will not work within the Rule.
 
 ### 5.2 Creating Spring Enabled POJO Rules
 
-POJO Rules can be created just like they were created above without Spring.
+POJO Rules can be created just like they were created above without Spring, but with some extra Spring goodness!
+To create Spring enabled POJO Rules, first add rulebook-spring as a dependency.
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.deliveredtechnologies</groupId>
+    <artifactId>rulebook-spring</artifactId>
+    <version>0.11</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+compile 'com.deliveredtechnologies:rulebook-spring:0.11'
+```
+
+_Note: 0.11 is currently the only version of rulebook-spring that provides
+SpringAwareRuleBookRunner, which is what allows Rules to @Autowire Spring components._
+
+The trivial example below demonstates the basic functionality.
+
+```java
+
+package com.exampl.rulebook.helloworld.component;
+
+@Component
+public class HelloWorldComponent {
+  public String getHelloWorld(String hello, String world) {
+    return hello + " " + world + "!";
+  }
+}
+
+```
 
 ```java
 
 package com.example.rulebook.helloworld;
 
+@RuleBean
 @Rule(order = 1)
 public class HelloSpringRule {
   @Given("hello")
@@ -623,7 +747,7 @@ public class HelloSpringRule {
 
   @Then
   public void then() {
-    result = hello + " ";
+    result = hello;
   }
 }
 ```
@@ -632,8 +756,12 @@ public class HelloSpringRule {
 
 package com.example.rulebook.helloworld;
 
+@RuleBean
 @Rule(order = 2)
 public class WorldSpringRule {
+  @Autowired
+  HelloWorldComponent helloWorldComponent;
+  
   @Given("world")
   private String world;
 
@@ -647,7 +775,7 @@ public class WorldSpringRule {
 
   @Then
   public void then() {
-    result += world;
+    result = helloWorldComponent.getHelloWorld(result, world);
   }
 }
 ```
@@ -656,10 +784,11 @@ public class WorldSpringRule {
 
 ```java
 @Configuration
+@ComponentScan("com.example.rulebook.helloworld")
 public class SpringConfig {
   @Bean
   public RuleBook ruleBook() {
-    RuleBook ruleBook = new RuleBookRunner("com.example.rulebook.helloworld");
+    RuleBook ruleBook = new SpringAwareRuleBookRunner("com.example.rulebook.helloworld");
     return ruleBook;
   }
 }
@@ -676,7 +805,7 @@ public class SpringConfig {
     facts.setValue("hello", "Hello ");
     facts.setValue("world", "World");
     ruleBook.run(facts);
-    ruleBook.getResult().ifPresent(System.out::println); //prints Hello World
+    ruleBook.getResult().ifPresent(System.out::println); //prints Hello World!
   }
 ```
 

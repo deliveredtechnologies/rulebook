@@ -27,6 +27,8 @@ import java.util.function.Predicate;
 
 import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.CONTINUE_ON_FAILURE;
 import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.STOP_ON_FAILURE;
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.ERROR_ON_FAILURE;
+
 
 /**
  * A standard implementation of {@link Rule}.
@@ -181,21 +183,29 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                         }
                       } catch (IllegalAccessException | InvocationTargetException err) {
                         LOGGER.error("Error invoking action on " + action.getClass(), err);
+                        if (_actionType.equals(ERROR_ON_FAILURE)) {
+                          throw err.getCause() == null ? new RuleException(err) :
+                              err.getCause() instanceof RuleException ? (RuleException)err.getCause() :
+                                  new RuleException(err.getCause());
+                        }
                       }
                     });
           facts.putAll(usingFacts);
         }
 
-        //stopping the rule chain only happens when the rule fails if _stopOnRuleFailure == true
+        // the actions were executed, so the rule chain continues
+        // STOP_ON_FAILURE ONLY stops the rule chain if there is a failure
         if (_actionType.equals(STOP_ON_FAILURE)) {
           this._ruleState = RuleState.NEXT;
         }
-
-        return true;
+        return true; //signifies that the actions were executed
       }
     } catch (Exception ex) {
-      //catch errors in case the 'when' condition fails; in that case, log the error and just move on
+      //catch errors from the 'when' condition; if it fails, just continue along unless ERROR_ON_FAILURE is set
       LOGGER.error("Error occurred when trying to evaluate rule!", ex);
+      if (_actionType.equals(ERROR_ON_FAILURE)) {
+        throw ex instanceof RuleException ? (RuleException)ex : new RuleException(ex);
+      }
     }
 
     return _actionType.equals(STOP_ON_FAILURE);

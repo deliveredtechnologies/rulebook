@@ -4,6 +4,10 @@ import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleException;
+import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.GoldenRule;
+import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import net.jodah.concurrentunit.Waiter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -106,5 +110,15 @@ public class CoRRuleBookTest {
     ruleBook.addRule(null);
 
     Assert.assertFalse(ruleBook.hasRules());
+  }
+
+  @Test(expected = RuleException.class)
+  public void rulesSetToErrorOnFailureThrowExceptionsInRuleBook() {
+    Rule<String, String> rule = new GoldenRule<>(String.class, RuleChainActionType.ERROR_ON_FAILURE);
+    rule.setCondition(facts -> facts.getValue("some fact").equals("nothing"));
+
+    RuleBook ruleBook = new CoRRuleBook();
+    ruleBook.addRule(rule);
+    ruleBook.run(new FactMap<String>());
   }
 }

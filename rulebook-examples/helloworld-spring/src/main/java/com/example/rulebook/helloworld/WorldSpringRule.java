@@ -1,7 +1,9 @@
 package com.example.rulebook.helloworld;
 
 import com.deliveredtechnologies.rulebook.annotation.*;
+import com.deliveredtechnologies.rulebook.spring.RuleBean;
 
+@RuleBean
 @Rule(order = 2)
 public class WorldSpringRule {
   @Given("world")

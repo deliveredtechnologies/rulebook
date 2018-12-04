@@ -18,11 +18,9 @@ jar {
 }
 
 repositories {
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-        mavenCentral()
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
@@ -30,15 +28,13 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.8.1-SNAPSHOT'
-    // tag::undertow[]
+    compile 'com.deliveredtechnologies:rulebook-core:0.11-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-spring:0.11-SNAPSHOT'
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
     compile("org.springframework.boot:spring-boot-starter-undertow")
-    // end::undertow[]
-    // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
-    // end::actuator[]
+
     testCompile("junit:junit")
 }

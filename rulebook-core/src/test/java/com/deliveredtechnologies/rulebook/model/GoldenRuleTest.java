@@ -64,6 +64,7 @@ public class GoldenRuleTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void setRuleStateShouldSetTheRuleState() {
     Rule rule = new GoldenRule(Object.class);
     rule.setRuleState(RuleState.BREAK);
@@ -91,7 +92,7 @@ public class GoldenRuleTest {
   public void settingTheResultSetsTheResult() {
     Rule<String, String> rule = new GoldenRule<>(String.class);
     Assert.assertFalse(rule.getResult().isPresent());
-    rule.setResult(new Result<String>("My Result"));
+    rule.setResult(new Result<>("My Result"));
     Assert.assertEquals("My Result", rule.getResult().get().getValue());
   }
 
@@ -120,5 +121,20 @@ public class GoldenRuleTest {
         .accept(Mockito.any(NameValueReferableTypeConvertibleMap.class));
     Mockito.verify(biConsumer, Mockito.times(1))
         .accept(Mockito.any(NameValueReferableTypeConvertibleMap.class), Mockito.any(Result.class));
+  }
+
+  @Test(expected = RuleException.class)
+  public void rulesSetToErrorOnFailureThrowExceptionsInWhen() {
+    Rule<String, String> rule = new GoldenRule<>(String.class, RuleChainActionType.ERROR_ON_FAILURE);
+    rule.setCondition(facts -> facts.getValue("some fact").equals("nothing"));
+    rule.invoke(new FactMap<String>());
+  }
+
+  @Test(expected = RuleException.class)
+  public void rulesToErrorOnFailureThrowExceptionsInActions() {
+    Rule<String, String> rule = new GoldenRule<>(String.class, RuleChainActionType.ERROR_ON_FAILURE);
+    rule.setCondition(facts -> true);
+    rule.addAction(facts -> System.out.println(facts.getValue("some fact").toLowerCase()));
+    rule.invoke(new FactMap<String>());
   }
 }

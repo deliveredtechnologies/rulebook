@@ -5,5 +5,6 @@ package com.deliveredtechnologies.rulebook.model;
  */
 public enum RuleChainActionType {
   STOP_ON_FAILURE,
+  ERROR_ON_FAILURE,
   CONTINUE_ON_FAILURE
 }
