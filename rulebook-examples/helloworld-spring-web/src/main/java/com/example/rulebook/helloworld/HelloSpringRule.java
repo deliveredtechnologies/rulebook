@@ -1,7 +1,9 @@
 package com.example.rulebook.helloworld;
 
 import com.deliveredtechnologies.rulebook.annotation.*;
+import com.deliveredtechnologies.rulebook.spring.RuleBean;
 
+@RuleBean
 @Rule(order = 1)
 public class HelloSpringRule {
   @Given("hello")
@@ -17,6 +19,6 @@ public class HelloSpringRule {
 
   @Then
   public void then() {
-    result = hello + " ";
+    result = hello;
   }
 }

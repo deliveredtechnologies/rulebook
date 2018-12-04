@@ -3,10 +3,13 @@ apply plugin: 'application'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.10'
+    compile 'com.deliveredtechnologies:rulebook-core:0.11-SNAPSHOT'
 }
 
 mainClassName = 'com.example.rulebook.megabank.Application'
