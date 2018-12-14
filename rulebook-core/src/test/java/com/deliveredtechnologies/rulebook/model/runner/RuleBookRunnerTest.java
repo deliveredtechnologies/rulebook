@@ -41,6 +41,18 @@ public class RuleBookRunnerTest {
   }
 
   @Test
+  public void ruleBookRunnerDoesNotLoadClassesInSubPackageIfNotInScan() {
+    RuleBookRunner ruleBookRunner = new RuleBookRunner(
+        "com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg",
+        pkg -> pkg.equals("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg"));
+    ruleBookRunner.run(new FactMap());
+
+    Assert.assertTrue(ruleBookRunner.hasRules());
+    Assert.assertFalse(ruleBookRunner.getRuleStatusMap().containsKey("SampleRuleWithoutResult"));
+    Assert.assertTrue(ruleBookRunner.getRuleStatusMap().containsKey("SubRuleWithResult"));
+  }
+
+  @Test
   public void ruleBookRunnerDoesNotLoadClassesForInvalidPackage() {
     RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.invalid");
     ruleBookRunner.run(new FactMap());

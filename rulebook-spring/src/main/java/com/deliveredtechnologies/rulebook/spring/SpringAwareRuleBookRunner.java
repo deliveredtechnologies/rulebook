@@ -8,6 +8,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.function.Predicate;
+
 /**
  * Runs the POJO Rules that can be Spring aware beans in a specified package as a RuleBook.
  *
@@ -27,6 +29,15 @@ public class SpringAwareRuleBookRunner extends RuleBookRunner implements Applica
 
   public SpringAwareRuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
     super(ruleBookClass, rulePackage);
+  }
+
+  public SpringAwareRuleBookRunner(String rulePackage, Predicate<String> subPkgMatch) {
+    super(rulePackage, subPkgMatch);
+  }
+
+  public SpringAwareRuleBookRunner(
+      Class<? extends RuleBook> ruleBookClass, String rulePackage, Predicate<String> subPkgMatch) {
+    super(ruleBookClass, rulePackage, subPkgMatch);
   }
 
   @Override

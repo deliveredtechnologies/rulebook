@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
@@ -23,6 +24,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
   private static Logger LOGGER = LoggerFactory.getLogger(RuleBookRunner.class);
 
   private String _package;
+  private Predicate<String> _subPkgMatch;
   private Class<? extends RuleBook> _prototypeClass;
 
   @SuppressWarnings("unchecked")
@@ -33,18 +35,38 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
    * @param rulePackage a package to scan for POJO Rules
    */
   public RuleBookRunner(String rulePackage) {
-    this(CoRRuleBook.class, rulePackage);
+    this(rulePackage, s -> s.startsWith(rulePackage));
+  }
+
+  /**
+   * Creates a new RuleBookRunner using the specified package and the default RuleBook.
+   * @param rulePackage a package to scan for POJO Rules
+   * @param subPkgMatch Predicate that returns true for any subpackages that will be scanned
+   */
+  public RuleBookRunner(String rulePackage, Predicate<String> subPkgMatch) {
+    this(CoRRuleBook.class, rulePackage, subPkgMatch);
   }
 
   /**
    * Creates a new RuleBookRunner using the specified package and the supplied RuleBook.
-   * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner.
-   * @param rulePackage   the package to scan for POJO rules.
+   * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner
+   * @param rulePackage   the package to scan for POJO rules
    */
   public RuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage) {
+    this(ruleBookClass, rulePackage, s -> s.startsWith(rulePackage));
+  }
+
+  /**
+   * Creates a new RuleBookRunner using the specified package, the supplied RuleBook and matching subpackages Predicate.
+   * @param ruleBookClass the RuleBook type to use as a delegate for the RuleBookRunner
+   * @param rulePackage   the package to scan for POJO rules
+   * @param subPkgMatch   Predicate that returns true for any subpackages that will be scanned
+   */
+  public RuleBookRunner(Class<? extends RuleBook> ruleBookClass, String rulePackage, Predicate<String> subPkgMatch) {
     super(ruleBookClass);
     _prototypeClass = ruleBookClass;
     _package = rulePackage;
+    _subPkgMatch = subPkgMatch;
   }
 
   /**
@@ -57,6 +79,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
     List<Class<?>> rules = reflections
         .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
         .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
+        .filter(rule -> _subPkgMatch.test(rule.getPackage().getName()))
         .collect(Collectors.toList());
 
     rules.sort(comparingInt(aClass ->
