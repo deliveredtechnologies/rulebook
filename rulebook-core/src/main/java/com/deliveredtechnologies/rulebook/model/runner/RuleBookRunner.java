@@ -56,7 +56,6 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
 
     List<Class<?>> rules = reflections
         .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
-        .filter(rule -> _package.equals(rule.getPackage().getName())) // Search only within package, not subpackages
         .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
         .collect(Collectors.toList());
 
