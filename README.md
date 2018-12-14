@@ -710,7 +710,7 @@ compile 'com.deliveredtechnologies:rulebook-spring:0.11'
 ```
 
 _Note: 0.11 is currently the only version of rulebook-spring that provides
-SpringAwareRuleBookRunner, which is what allows Rules to @Autowire Spring components._
+SpringAwareRuleBookRunner, which is what allows Rules to have injected @Autowired Spring components._
 
 The trivial example below demonstates the basic functionality.
 
