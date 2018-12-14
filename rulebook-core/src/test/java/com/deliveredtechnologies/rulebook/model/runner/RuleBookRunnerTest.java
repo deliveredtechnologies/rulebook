@@ -25,7 +25,8 @@ import static org.mockito.Mockito.mock;
 public class RuleBookRunnerTest {
   @Test
   public void ruleBookRunnerDoesAddRuleClassesInPackage() {
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
+    RuleBookRunner ruleBookRunner =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg");
     ruleBookRunner.run(new FactMap());
 
     Assert.assertTrue(ruleBookRunner.hasRules());
@@ -33,10 +34,22 @@ public class RuleBookRunnerTest {
 
   @Test
   public void ruleBookRunnerDoesNotLoadClassesIfNotInPackage() {
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook");
+    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.util");
     ruleBookRunner.run(new FactMap());
 
     Assert.assertFalse(ruleBookRunner.hasRules());
+  }
+
+  @Test
+  public void ruleBookRunnerDoesNotLoadClassesInSubPackageIfNotInScan() {
+    RuleBookRunner ruleBookRunner = new RuleBookRunner(
+        "com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg",
+        pkg -> pkg.equals("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg"));
+    ruleBookRunner.run(new FactMap());
+
+    Assert.assertTrue(ruleBookRunner.hasRules());
+    Assert.assertFalse(ruleBookRunner.getRuleStatusMap().containsKey("SampleRuleWithoutResult"));
+    Assert.assertTrue(ruleBookRunner.getRuleStatusMap().containsKey("SubRuleWithResult"));
   }
 
   @Test
@@ -89,7 +102,8 @@ public class RuleBookRunnerTest {
     Fact<String> fact2 = new Fact("fact2", "Fact");
     FactMap<String> factMap = new FactMap<>();
 
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
+    RuleBookRunner ruleBookRunner =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg");
     factMap.put(fact1);
     factMap.put(fact2);
     ruleBookRunner.run(factMap);
@@ -102,14 +116,16 @@ public class RuleBookRunnerTest {
   @Test(expected = UnsupportedOperationException.class)
   public void rulesCanNotBeAddedByCallingAddRule() {
     Rule rule = mock(Rule.class);
-    RuleBookRunner ruleBookRunner = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
+    RuleBookRunner ruleBookRunner =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg");
     ruleBookRunner.addRule(rule);
   }
 
   @Test
   @SuppressWarnings("unchecked")
   public void ruleBookRunnerResetsToDefaultResult() {
-    RuleBook<String> ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
+    RuleBook<String> ruleBook =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg");
     ruleBook.setDefaultResult("default");
 
     FactMap<String> facts = new FactMap<>();
@@ -132,7 +148,8 @@ public class RuleBookRunnerTest {
   public void ruleBookRunnerIsThreadSafe() throws TimeoutException {
     final Waiter waiter = new Waiter();
 
-    RuleBook ruleBook = new RuleBookRunner("com.deliveredtechnologies.rulebook.runner.test.rulebooks");
+    RuleBook ruleBook =
+        new RuleBookRunner("com.deliveredtechnologies.rulebook.model.runner.test.rulebooks.subpkg");
 
     FactMap<String> equalFacts1 = new FactMap<>();
     equalFacts1.setValue("fact1", "Fact");
