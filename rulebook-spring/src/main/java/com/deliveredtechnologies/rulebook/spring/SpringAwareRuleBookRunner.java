@@ -19,9 +19,12 @@ import java.util.function.Predicate;
  */
 public class SpringAwareRuleBookRunner extends RuleBookRunner implements ApplicationContextAware {
 
+  private static Logger LOGGER = LoggerFactory.getLogger(SpringAwareRuleBookRunner.class);
+
+
   private ApplicationContext _applicationContext;
 
-  private static Logger LOGGER = LoggerFactory.getLogger(SpringAwareRuleBookRunner.class);
+  private boolean allowNonSpringRules = true;
 
   public SpringAwareRuleBookRunner(String rulePackage) {
     super(rulePackage);
@@ -56,8 +59,27 @@ public class SpringAwareRuleBookRunner extends RuleBookRunner implements Applica
       // Spring bean POJO rule found
       return _applicationContext.getBean(rule);
     } catch (BeansException e) {
-      // POJO rule isn't a Spring bean
-      return super.getRuleInstance(rule);
+      LOGGER.warn("Rule {} could not be loaded as a spring bean", rule);
+      if(allowNonSpringRules){
+        // POJO rule isn't a Spring bean
+        LOGGER.info("Loading rule as POJO rule {}", rule);
+        return super.getRuleInstance(rule);
+      }else{
+        throw new IllegalStateException("Cannot instantiate rule "+rule.toString()+" as a spring bean");
+      }
+
     }
+  }
+
+  public boolean isAllowNonSpringRules() {
+    return allowNonSpringRules;
+  }
+
+  /**
+   * Whether or not this runner should try to instantiate POJO rules or only Spring Beans rules
+   * @param allowNonSpringRules {@code true} allows POJO rules while {@code false} throws {@link IllegalStateException} for non spring rules
+   */
+  public void setAllowNonSpringRules(boolean allowNonSpringRules) {
+    this.allowNonSpringRules = allowNonSpringRules;
   }
 }

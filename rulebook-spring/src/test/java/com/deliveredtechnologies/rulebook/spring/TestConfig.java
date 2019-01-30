@@ -3,11 +3,13 @@ package com.deliveredtechnologies.rulebook.spring;
 import com.deliveredtechnologies.rulebook.StandardDecision;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 
 import java.io.InvalidClassException;
@@ -24,11 +26,12 @@ public class TestConfig {
 
   /**
    * Creates a RuleBookBean; DSL rules and RuleBean POJO rules can be mixed together.
-   * @return  RuleBean prototype
+   *
+   * @return RuleBean prototype
    */
   @Bean
   @Scope("prototype")
-  public RuleBookBean ruleBookBean()  {
+  public RuleBookBean ruleBookBean() {
     RuleBookBean ruleBookBean = new RuleBookBean();
     try {
       ruleBookBean.addRule(_context.getBean(SpringRuleWithResult.class));
@@ -59,7 +62,15 @@ public class TestConfig {
   }
 
   @Bean
+  @Primary
   public SpringAwareRuleBookRunner springAwareRuleBookRunner() {
     return new SpringAwareRuleBookRunner("com.deliveredtechnologies.rulebook.spring");
+  }
+
+  @Bean("strictSpringRuleBookRunner")
+  public SpringAwareRuleBookRunner strictSpringRuleBookRunner() {
+    final SpringAwareRuleBookRunner springAwareRuleBookRunner = new SpringAwareRuleBookRunner("com.deliveredtechnologies.rulebook.spring");
+    springAwareRuleBookRunner.setAllowNonSpringRules(false);
+    return springAwareRuleBookRunner;
   }
 }
