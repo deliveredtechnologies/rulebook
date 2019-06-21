@@ -234,7 +234,8 @@ public class RuleBookRunnerTest {
       Assert.assertTrue(err.getCause() instanceof Exception);
       Assert.assertEquals("Sumthin' Broke!", err.getCause().getMessage());
       Assert.assertEquals(ruleBook.getRuleStatus("SampleRule"), RuleStatus.EXECUTED);
-      Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.PENDING);
+      Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.ERROR);
+      Assert.assertEquals(ruleBook.getRuleStatus("AfterErrorRule"), RuleStatus.PENDING);
       return;
     }
     Assert.fail();
@@ -250,7 +251,7 @@ public class RuleBookRunnerTest {
     } catch (RuleException err) {
       Assert.assertTrue(err.getCause() instanceof CustomException);
       Assert.assertEquals("Sumthin' Broke!", err.getCause().getMessage());
-      Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.PENDING);
+      Assert.assertEquals(ruleBook.getRuleStatus("ErrorRule"), RuleStatus.ERROR);
       return;
     }
     Assert.fail();

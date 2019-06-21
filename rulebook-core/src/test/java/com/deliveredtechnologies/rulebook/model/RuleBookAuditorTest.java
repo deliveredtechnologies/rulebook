@@ -70,7 +70,7 @@ public class RuleBookAuditorTest {
    */
   @Test
   @SuppressWarnings("unchecked")
-  public void errorOnFailureRulesResultInPendingStatus() {
+  public void errorOnFailureRulesResultInErrorStatus() {
     Rule<Object, Object> rule1 = new GoldenRule(Object.class);
     rule1.addAction((facts, result)
         -> result.setValue("Rule was triggered with status=" + facts.get("status")
@@ -79,8 +79,11 @@ public class RuleBookAuditorTest {
     Rule<Object, Object> rule2 = new GoldenRule(Object.class, RuleChainActionType.ERROR_ON_FAILURE);
     rule2.setCondition(stuff -> stuff.getValue("invalid").equals("something"));
 
+    Rule<Object, Object> rule3 = new GoldenRule(Object.class, RuleChainActionType.ERROR_ON_FAILURE);
+
     AuditableRule auditableRule1 = new AuditableRule(rule1, "SimpleRule");
     AuditableRule auditableRule2 = new AuditableRule(rule2, "ErrorRule");
+    AuditableRule auditableRule3 = new AuditableRule(rule3, "AfterErrorRule");
 
     FactMap facts = new FactMap();
     facts.setValue("status", 1);
@@ -91,12 +94,14 @@ public class RuleBookAuditorTest {
     RuleBookAuditor auditor = new RuleBookAuditor(ruleBook);
     auditor.addRule(auditableRule1);
     auditor.addRule(auditableRule2);
+    auditor.addRule(auditableRule3);
 
     try {
       ruleBook.run(facts);
     } catch (Exception e) {
       Assert.assertEquals(RuleStatus.EXECUTED, auditor.getRuleStatus("SimpleRule"));
-      Assert.assertEquals(RuleStatus.PENDING, auditor.getRuleStatus("ErrorRule"));
+      Assert.assertEquals(RuleStatus.ERROR, auditor.getRuleStatus("ErrorRule"));
+      Assert.assertEquals(RuleStatus.PENDING, auditor.getRuleStatus("AfterErrorRule"));
       Assert.assertTrue(e instanceof RuleException);
       return;
     }
