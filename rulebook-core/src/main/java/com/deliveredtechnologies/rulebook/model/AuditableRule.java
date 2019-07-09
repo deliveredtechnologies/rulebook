@@ -91,8 +91,14 @@ public class AuditableRule<T, U> implements Rule<T, U>, Auditable {
 
   @Override
   public boolean invoke(NameValueReferableMap facts) {
-    boolean isPassing = _rule.invoke(facts);
-    _auditor.updateRuleStatus(this, isPassing ? RuleStatus.EXECUTED : RuleStatus.SKIPPED);
+    boolean isPassing;
+    try {
+      isPassing = _rule.invoke(facts);
+      _auditor.updateRuleStatus(this, isPassing ? RuleStatus.EXECUTED : RuleStatus.SKIPPED);
+    } catch (RuleException ex) {
+      _auditor.updateRuleStatus(this, RuleStatus.ERROR);
+      throw ex;
+    }
     return isPassing;
   }
 

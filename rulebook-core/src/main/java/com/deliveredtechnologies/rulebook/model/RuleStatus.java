@@ -7,5 +7,6 @@ public enum RuleStatus {
   PENDING,
   SKIPPED,
   EXECUTED,
-  NONE
+  NONE,
+  ERROR
 }

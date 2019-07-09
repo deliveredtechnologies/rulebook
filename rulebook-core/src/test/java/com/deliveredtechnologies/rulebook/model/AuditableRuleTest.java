@@ -202,4 +202,20 @@ public class AuditableRuleTest {
     Mockito.verify(rule, Mockito.times(1)).setResult(result);
     Mockito.verify(rule, Mockito.times(1)).getResult();
   }
+
+  @Test(expected = RuleException.class)
+  @SuppressWarnings("unchecked")
+  public void auditableRulesWithErrorOnFailureUpdateAuditorToErrorWhenInvokeFails() {
+    Rule<String, String> rule = new GoldenRule(String.class, RuleChainActionType.ERROR_ON_FAILURE);
+    rule.setCondition(facts -> facts.getValue("some fact").equals("nothing"));
+
+    AuditableRule auditableRule = new AuditableRule<String, String>(rule, "Simple rule");
+    Auditor auditor = Mockito.mock(Auditor.class);
+
+    auditableRule.setAuditor(auditor);
+
+    auditableRule.invoke(new FactMap());
+
+    Mockito.verify(auditor, Mockito.times(1)).updateRuleStatus(auditableRule, RuleStatus.ERROR);
+  }
 }
