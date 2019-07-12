@@ -150,6 +150,10 @@ public class RuleAdapter implements Rule {
                 if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
                   throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
                 }
+                if (_actionType == RuleChainActionType.STOP_ON_FAILURE) {
+                  _rule.setRuleState(RuleState.EXCEPTION);  
+                }
+                
                 LOGGER.error(
                     "Unable to validate condition due to an exception. It will be evaluated as false", ex);
                 return false;
@@ -292,6 +296,10 @@ public class RuleAdapter implements Rule {
                 if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
                   throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
                 }
+                if (_actionType == RuleChainActionType.STOP_ON_FAILURE) {
+                  _rule.setRuleState(RuleState.EXCEPTION);
+                }
+                
                 LOGGER.error("Unable to invoke "
                     + _pojoRule.getClass().getName()
                     + " when converting then to BiConsumer", ex);
@@ -311,6 +319,9 @@ public class RuleAdapter implements Rule {
         } catch (IllegalAccessException | InvocationTargetException ex) {
           if (_actionType == RuleChainActionType.ERROR_ON_FAILURE) {
             throw new RuleException(ex.getCause() == null ? ex : ex.getCause());
+          }
+          if (_actionType == RuleChainActionType.STOP_ON_FAILURE) {
+            _rule.setRuleState(RuleState.EXCEPTION);  
           }
           LOGGER.error("Unable to invoke "
                   + _pojoRule.getClass().getName()
