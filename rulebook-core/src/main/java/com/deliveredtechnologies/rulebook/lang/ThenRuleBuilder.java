@@ -59,9 +59,6 @@ public class ThenRuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
    * @return  a TerminatingRuleBuilder that only allows for the Rule to be built following stop()
    */
   public TerminatingRuleBuilder<T, U> stop() {
-    // Because when we use POJO Rules we may want to manually set a BREAK
-    // we have to use another RuleState called POJOMANUALBREAK
-    // otherwise we'll ignore the BREAK in the Invoke
     _rule.setRuleState(RuleState.BREAK);
     return this;
   }
