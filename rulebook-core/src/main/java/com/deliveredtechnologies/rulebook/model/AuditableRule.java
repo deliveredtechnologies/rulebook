@@ -94,7 +94,11 @@ public class AuditableRule<T, U> implements Rule<T, U>, Auditable {
     boolean isPassing;
     try {
       isPassing = _rule.invoke(facts);
-      _auditor.updateRuleStatus(this, isPassing ? RuleStatus.EXECUTED : RuleStatus.SKIPPED);
+      if (_rule.getRuleState().equals(RuleState.EXCEPTION)) {
+        _auditor.updateRuleStatus(this, RuleStatus.ERROR);
+      } else {
+        _auditor.updateRuleStatus(this, isPassing ? RuleStatus.EXECUTED : RuleStatus.SKIPPED);
+      }
     } catch (RuleException ex) {
       _auditor.updateRuleStatus(this, RuleStatus.ERROR);
       throw ex;

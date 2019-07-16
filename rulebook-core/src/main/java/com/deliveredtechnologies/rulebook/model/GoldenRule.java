@@ -143,7 +143,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
               .collect(Collectors.toMap(
                   key -> key,
                   key -> ((NameValueReferable<T>) facts.get(key)))));
-
+      
       //invoke then() action(s) if when() is true or if when() was never specified
       if (getCondition() == null || getCondition().test(new TypeConvertibleFactMap<T>(typeFilteredFacts))) {
 
@@ -203,7 +203,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
           if (_ruleState == RuleState.EXCEPTION) {
             setRuleState(RuleState.BREAK);
           } else {
-            _ruleState = RuleState.NEXT;
+            setRuleState(RuleState.NEXT);
           }
         }
         return true; //signifies that the actions were executed

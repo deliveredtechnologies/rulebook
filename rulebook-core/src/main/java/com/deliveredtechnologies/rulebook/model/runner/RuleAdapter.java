@@ -66,6 +66,9 @@ public class RuleAdapter implements Rule {
 
     _actionType = ruleAnnotation.ruleChainAction();
     _rule = rule == null ? new GoldenRule(Object.class, _actionType) : rule;
+    if (_actionType.equals(RuleChainActionType.STOP_ON_FAILURE)) {
+      _rule.setRuleState(RuleState.BREAK);
+    }
     _pojoRule = pojoRule;
   }
 
