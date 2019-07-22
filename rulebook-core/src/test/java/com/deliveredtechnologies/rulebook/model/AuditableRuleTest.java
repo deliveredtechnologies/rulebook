@@ -8,16 +8,33 @@ import com.deliveredtechnologies.rulebook.RuleState;
 import com.deliveredtechnologies.rulebook.Result;
 
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
+import com.deliveredtechnologies.rulebook.model.runner.RuleAdapter;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.InvalidClassException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import com.deliveredtechnologies.rulebook.model.Rule;
+import com.deliveredtechnologies.rulebook.model.pojotestrules.exceptions.RuleWhereThenThrowsAnExceptionButNoStopOnFailure;
+import com.deliveredtechnologies.rulebook.model.pojotestrules.exceptions.RuleWhereThenThrowsAnExceptionStopOnFailure;
+import com.deliveredtechnologies.rulebook.model.pojotestrules.exceptions.RuleWhereWhenThrowsAnExceptionButNoStopOnFailure;
+import com.deliveredtechnologies.rulebook.model.pojotestrules.exceptions.RuleWhereWhenThrowsAnExceptionStopOnFailure;
+import com.deliveredtechnologies.rulebook.annotation.Then;
+import com.deliveredtechnologies.rulebook.annotation.When;
+
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.ERROR_ON_FAILURE;
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.STOP_ON_FAILURE;
+import static com.deliveredtechnologies.rulebook.model.RuleChainActionType.CONTINUE_ON_FAILURE;
 
 /**
  * Tests for {@link AuditableRule}.
@@ -160,6 +177,8 @@ public class AuditableRuleTest {
   @SuppressWarnings("unchecked")
   public void auditableRulesUpdateAuditorToExecutedWhenInvokePasses() {
     Rule<String, String> rule = Mockito.mock(Rule.class);
+    Mockito.when(rule.getRuleState()).thenReturn(RuleState.NEXT);
+
     AuditableRule auditableRule = new AuditableRule<String, String>(rule);
     Auditor auditor = Mockito.mock(Auditor.class);
 
@@ -174,8 +193,10 @@ public class AuditableRuleTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void auditableRulesUpdateAuditorToExecutedWhenInvokeFails() {
+  public void auditableRulesUpdateAuditorToExecutedWhenInvokeFailsButItsNotAnException() {
     Rule<String, String> rule = Mockito.mock(Rule.class);
+    Mockito.when(rule.getRuleState()).thenReturn(RuleState.NEXT);
+    
     AuditableRule auditableRule = new AuditableRule<String, String>(rule);
     Auditor auditor = Mockito.mock(Auditor.class);
 
@@ -218,4 +239,5 @@ public class AuditableRuleTest {
 
     Mockito.verify(auditor, Mockito.times(1)).updateRuleStatus(auditableRule, RuleStatus.ERROR);
   }
+  
 }

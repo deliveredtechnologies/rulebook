@@ -143,7 +143,7 @@ public class GoldenRule<T, U> implements Rule<T, U> {
               .collect(Collectors.toMap(
                   key -> key,
                   key -> ((NameValueReferable<T>) facts.get(key)))));
-
+      
       //invoke then() action(s) if when() is true or if when() was never specified
       if (getCondition() == null || getCondition().test(new TypeConvertibleFactMap<T>(typeFilteredFacts))) {
 
@@ -188,6 +188,9 @@ public class GoldenRule<T, U> implements Rule<T, U> {
                               err.getCause() instanceof RuleException ? (RuleException)err.getCause() :
                                   new RuleException(err.getCause());
                         }
+                        if (_actionType.equals(STOP_ON_FAILURE)) {
+                          setRuleState(RuleState.BREAK);
+                        }
                       }
                     });
           facts.putAll(usingFacts);
@@ -196,7 +199,12 @@ public class GoldenRule<T, U> implements Rule<T, U> {
         // the actions were executed, so the rule chain continues
         // STOP_ON_FAILURE ONLY stops the rule chain if there is a failure
         if (_actionType.equals(STOP_ON_FAILURE)) {
-          this._ruleState = RuleState.NEXT;
+          // If an Exception has happened and the RuleState.EXCEPTION then we should break the RuleChain
+          if (_ruleState == RuleState.EXCEPTION) {
+            setRuleState(RuleState.BREAK);
+          } else {
+            setRuleState(RuleState.NEXT);
+          }
         }
         return true; //signifies that the actions were executed
       }
@@ -206,6 +214,10 @@ public class GoldenRule<T, U> implements Rule<T, U> {
       if (_actionType.equals(ERROR_ON_FAILURE)) {
         throw ex instanceof RuleException ? (RuleException)ex : new RuleException(ex);
       }
+      if (_actionType.equals(STOP_ON_FAILURE)) {
+        setRuleState(RuleState.EXCEPTION);
+      }
+
     }
 
     return _actionType.equals(STOP_ON_FAILURE);
