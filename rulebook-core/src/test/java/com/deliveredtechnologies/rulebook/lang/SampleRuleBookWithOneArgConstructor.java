@@ -5,7 +5,9 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleStatus;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,4 +43,11 @@ public class SampleRuleBookWithOneArgConstructor<T> implements RuleBook<T> {
   public boolean hasRules() {
     return false;
   }
+
+
+  @Override
+  public Map<String, Map<Long, RuleStatus>> getAudit() {
+    return null;
+  }
+  
 }

@@ -1,22 +1,34 @@
 package com.deliveredtechnologies.rulebook.model;
 
 import com.deliveredtechnologies.rulebook.FactMap;
-import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
 import com.deliveredtechnologies.rulebook.lang.RuleBuilder;
 import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Tests for {@link RuleBookAuditor}.
  */
 public class RuleBookAuditorTest {
+
+  @Test
+  public void ruleBookAuditorCanAuditRulesWhenCreatedThroughAClassDef() {  
+    RuleBook rulebook = RuleBookBuilder.create(SimpleRuleAdds.class).asAuditor()  
+        .build();
+        
+    rulebook.run(new FactMap());
+    Auditor auditor = (Auditor)rulebook;
+
+    Assert.assertEquals(auditor.getRuleStatus("Rule1"), RuleStatus.EXECUTED);
+    Assert.assertEquals(auditor.getRuleStatus("Rule2"), RuleStatus.SKIPPED);
+    Assert.assertEquals(auditor.getRuleStatus("Rule3"), RuleStatus.EXECUTED);
+  }
+  
+    
   @Test
   public void ruleBookAuditorCanAuditRules() {
     RuleBook rulebook = RuleBookBuilder.create().asAuditor()

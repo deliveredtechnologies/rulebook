@@ -4,6 +4,7 @@ import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,4 +47,7 @@ public interface RuleBook<T> {
    * @return  true if any Rules have been defined in the RuleBook, otherwise false.
    */
   boolean hasRules();
+  
+  Map<String, Map<Long, RuleStatus>> getAudit();
+  
 }

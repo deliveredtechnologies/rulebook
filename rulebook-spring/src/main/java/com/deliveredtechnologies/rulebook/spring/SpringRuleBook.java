@@ -4,9 +4,11 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.RuleStatus;
 import com.deliveredtechnologies.rulebook.model.runner.RuleAdapter;
 
 import java.io.InvalidClassException;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -49,5 +51,10 @@ public class SpringRuleBook<T> implements RuleBook<T> {
   @Override
   public boolean hasRules() {
     return _ruleBook.hasRules();
+  }
+
+  @Override
+  public Map<String, Map<Long, RuleStatus>> getAudit() {
+    return null;
   }
 }

@@ -2,7 +2,9 @@ package com.deliveredtechnologies.rulebook.model;
 
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
+import com.deliveredtechnologies.rulebook.model.rulechain.cor.CoRRuleBook;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -31,6 +33,11 @@ public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
       defineRules();
     }
     _ruleBook.run(facts);
+    if ( _ruleBook.getAudit() != null) {
+      if ( _ruleBook.getAudit().size() > 0 ) {
+        this._auditMap = _ruleBook.getAudit(); 
+      }
+    }
   }
 
   @Override
@@ -47,4 +54,5 @@ public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
   public boolean hasRules() {
     return _ruleBook.hasRules();
   }
+
 }

@@ -9,9 +9,13 @@ import java.util.stream.Collectors;
  * Auditors are used for auditing rules. They maintain a record of each Rule and their state.
  */
 public abstract class Auditor {
-  private Map<String, Map<Long, RuleStatus>> _auditMap = new HashMap<>();
+  protected Map<String, Map<Long, RuleStatus>> _auditMap = new HashMap<>();
   private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
 
+  public Map<String, Map<Long, RuleStatus>> getAudit() {
+    return _auditMap;
+  }
+  
   /**
    * Registers a rule to be audited.
    * @param rule  and {@link Auditable} rule
