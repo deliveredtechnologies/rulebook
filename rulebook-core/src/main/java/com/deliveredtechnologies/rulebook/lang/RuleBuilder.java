@@ -94,6 +94,7 @@ public class RuleBuilder<T, U> implements TerminatingRuleBuilder<T, U> {
     builder._factType = factType;
     builder._resultType = _resultType;
     builder._actionType = _actionType;
+    builder._name = _name;
     return builder;
   }
 
