@@ -41,9 +41,5 @@ public class SampleRuleBookWithPrivateConstructor<T> implements RuleBook<T> {
     return false;
   }
 
-  @Override
-  public Map<String, Map<Long, RuleStatus>> getAudit() {
-    return null;
-  }
 
 }

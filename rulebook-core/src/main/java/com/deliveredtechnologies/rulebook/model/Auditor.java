@@ -29,6 +29,10 @@ public abstract class Auditor {
     }
   }
 
+  public Map<String, Map<Long, RuleStatus>> getRegisteredRules() {
+    return _auditMap;
+  }
+  
   /**
    * Updates the status of the rule & stores the status with the Auditor.
    * @param rule    the rule in question

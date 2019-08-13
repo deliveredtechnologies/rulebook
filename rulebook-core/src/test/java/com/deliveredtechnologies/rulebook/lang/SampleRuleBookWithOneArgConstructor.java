@@ -44,10 +44,5 @@ public class SampleRuleBookWithOneArgConstructor<T> implements RuleBook<T> {
     return false;
   }
 
-
-  @Override
-  public Map<String, Map<Long, RuleStatus>> getAudit() {
-    return null;
-  }
   
 }

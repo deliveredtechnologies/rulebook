@@ -53,8 +53,4 @@ public class SpringRuleBook<T> implements RuleBook<T> {
     return _ruleBook.hasRules();
   }
 
-  @Override
-  public Map<String, Map<Long, RuleStatus>> getAudit() {
-    return null;
-  }
 }

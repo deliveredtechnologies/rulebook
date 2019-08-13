@@ -48,6 +48,4 @@ public interface RuleBook<T> {
    */
   boolean hasRules();
   
-  Map<String, Map<Long, RuleStatus>> getAudit();
-  
 }

@@ -33,9 +33,12 @@ public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
       defineRules();
     }
     _ruleBook.run(facts);
-    if ( _ruleBook.getAudit() != null) {
-      if ( _ruleBook.getAudit().size() > 0 ) {
-        this._auditMap = _ruleBook.getAudit(); 
+    if ( getRegisteredRules().size() == 0 ) {
+      if ( _ruleBook instanceof RuleBookAuditor ) {
+        RuleBookAuditor auditableRuleBook = (RuleBookAuditor) _ruleBook;
+        if ( auditableRuleBook.getRegisteredRules().size() > 0 ) {
+          this._auditMap = auditableRuleBook.getRegisteredRules();
+        }
       }
     }
   }

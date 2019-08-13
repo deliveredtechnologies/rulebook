@@ -66,9 +66,5 @@ public class CoRRuleBook<T> implements RuleBook<T> {
     return _headRule != null;
   }
 
-  @Override
-  public Map<String, Map<Long, RuleStatus>> getAudit() {
-    return null;
-  }
   
 }
