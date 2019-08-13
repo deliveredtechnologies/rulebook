@@ -10,4 +10,5 @@ include 'megabank-pojo'
 include 'helloworld-spring'
 include 'helloworld-spring-web'
 include 'megabank-guice'
+include 'megabank-pojo-multi-package'
 

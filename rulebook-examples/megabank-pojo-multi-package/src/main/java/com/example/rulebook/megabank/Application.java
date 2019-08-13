@@ -4,11 +4,12 @@ import com.deliveredtechnologies.rulebook.Fact;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.model.Auditor;
+import com.deliveredtechnologies.rulebook.model.RuleBookAuditor;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 
 public class Application {
   public static void main(String[] args) {
-    RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook.megabank");
+    RuleBookRunner ruleBook = new RuleBookRunner("com.example.rulebook.megabank.rules");
     NameValueReferableMap<ApplicantBean> facts = new FactMap<>();
     ApplicantBean applicant1 = new ApplicantBean(650, 20000, true);
     ApplicantBean applicant2 = new ApplicantBean(620, 30000, true);
