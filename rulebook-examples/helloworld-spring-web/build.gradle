@@ -1,6 +1,9 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE")
@@ -28,8 +31,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile 'com.deliveredtechnologies:rulebook-core:0.11-SNAPSHOT'
-    compile 'com.deliveredtechnologies:rulebook-spring:0.11-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-core:0.12-SNAPSHOT'
+    compile 'com.deliveredtechnologies:rulebook-spring:0.12-SNAPSHOT'
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }

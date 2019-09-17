@@ -15,7 +15,7 @@ cache:
   directories:
     - $HOME/.gradle
 jdk:
-  - oraclejdk8
+  - openjdk8
 script:
   - |
     if [ $OSSRH_PASSWORD != "false" ] && cat gradle.properties | grep -q SNAPSHOT; then
