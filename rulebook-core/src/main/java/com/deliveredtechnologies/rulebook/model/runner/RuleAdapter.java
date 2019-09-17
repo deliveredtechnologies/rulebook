@@ -1,7 +1,6 @@
 package com.deliveredtechnologies.rulebook.model.runner;
 
 
-
 import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
@@ -13,6 +12,10 @@ import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleChainActionType;
 import com.deliveredtechnologies.rulebook.model.RuleException;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,6 +226,45 @@ public class RuleAdapter implements Rule {
     return _rule.getResult();
   }
 
+  private List<Class<?>> eligibleParameterTypes(Field field) {
+    Type genericType = field.getGenericType();
+    if (genericType instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType)genericType;
+      Type[] typeArguments = parameterizedType.getActualTypeArguments();
+      if (typeArguments != null && typeArguments.length > 0) {
+        Type typeArgument = typeArguments[0];
+        if (typeArgument instanceof Class) {
+          return Collections.singletonList((Class<?>)typeArgument);
+        } else if (typeArgument instanceof WildcardType) {
+          WildcardType wildcardType = (WildcardType) typeArgument;
+          return Stream.of(wildcardType.getUpperBounds())
+              .filter(type -> type instanceof Class)
+              .map(type -> (Class<?>) type)
+              .collect(Collectors.toList());
+        } else if (typeArgument instanceof TypeVariable) {
+          TypeVariable typeVariable = (TypeVariable)typeArgument;
+          return Stream.of(typeVariable.getBounds())
+              .filter(type -> type instanceof Class)
+              .map(type -> (Class<?>) type)
+              .collect(Collectors.toList());
+        }
+      }
+    }
+    return Collections.emptyList();
+  }
+
+  private boolean isCompatibleGenericType(Field field, Object factObject) {
+    final Object factValue;
+    if (factObject instanceof NameValueReferable) {
+      factValue = ((NameValueReferable) factObject).getValue();
+    } else {
+      factValue = null;
+    }
+    return factValue != null
+        && eligibleParameterTypes(field).stream()
+        .anyMatch(type -> type.isAssignableFrom(factValue.getClass()));
+  }
+
   /**
    * Convert the Facts to properties with the @Given annotation in the class.
    * If any matched properties are non-Facts, then the value of the associated Facts are mapped to those
@@ -247,16 +289,13 @@ public class RuleAdapter implements Rule {
           } else if (Collection.class.isAssignableFrom(field.getType())) {
             //set a Collection of Fact object values
             Stream stream = facts.values().stream()
-                    .filter(fact -> { //filter on only facts that contain objects matching the generic type
-                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
-                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
-                      return genericType.equals(((NameValueReferable) fact).getValue().getClass());
-                    })
+                    .filter(fact -> isCompatibleGenericType(field, fact))
                     .map(fact -> {
-                      ParameterizedType paramType = (ParameterizedType)field.getGenericType();
-                      Class<?> genericType = (Class<?>)paramType.getActualTypeArguments()[0];
-                      return genericType.cast(((NameValueReferable)fact).getValue());
+                      Object factValue = ((NameValueReferable) fact).getValue();
+                      Class<?> targetType = eligibleParameterTypes(field).iterator().next();
+                      return targetType.cast(factValue);
                     });
+
             if (List.class == field.getType()) {
               //map List of Fact values to field
               field.set(_pojoRule, stream.collect(Collectors.toList()));
