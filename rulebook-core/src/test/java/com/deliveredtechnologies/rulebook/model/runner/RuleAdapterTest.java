@@ -10,12 +10,14 @@ import com.deliveredtechnologies.rulebook.NameValueReferable;
 import com.deliveredtechnologies.rulebook.model.GoldenRule;
 import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.runner.rule.result.ResultRule;
+import com.deliveredtechnologies.rulebook.runner.test.rulebooks.RuleWithWildcardCollections;
 import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutAnnotations;
 import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithResult;
 import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutRuleAnnotation;
 import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SubRuleWithResult;
 import com.deliveredtechnologies.rulebook.runner.test.rulebooks.SampleRuleWithoutResult;
 
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.times;
 /**
  * Tests for {@link RuleAdapter}.
  */
+
 public class RuleAdapterTest {
 
   private FactMap<Object> _factMap;
@@ -293,6 +296,26 @@ public class RuleAdapterTest {
 
     verify(consumer, times(1)).accept(any(FactMap.class));
     Assert.assertTrue(consumer == ((List<Object>)ruleAdapter.getActions()).get(0));
+  }
+
+  @Test
+  public void pojoWithWildCardCollections() throws InvalidClassException {
+    RuleWithWildcardCollections<Number> rule = new RuleWithWildcardCollections<>();
+    RuleAdapter ruleAdapter = new RuleAdapter(rule);
+    Fact<String> testStringFact = new Fact("stringFactName", "A string value");
+    Fact<String> testStringFact2 = new Fact("secondStringFactName", "A different string value");
+    Fact<Integer> testIntegerFact = new Fact("integerFactName", Integer.MAX_VALUE);
+    Fact<Long> testLongFact = new Fact("longFactName", Long.MAX_VALUE);
+    ruleAdapter.addFacts(testStringFact, testStringFact2, testIntegerFact, testLongFact);
+    ruleAdapter.invoke();
+    Set<CharSequence> stringResults = (Set<CharSequence>)ruleAdapter.getResult().get().getValue();
+    List<Number> numbers = rule._numberSet;
+    Assert.assertEquals(2, numbers.size());
+    Assert.assertTrue(numbers.contains(testIntegerFact.getValue()));
+    Assert.assertTrue(numbers.contains(testLongFact.getValue()));
+    Assert.assertEquals(2, stringResults.size());
+    Assert.assertTrue(stringResults.contains(testStringFact.getValue()));
+    Assert.assertTrue(stringResults.contains(testStringFact2.getValue()));
   }
 
   @Test
