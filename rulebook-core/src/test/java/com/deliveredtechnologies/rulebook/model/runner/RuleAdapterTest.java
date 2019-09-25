@@ -299,7 +299,7 @@ public class RuleAdapterTest {
   }
 
   @Test
-  public void pojoeWithWildCardCollections() throws InvalidClassException {
+  public void pojoWithWildCardCollections() throws InvalidClassException {
     RuleWithWildcardCollections<Number> rule = new RuleWithWildcardCollections<>();
     RuleAdapter ruleAdapter = new RuleAdapter(rule);
     Fact<String> testStringFact = new Fact("stringFactName", "A string value");
