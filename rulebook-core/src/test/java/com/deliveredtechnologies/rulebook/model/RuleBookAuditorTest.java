@@ -39,6 +39,34 @@ public class RuleBookAuditorTest {
     Assert.assertEquals(auditor.getRuleStatus("Rule3"), RuleStatus.EXECUTED);
   }
 
+  @Test
+  public void ruleBookAuditorAuditsRulesFromDecoratedRuleBookAuditor() {
+    RuleBook rulebook = new RuleBookAuditor(new CoRRuleBook()) {
+      @Override
+      public void defineRules() {
+        addRule(RuleBuilder.create().withName("Rule1")
+            .when(facts -> true)
+            .then(facts -> {
+            }).build());
+        addRule(RuleBuilder.create().withName("Rule2")
+            .when(facts -> false)
+            .then(facts -> {
+            }).build());
+        addRule(RuleBuilder.create().withName("Rule3")
+            .when(facts -> true)
+            .then(facts -> {
+            }).build());
+      }
+    };
+
+    rulebook.run(new FactMap());
+    Auditor auditor = (Auditor)rulebook;
+
+    Assert.assertEquals(auditor.getRuleStatus("Rule1"), RuleStatus.EXECUTED);
+    Assert.assertEquals(auditor.getRuleStatus("Rule2"), RuleStatus.SKIPPED);
+    Assert.assertEquals(auditor.getRuleStatus("Rule3"), RuleStatus.EXECUTED);
+  }
+
   /**
    * Test to ensure that rules invoked using null facts don't error just because that facts are null.
    */

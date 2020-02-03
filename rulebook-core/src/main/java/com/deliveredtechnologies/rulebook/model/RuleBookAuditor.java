@@ -6,13 +6,21 @@ import com.deliveredtechnologies.rulebook.Result;
 import java.util.Optional;
 
 /**
- * Created by clong on 9/3/17.
+ * Decorates RuleBook with auditing functionality.
  */
 public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
   private RuleBook<T> _ruleBook;
 
+  /**
+   * Costructor - Decorates the supplied RuleBook; if a RuleBookAuditor is supplied, it assumes its audited rules.
+   * @param ruleBook  RuleBook to decorate with auditing functionality
+   */
   public RuleBookAuditor(RuleBook<T> ruleBook) {
     _ruleBook = ruleBook;
+    if ( _ruleBook instanceof RuleBookAuditor ) {
+      RuleBookAuditor auditableRuleBook = (RuleBookAuditor) _ruleBook;
+      _auditMap = auditableRuleBook._auditMap;
+    }
   }
 
   @Override
