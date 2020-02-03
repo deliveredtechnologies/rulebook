@@ -266,6 +266,13 @@ project("rulebook-core") {
                         role 'raised bug for v0.11'
                     }
                 }
+                contributor {
+                    name 'mikelear'
+                    url 'https://github.com/mikelear'
+                    roles {
+                        role 'raised RuleBookAuditor bug where decorated auditors with defineRules aren not audited and proposed fix'
+                    }
+                }
             }
         }
     }
