@@ -59,8 +59,9 @@ public class RuleBookAuditorTest {
       }
     };
 
+    RuleBookAuditor auditor = new RuleBookAuditor(rulebook);
+
     rulebook.run(new FactMap());
-    Auditor auditor = (Auditor)rulebook;
 
     Assert.assertEquals(auditor.getRuleStatus("Rule1"), RuleStatus.EXECUTED);
     Assert.assertEquals(auditor.getRuleStatus("Rule2"), RuleStatus.SKIPPED);
