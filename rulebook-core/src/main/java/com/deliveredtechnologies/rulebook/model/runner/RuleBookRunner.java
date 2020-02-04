@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 import static java.util.Comparator.comparingInt;
@@ -26,6 +28,8 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
   private String _package;
   private Predicate<String> _subPkgMatch;
   private Class<? extends RuleBook> _prototypeClass;
+  private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+  private Optional<List<Class<?>>> _rules = Optional.ofNullable(null);
 
   @SuppressWarnings("unchecked")
   private Result _result = new Result(null);
@@ -76,15 +80,32 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
   protected List<Class<?>> getPojoRules() {
     Reflections reflections = new Reflections(_package);
 
-    List<Class<?>> rules = reflections
-        .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
-        .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
-        .filter(rule -> _subPkgMatch.test(rule.getPackage().getName()))
-        .collect(Collectors.toList());
 
-    rules.sort(comparingInt(aClass ->
-        getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, aClass).order()));
+    try {
+      _lock.readLock().lock();
+      if (_rules.isPresent()) {
+        return _rules.get();
+      }
+    } finally {
+      _lock.readLock().unlock();
+    }
+    try {
+      _lock.writeLock().lock();
+      if (_rules.isPresent()) {
+        return _rules.get();
+      }
+      List<Class<?>> rules = reflections
+          .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
+          .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
+          .filter(rule -> _subPkgMatch.test(rule.getPackage().getName()))
+          .collect(Collectors.toList());
 
-    return rules;
+      rules.sort(comparingInt(aClass ->
+          getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, aClass).order()));
+      _rules = Optional.of(rules);
+    } finally {
+      _lock.writeLock().unlock();
+    }
+    return _rules.get();
   }
 }
