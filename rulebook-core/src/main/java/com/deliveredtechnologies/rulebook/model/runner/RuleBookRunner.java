@@ -80,17 +80,16 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
   protected List<Class<?>> getPojoRules() {
     Reflections reflections = new Reflections(_package);
 
-
+    _lock.readLock().lock();
     try {
-      _lock.readLock().lock();
       if (_rules.isPresent()) {
         return _rules.get();
       }
     } finally {
       _lock.readLock().unlock();
     }
+    _lock.writeLock().lock();
     try {
-      _lock.writeLock().lock();
       if (_rules.isPresent()) {
         return _rules.get();
       }
