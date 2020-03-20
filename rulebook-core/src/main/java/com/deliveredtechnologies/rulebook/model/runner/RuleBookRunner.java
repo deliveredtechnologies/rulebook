@@ -9,11 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Stream;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
 import static java.util.Comparator.comparingInt;
@@ -93,8 +95,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
       if (_rules.isPresent()) {
         return _rules.get();
       }
-      List<Class<?>> rules = reflections
-          .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
+      List<Class<?>> rules = PojoRulesCache.getPojoRules(_package).stream()
           .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
           .filter(rule -> _subPkgMatch.test(rule.getPackage().getName()))
           .collect(Collectors.toList());
