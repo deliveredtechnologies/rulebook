@@ -53,7 +53,7 @@ subprojects {
         //logging
         compile("org.slf4j:slf4j-api:1.7.22")
         //reflection
-        compile("org.reflections:reflections:0.9.10")
+        compile("org.reflections:reflections:0.9.9")
         //unit testing
         testCompile("junit:junit:4.12")
         testCompile("net.jodah:concurrentunit:0.4.2")
