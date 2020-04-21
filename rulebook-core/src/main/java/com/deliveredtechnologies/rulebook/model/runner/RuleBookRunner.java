@@ -78,8 +78,6 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
    * @return  a List of POJO Rules
    */
   protected List<Class<?>> getPojoRules() {
-    Reflections reflections = new Reflections(_package);
-
     _lock.readLock().lock();
     try {
       if (_rules.isPresent()) {
@@ -93,6 +91,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
       if (_rules.isPresent()) {
         return _rules.get();
       }
+      Reflections reflections = new Reflections(_package);
       List<Class<?>> rules = reflections
           .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
           .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
@@ -102,9 +101,9 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
       rules.sort(comparingInt(aClass ->
           getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, aClass).order()));
       _rules = Optional.of(rules);
+      return _rules.get();
     } finally {
       _lock.writeLock().unlock();
     }
-    return _rules.get();
   }
 }
