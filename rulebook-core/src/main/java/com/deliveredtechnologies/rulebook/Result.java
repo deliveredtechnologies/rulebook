@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * and across other objects (i.e. DecisionBook and Decision objects)
  */
 public class Result<T> implements Referable<T> {
-  private Map<Long, T> _valueMap = new HashMap<>();
+  private final Map<Long, T> _valueMap = new HashMap<>();
   private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
   private T _defaultValue = null;
 
