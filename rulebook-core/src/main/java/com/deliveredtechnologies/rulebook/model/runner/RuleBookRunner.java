@@ -28,7 +28,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
   private String _package;
   private Predicate<String> _subPkgMatch;
   private Class<? extends RuleBook> _prototypeClass;
-  private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
   private Optional<List<Class<?>>> _rules = Optional.ofNullable(null);
 
   @SuppressWarnings("unchecked")
