@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotatedField;
 import static com.deliveredtechnologies.rulebook.util.AnnotationUtils.getAnnotation;
@@ -80,6 +81,12 @@ public abstract class AbstractRuleBookRunner extends Auditor implements RuleBook
   @Override
   @SuppressWarnings("unchecked")
   public void setDefaultResult(Object result) {
+    _result = new Result(result);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public void setDefaultResult(Supplier result) {
     _result = new Result(result);
   }
 

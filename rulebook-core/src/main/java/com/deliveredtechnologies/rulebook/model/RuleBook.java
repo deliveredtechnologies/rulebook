@@ -1,10 +1,10 @@
 package com.deliveredtechnologies.rulebook.model;
 
-import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * The RuleBook interface for defining objects that handle the behavior of rules chained together.
@@ -28,6 +28,13 @@ public interface RuleBook<T> {
    * @param result  the default Result value
    */
   void setDefaultResult(T result);
+
+
+  /**
+   * Set the default Result supplier function; this should be set for RuleBooks that are expected to produce a Result.
+   * @param supplier the default Result value.
+   */
+  void setDefaultResult(Supplier<T> supplier);
 
   /**
    * Get the Result of the RuleBook.
