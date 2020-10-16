@@ -6,6 +6,7 @@ import com.deliveredtechnologies.rulebook.model.Rule;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A RuleBook implementation that chains Rules together using the Chain of Responsibility (CoR) pattern.
@@ -50,6 +51,11 @@ public class CoRRuleBook<T> implements RuleBook<T> {
   @Override
   public void setDefaultResult(T result) {
     _result = new Result<T>(result);
+  }
+
+  @Override
+  public void setDefaultResult(Supplier<T> result) {
+    _result = new Result<>(result);
   }
 
   @Override
