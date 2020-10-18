@@ -4,6 +4,7 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.Result;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Decorates RuleBook with auditing functionality.
@@ -43,6 +44,11 @@ public class RuleBookAuditor<T> extends Auditor implements RuleBook<T> {
 
   @Override
   public void setDefaultResult(T result) {
+    _ruleBook.setDefaultResult(result);
+  }
+
+  @Override
+  public void setDefaultResult(Supplier<T> result) {
     _ruleBook.setDefaultResult(result);
   }
 
