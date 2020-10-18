@@ -8,6 +8,7 @@ import com.deliveredtechnologies.rulebook.model.runner.RuleAdapter;
 
 import java.io.InvalidClassException;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * RuleBook decorator for Spring that allows Rules to be created from either Spring annotated POJO Rules or
@@ -39,6 +40,11 @@ public class SpringRuleBook<T> implements RuleBook<T> {
   @Override
   public void setDefaultResult(T result) {
     _ruleBook.setDefaultResult(result);
+  }
+
+  @Override
+  public void setDefaultResult(Supplier<T> supplier) {
+    _ruleBook.setDefaultResult(supplier);
   }
 
   @Override

@@ -18,7 +18,20 @@ public class RuleBookAuditorTest {
         .build();
     ruleBook.run(new FactMap<>());
 
-    Auditor auditor = (Auditor)ruleBook;
+    Auditor auditor = (Auditor) ruleBook;
+    assertEquals(auditor.getRuleStatus("First"), RuleStatus.EXECUTED);
+    assertEquals(auditor.getRuleStatus("Second"), RuleStatus.SKIPPED);
+  }
+
+  @Test
+  public void ruleBookAuditorAuditsRulesDeclaredInDefineRulesSupplierDefaultResult() {
+    RuleBook ruleBook = RuleBookBuilder.create(SubCoRRuleBookAuditor.class)
+        .withResultType(String.class)
+        .withDefaultResult(() -> "Unknown")
+        .build();
+    ruleBook.run(new FactMap<>());
+
+    Auditor auditor = (Auditor) ruleBook;
     assertEquals(auditor.getRuleStatus("First"), RuleStatus.EXECUTED);
     assertEquals(auditor.getRuleStatus("Second"), RuleStatus.SKIPPED);
   }

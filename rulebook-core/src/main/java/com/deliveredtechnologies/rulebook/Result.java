@@ -3,6 +3,7 @@ package com.deliveredtechnologies.rulebook;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
 
 /**
  * This is a wrapper class for the actual result.
@@ -15,6 +16,7 @@ public class Result<T> implements Referable<T> {
   private final Map<Long, T> _valueMap = new HashMap<>();
   private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
   private T _defaultValue = null;
+  private Supplier<T> _supplier = null;
 
   public Result() {}
 
@@ -28,6 +30,19 @@ public class Result<T> implements Referable<T> {
   }
 
   /**
+   * Creates an instance of Result with a default supplier function.
+   *
+   * @param supplier the default value.
+   */
+  public Result(Supplier<T> supplier) {
+    if (supplier != null) {
+      _supplier = supplier;
+      _defaultValue = supplier.get();
+    }
+  }
+
+
+  /**
    * Resets the value of the Result to its default value.
    */
   public void reset() {
@@ -39,7 +54,12 @@ public class Result<T> implements Referable<T> {
     } finally {
       _lock.readLock().unlock();
     }
-    setValue(_defaultValue);
+    if (_supplier == null) {
+      setValue(_defaultValue);
+    } else {
+      // Create new reference
+      setValue(_supplier.get());
+    }
   }
 
   /**

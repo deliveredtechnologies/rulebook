@@ -4,6 +4,8 @@ import com.deliveredtechnologies.rulebook.lang.RuleBookBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
@@ -82,8 +84,48 @@ public class ResultTest {
   }
 
   @Test
+  public void getResultFailedWithDefaultValueSetToAnObject() {
+    ComplexObject complexObject = new ComplexObject();
+
+    Result<ComplexObject> result = new Result<>(complexObject);
+    result.getValue()._choices.add("Bad choices");
+    complexObject._value = -1.0;
+    Assert.assertSame(result.getValue(), complexObject);
+
+    result.reset();
+    // Still same !
+    Assert.assertSame(result.getValue(), complexObject);
+  }
+
+  @Test
+  public void getResultWithSupplierAndDefaultValueSetToAnObject() {
+    Result<ComplexObject> result = new Result<>(ComplexObject::new);
+    result.getValue()._choices.add("Bad choices");
+
+    ComplexObject complexObject = result.getValue();
+
+    result.reset();
+    // Not same !
+    Assert.assertNotSame(result.getValue(), complexObject);
+  }
+
+  @Test
+  public void resetWithSupplierAndNoDefaultValueSetDoesNotError() {
+    Result<String> result = new Result<>(() -> null);
+    result.reset();
+  }
+
+  @Test
   public void toStringWithNoValueReturnsToStringOnDefaultValue() {
     Result<String> result = new Result<>("Default");
+
+    Assert.assertEquals("Default", result.toString());
+  }
+
+
+  @Test
+  public void toStringWithSupplierAndNoValueReturnsToStringOnDefaultValue() {
+    Result<String> result = new Result<>(() -> "Default");
 
     Assert.assertEquals("Default", result.toString());
   }
@@ -94,4 +136,17 @@ public class ResultTest {
 
     Assert.assertEquals("", result.toString());
   }
+
+  @Test
+  public void toStringWithSupplierAndNoValueOrDefaultReturnsBlankString() {
+    Result<String> result = new Result<>(() -> null);
+
+    Assert.assertEquals("", result.toString());
+  }
+
+  class ComplexObject {
+    double _value = 12.0;
+    List<String> _choices = new ArrayList<>();
+  }
+
 }

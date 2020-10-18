@@ -16,6 +16,8 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collections;
+
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,6 +219,7 @@ public class RuleAdapter implements Rule {
               }
             } catch (Exception ex) {
               LOGGER.error("Unable to set @Result field in " + _pojoRule.getClass(), ex);
+              throw new UncheckedExecutionException(ex);
             }
           });
   }
