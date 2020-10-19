@@ -1,5 +1,5 @@
-[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.11|
-[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.11|
+[RuleBook-Spring Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-spring|0.12|
+[RuleBook-Core Maven Central]:http://search.maven.org/#artifactdetails|com.deliveredtechnologies|rulebook-core|0.12|
 [Apache 2.0 License]:https://opensource.org/licenses/Apache-2.0
 
 # RuleBook <img src="https://github.com/Clayton7510/RuleBook/blob/master/LambdaBook.png" height="100" align="left"/>
@@ -75,8 +75,8 @@ cd RuleBook
 
 ### 1.3 Latest Sonatype SNAPSHOT (Development) Release
 
-* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.12-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
-* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.12-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-core &nbsp;&nbsp;&nbsp;[![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.13-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
+* rulebook-spring [![Sonatype Nexus](https://img.shields.io/badge/SNAPSHOT-0.13-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/)
 
 ### 1.4 Adding RuleBook to Your Maven Project
 
@@ -86,7 +86,7 @@ _Add the code below to your pom.xml_
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-core</artifactId>
-    <version>0.11</version>
+    <version>0.12</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ _Add the code below to your pom.xml_
 _Add the code below to your build.gradle_
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-core:0.11'
+compile 'com.deliveredtechnologies:rulebook-core:0.12'
 ```
 
 <sub>[[Top](#contents)]</sub>
@@ -699,14 +699,14 @@ Maven:
 <dependency>
     <groupId>com.deliveredtechnologies</groupId>
     <artifactId>rulebook-spring</artifactId>
-    <version>0.11</version>
+    <version>0.12</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile 'com.deliveredtechnologies:rulebook-spring:0.11'
+compile 'com.deliveredtechnologies:rulebook-spring:0.12'
 ```
 
 _Note: 0.11 is currently the only version of rulebook-spring that provides
