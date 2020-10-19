@@ -44,7 +44,7 @@ subprojects {
     apply plugin: 'com.bmuschko.nexus'
 
     group = properties['project.group']
-    version = properties['project.version']
+    version = project.hasProperty('newVersion') ? project.newVersion : properties['project.version']
     sourceCompatibility = properties['project.compatibility']
     targetCompatibility = properties['project.compatibility']
 
@@ -357,3 +357,4 @@ task copySource(type: Copy) {
     from subprojects.sourceSets.main.allSource
     into "${rootDir}/src/main/java"
 }
+

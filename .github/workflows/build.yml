@@ -1,0 +1,67 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: build
+
+on:
+  push:
+    branches: [ develop, master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Configure GPG Settings for Signing
+        id: gpg
+        env:
+          GPG_KEY: ${{ secrets.MAVEN_KEY }}
+          GPG_PW: ${{ secrets.MAVEN_KEY_PW }}
+        run: |
+          export GPG_TTY=$(tty)
+          echo "$GPG_KEY" >> codesigning.asc
+          gpg --batch --import codesigning.asc
+          shred --remove codesigning.asc
+      - name: Build & Deploy
+        id: deploy
+        env:
+          OSSRH_USERNAME: ${{ secrets.SONATYPE_USER }}
+          OSSRH_PASSWORD: ${{ secrets.SONATYPE_PW }}
+          GPG_KEY_PW: ${{ secrets.MAVEN_KEY_PW }}
+          GPG_KEY_ID: ${{ secrets.MAVEN_KEY_ID }}
+        run: |
+          VERSION=$(./gradlew properties -q | grep "project.version:" | awk '{print $2}')
+
+          if ! echo $VERSION | grep -q SNAPSHOT ; then
+
+            echo "***** BRANCH_NAME is ${GITHUB_REF} *****"
+
+            if [ "${GITHUB_REF}" == "refs/heads/develop" ] ; then
+              # Always push a SNAPSHOT release on a merge into the 'develop' branch
+              echo "***** Deploying ${VERSION}-SNAPSHOT *****"
+              ./gradlew clean build alljavadoc uploadArchives -PnewVersion="${VERSION}-SNAPSHOT" -PnexusUsername="${OSSRH_USERNAME}" -PnexusPassword="${OSSRH_PASSWORD}" -Psigning.keyId="" -Psigning.password=""
+
+              VERSION="${VERSION}-${GITHUB_RUN_NUMBER}"
+              echo "***** VERSION has been updated to $VERSION ******"
+            fi
+          fi
+
+          # Stage for Maven Central Deployment if a release or SonaType SNAPSHOT repo if a SNAPSHOT
+          export GPG_TTY=$(tty)
+          echo "***** Deploying ${VERSION} *****"
+          # ./gradlew clean build alljavadoc uploadArchives -PnewVersion="${VERSION}" -PnexusUsername="${OSSRH_USERNAME}" -PnexusPassword="${OSSRH_PASSWORD}" -Psigning.keyId="${GPG_KEY_ID}" -Psigning.password="${GPG_KEY_PW}"
+          echo "***** Skipping ${VERSION} Deployment to Maven Central *****"
+      - name: Update Code Coverage
+        id: coverage
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          CI_BRANCH: "${env.BRANCH_NAME}"
+        run: |
+          echo "***** CI_BRANCH is ${CI_BRANCH} *****"
+          ./gradlew clean check jacocoRootReport copySource coveralls
