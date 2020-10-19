@@ -8,7 +8,6 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -28,7 +27,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
   private String _package;
   private Predicate<String> _subPkgMatch;
   private Class<? extends RuleBook> _prototypeClass;
-  private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
   private Optional<List<Class<?>>> _rules = Optional.ofNullable(null);
 
   @SuppressWarnings("unchecked")
@@ -78,8 +77,6 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
    * @return  a List of POJO Rules
    */
   protected List<Class<?>> getPojoRules() {
-    Reflections reflections = new Reflections(_package);
-
     _lock.readLock().lock();
     try {
       if (_rules.isPresent()) {
@@ -93,6 +90,7 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
       if (_rules.isPresent()) {
         return _rules.get();
       }
+      Reflections reflections = new Reflections(_package);
       List<Class<?>> rules = reflections
           .getTypesAnnotatedWith(com.deliveredtechnologies.rulebook.annotation.Rule.class).stream()
           .filter(rule -> rule.getAnnotatedSuperclass() != null) // Include classes only, exclude interfaces, etc.
@@ -102,9 +100,9 @@ public class RuleBookRunner extends AbstractRuleBookRunner {
       rules.sort(comparingInt(aClass ->
           getAnnotation(com.deliveredtechnologies.rulebook.annotation.Rule.class, aClass).order()));
       _rules = Optional.of(rules);
+      return _rules.get();
     } finally {
       _lock.writeLock().unlock();
     }
-    return _rules.get();
   }
 }

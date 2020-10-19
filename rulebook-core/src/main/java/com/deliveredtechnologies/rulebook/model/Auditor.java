@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  */
 public abstract class Auditor {
   protected Map<String, Map<Long, RuleStatus>> _auditMap = new HashMap<>();
-  private ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock _lock = new ReentrantReadWriteLock();
 
   /**
    * Registers a rule to be audited.
