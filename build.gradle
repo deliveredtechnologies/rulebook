@@ -270,7 +270,28 @@ project("rulebook-core") {
                     name 'mikelear'
                     url 'https://github.com/mikelear'
                     roles {
-                        role 'raised RuleBookAuditor bug where decorated auditors with defineRules aren not audited and proposed fix'
+                        role 'fixed bug in v0.12'
+                    }
+                }
+                contributor {
+                    name 'Adrien Wattez'
+                    url ''
+                    roles {
+                        role 'provided an enhancement to v0.12'
+                    }
+                }
+                contributor {
+                    name 'Adam Zell'
+                    url 'https://github.com/azell'
+                    roles {
+                        role 'fixed bug in v0.12'
+                    }
+                }
+                contributor {
+                    name 'Craig Main'
+                    url 'https://github.com/jimmymain'
+                    roles {
+                        role 'fixed bug in v0.12'
                     }
                 }
             }
