@@ -22,17 +22,9 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           CI_NAME: "GitHub Actions"
-          CI_BUILD_NUMBER: ${{ env.GITHUB_RUN_ID }}
           CI_PULL_REQUEST: ${{ github.event.pull_request.number }}
-          CI_BUILD_URL: "https://github.com/deliveredtechnologies/rulebook/pull/${{ github.event.pull_request.number }}/checks?check_run_id=${{ env.GITHUB_RUN_ID }}"
           CI_BRANCH: ${{ github.event.pull_request.head.ref }}
 
-
-
         run: |
-          CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "***** CI_NAME: ${CI_NAME} *****"
-          echo "***** CI_BUILD_NUMBER: ${CI_BUILD_NUMBER} *****"
-          echo "***** ${CI_BUILD_URL} *****"
           echo "***** Updating Coverage for PR ${CI_PULL_REQUEST} on BRANCH ${CI_BRANCH} *****"
           ./gradlew check jacocoRootReport copySource coveralls
