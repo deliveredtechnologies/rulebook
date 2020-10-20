@@ -24,7 +24,7 @@ jobs:
           CI_NAME: "GitHub Actions"
           CI_BUILD_NUMBER: ${{ env.GITHUB_RUN_ID }}
           CI_PULL_REQUEST: ${{ github.event.pull_request.number }}
-          CI_BUILD_URL: "https://github.com/deliveredtechnologies/rulebook/pull/${CI_PULL_REQUEST}/checks?check_run_id=${CI_BUILD_NUMBER}"
+          CI_BUILD_URL: "https://github.com/deliveredtechnologies/rulebook/pull/${{ github.event.pull_request.number }}/checks?check_run_id=${{ env.GITHUB_RUN_ID }}"
           CI_BRANCH: ${{ github.event.pull_request.head.ref }}
 
 
