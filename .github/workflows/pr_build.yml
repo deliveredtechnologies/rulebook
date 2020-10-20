@@ -21,8 +21,9 @@ jobs:
       - name: Build with Gradle
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          CI_BRANCH: "${GITHUB_REF}"
+          CI_BRANCH: ${{ github.base_ref }}
         run: |
           CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          CI_BUILD_URL="https://github.com/deliveredtechnologies/rulebook/pull/${CI_PULL_REQUEST}"
           echo "***** Updating Coverage for PR ${CI_PULL_REQUEST} on BRANCH ${CI_BRANCH} *****"
           ./gradlew check jacocoRootReport copySource coveralls
