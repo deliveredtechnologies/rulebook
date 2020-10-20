@@ -21,7 +21,7 @@ jobs:
       - name: Build with Gradle
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          CI_BRANCH: ${{ github.base_ref }}
+          CI_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
           CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           CI_BUILD_URL="https://github.com/deliveredtechnologies/rulebook/pull/${CI_PULL_REQUEST}"
