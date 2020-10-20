@@ -21,6 +21,7 @@ jobs:
       - name: Build with Gradle
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          CI_BRANCH: "${env.BRANCH_NAME}"
         run: |
           CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "***** Updating Coverage for PR ${CI_PULL_REQUEST} *****"
